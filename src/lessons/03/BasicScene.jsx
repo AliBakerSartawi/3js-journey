@@ -56,8 +56,15 @@ function BasicScene() {
 
     // this is another way to change rotation order
     // but rotation values must be updated for it to take effect
-    box.current.rotation.reorder('XYZ');
+    console.log(box.current.rotation.order)
+    if (box.current.rotation.order === 'XYZ') {
+      box.current.rotation.reorder('YXZ');
+    } else {
+      box.current.rotation.reorder('XYZ');
+    }
     box.current.rotation.set(Math.PI * 0.25, Math.PI * 0.25, 0);
+
+    // axesHelper causes onClick issues, calls the function multiple times
   }
 
   return (
@@ -83,7 +90,7 @@ function BasicScene() {
           position={[1, 1, 1]}
           // scale prop overrides the geometry args
           scale={[0.5, 0.5, 0.5]}>
-          <axesHelper args={[3]} />
+          {/* <axesHelper args={[3]} /> */}
           <boxGeometry
             // if args are not specified, defaults are [1, 1, 1]
             args={[1, 1, 1]}
