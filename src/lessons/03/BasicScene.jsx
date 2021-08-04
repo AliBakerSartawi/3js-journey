@@ -112,7 +112,34 @@ function BasicScene() {
 
   return (
     // default camera fov is 75 approximately
-    <Canvas camera={{ fov: 75, position: [3, 1, 5] }}>
+    <Canvas
+      camera={{
+        // fov best between 45 and 75, and the latter is a lot
+        fov: 45,
+        position: [3, 1, 5],
+        // objects between near and far are the ones captured by the camera
+        near: 0.1,
+        // even 100 for far is considered a lot
+        far: 2000,
+      }}
+
+      //// for a little better 3d object shapes, add this to left and right
+      //// ... to increase horizontal fov
+      //// aspectRatio = width / height
+      //// left: -1 * aspectRatio => -1.33333
+      //// right: 1 * aspectRatio =>  1.33333
+      // orthographic
+      // camera={{
+      //   left: -1,
+      //   right: 1,
+      //   top: 1,
+      //   bottom: -1,
+      //   near: 1,
+      //   far: 1000,
+      //   zoom: 50,
+      //   position: [0, 5, 10]
+      // }}
+      >
       <axesHelper args={[10]} />
       <OrbitControls />
       <Camera box={box} group={group} />
@@ -143,7 +170,7 @@ function BasicScene() {
         </mesh>
         <mesh position={[0, 2, 2]} scale={[0.5, 0.5, 0.5]}>
           <axesHelper args={[3]} />
-          <sphereGeometry  />
+          <sphereGeometry />
           <meshBasicMaterial color="lime" />
         </mesh>
       </group>
@@ -204,4 +231,11 @@ export default BasicScene;
  *    window.requestAnimationsFrame(render)
  * }
  * render()
+ */
+
+/**
+ * orthographic camera has no perspective
+ *
+ * Think about Age Of Empires, characters have the same size
+ * no matter their distance from camera
  */
