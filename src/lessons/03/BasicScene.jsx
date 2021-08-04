@@ -55,6 +55,12 @@ function Camera({ box, group }) {
       x: state.mouse.x * -0.25,
       y: state.mouse.y * -0.25
     });
+    
+    gsap.to(state.camera.position, {
+      duration: 0.5,
+      x: state.mouse.x * 3,
+      y: state.mouse.y * 3
+    });
 
     // box.current.position.x = state.mouse.x * 0.25;
     // box.current.position.y = state.mouse.y * 0.25;
@@ -113,14 +119,15 @@ function BasicScene() {
   return (
     // default camera fov is 75 approximately
     <Canvas
+      // decide camera settings at beginning of project
       camera={{
         // fov best between 45 and 75, and the latter is a lot
         fov: 45,
-        position: [3, 1, 5],
+        position: [5, 5, 5],
         // objects between near and far are the ones captured by the camera
         near: 0.1,
         // even 100 for far is considered a lot
-        far: 2000,
+        far: 2000
       }}
 
       //// for a little better 3d object shapes, add this to left and right
@@ -139,7 +146,7 @@ function BasicScene() {
       //   zoom: 50,
       //   position: [0, 5, 10]
       // }}
-      >
+    >
       <axesHelper args={[10]} />
       <OrbitControls />
       <Camera box={box} group={group} />
