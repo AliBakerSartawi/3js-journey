@@ -8,7 +8,6 @@ import gsap from 'gsap';
 
 // the camera must be used in a component inside the Canvas component
 function Camera({ box, group }) {
-
   return null;
 }
 
@@ -25,37 +24,25 @@ function Geometries() {
           position: [1, 1, 5],
           near: 0.1,
           far: 2000
-        }}
-      >
+        }}>
         <axesHelper args={[10]} />
-        <OrbitControls
-          dampingFactor={0.05}
-        />
+        <OrbitControls dampingFactor={0.05} />
         <Camera box={box} group={group} />
-        <group
-          // changes properties of what's inside the group combined
-          ref={group}
+
+        <mesh
+          ref={box}
+          rotation={[Math.PI * 0.25, Math.PI * 0.25, 0, 'YXZ']}
           position={[1, 1, 1]}
-          scale={[0.7, 0.7, 0.7]}
-          rotation={[0, 0, 0]}>
-          <axesHelper args={[5]} />
-          <mesh
-            ref={box}
-            rotation={[Math.PI * 0.25, Math.PI * 0.25, 0, 'YXZ']}
-            position={[1, 1, 1]}
-            scale={[0.5, 0.5, 0.5]}>
-            <axesHelper args={[3]} />
-            <boxGeometry
-              args={[1, 1, 1]}
-            />
-            <meshBasicMaterial color="crimson" />
-          </mesh>
-          <mesh position={[0, 2, 2]} scale={[0.5, 0.5, 0.5]}>
-            <axesHelper args={[3]} />
-            <sphereGeometry />
-            <meshBasicMaterial color="lime" />
-          </mesh>
-        </group>
+          scale={[0.5, 0.5, 0.5]}>
+          <axesHelper args={[3]} />
+          <boxGeometry args={[1, 2, 3, 2, 2, 2]} />
+          <meshBasicMaterial wireframe color="crimson" />
+        </mesh>
+        <mesh position={[0, 2, 2]} scale={[0.5, 0.5, 0.5]}>
+          <axesHelper args={[3]} />
+          <sphereGeometry />
+          <meshBasicMaterial color="lime" />
+        </mesh>
       </Canvas>
     </div>
   );
