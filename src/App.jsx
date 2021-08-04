@@ -1,10 +1,12 @@
 import './App.scss';
-import BasicScene from './lessons/03/BasicScene';
+import BasicScene from './lessons/BasicScene';
+import Geometries from './lessons/Geometries';
 
 function App() {
   return (
     <div className="app">
-      <BasicScene />
+      {/* <BasicScene /> */}
+      <Geometries />
     </div>
   );
 }
