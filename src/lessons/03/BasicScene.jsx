@@ -123,75 +123,78 @@ function BasicScene() {
   }
 
   return (
-    // default camera fov is 75 approximately
-    <Canvas
-      // decide camera settings at beginning of project
-      camera={{
-        // fov best between 45 and 75, and the latter is a lot
-        fov: 45,
-        position: [1, 1, 5],
-        // objects between near and far are the ones captured by the camera
-        near: 0.1,
-        // even 100 for far is considered a lot
-        far: 2000
-      }}
-
-      //// for a little better 3d object shapes, add this to left and right
-      //// ... to increase horizontal fov
-      //// aspectRatio = width / height
-      //// left: -1 * aspectRatio => -1.33333
-      //// right: 1 * aspectRatio =>  1.33333
-      // orthographic
-      // camera={{
-      //   left: -1,
-      //   right: 1,
-      //   top: 1,
-      //   bottom: -1,
-      //   near: 1,
-      //   far: 1000,
-      //   zoom: 50,
-      //   position: [0, 5, 10]
-      // }}
-    >
-      <axesHelper args={[10]} />
-      <OrbitControls
-        // the lower the smoother
-        dampingFactor={0.05}
-      />
-      {/* <TrackballControls /> */}
-      <Camera box={box} group={group} />
-      <group
-        // changes properties of what's inside the group combined
-        ref={group}
-        position={[1, 1, 1]}
-        scale={[0.7, 0.7, 0.7]}
-        rotation={[0, 0, 0]}>
-        <axesHelper args={[5]} />
-        <mesh
-          ref={box}
-          onClick={log}
-          // Math.PI is equal to 180 degrees rotation (half rotation)
-          // quarter rotation => Math.PI / 2 OR Math.PI * 0.5
-          // read notes at bottom of page for advanced rotation
-          rotation={[Math.PI * 0.25, Math.PI * 0.25, 0, 'YXZ']}
+    // the canvas will take full size of its parent
+    <div style={{height: '100vh'}}>
+      {/* default camera fov is 75 approximately */}
+      <Canvas
+      
+        // decide camera settings at beginning of project
+        camera={{
+          // fov best between 45 and 75, and the latter is a lot
+          fov: 45,
+          position: [1, 1, 5],
+          // objects between near and far are the ones captured by the camera
+          near: 0.1,
+          // even 100 for far is considered a lot
+          far: 2000
+        }}
+        //// for a little better 3d object shapes, add this to left and right
+        //// ... to increase horizontal fov
+        //// aspectRatio = width / height
+        //// left: -1 * aspectRatio => -1.33333
+        //// right: 1 * aspectRatio =>  1.33333
+        // orthographic
+        // camera={{
+        //   left: -1,
+        //   right: 1,
+        //   top: 1,
+        //   bottom: -1,
+        //   near: 1,
+        //   far: 1000,
+        //   zoom: 50,
+        //   position: [0, 5, 10]
+        // }}
+      >
+        <axesHelper args={[10]} />
+        <OrbitControls
+          // the lower the smoother
+          dampingFactor={0.05}
+        />
+        {/* <TrackballControls /> */}
+        <Camera box={box} group={group} />
+        <group
+          // changes properties of what's inside the group combined
+          ref={group}
           position={[1, 1, 1]}
-          // scale prop overrides the geometry args
-          scale={[0.5, 0.5, 0.5]}>
-          <axesHelper args={[3]} />
-          <boxGeometry
-            // if args are not specified, defaults are [1, 1, 1]
-            args={[1, 1, 1]}
-          />
-          {/* better way to declare colors is like this "0xff0000" */}
-          <meshBasicMaterial color="crimson" />
-        </mesh>
-        <mesh position={[0, 2, 2]} scale={[0.5, 0.5, 0.5]}>
-          <axesHelper args={[3]} />
-          <sphereGeometry />
-          <meshBasicMaterial color="lime" />
-        </mesh>
-      </group>
-    </Canvas>
+          scale={[0.7, 0.7, 0.7]}
+          rotation={[0, 0, 0]}>
+          <axesHelper args={[5]} />
+          <mesh
+            ref={box}
+            onClick={log}
+            // Math.PI is equal to 180 degrees rotation (half rotation)
+            // quarter rotation => Math.PI / 2 OR Math.PI * 0.5
+            // read notes at bottom of page for advanced rotation
+            rotation={[Math.PI * 0.25, Math.PI * 0.25, 0, 'YXZ']}
+            position={[1, 1, 1]}
+            // scale prop overrides the geometry args
+            scale={[0.5, 0.5, 0.5]}>
+            <axesHelper args={[3]} />
+            <boxGeometry
+              // if args are not specified, defaults are [1, 1, 1]
+              args={[1, 1, 1]}
+            />
+            {/* better way to declare colors is like this "0xff0000" */}
+            <meshBasicMaterial color="crimson" />
+          </mesh>
+          <mesh position={[0, 2, 2]} scale={[0.5, 0.5, 0.5]}>
+            <axesHelper args={[3]} />
+            <sphereGeometry />
+            <meshBasicMaterial color="lime" />
+          </mesh>
+        </group>
+      </Canvas>
+    </div>
   );
 }
 
