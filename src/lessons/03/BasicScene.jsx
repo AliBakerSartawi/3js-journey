@@ -124,10 +124,15 @@ function BasicScene() {
 
   return (
     // the canvas will take full size of its parent
-    <div style={{height: '100vh'}}>
+    <div style={{ height: '100vh' }}>
       {/* default camera fov is 75 approximately */}
       <Canvas
-      
+        // some screens have a higher dpr than 1,
+        // this attribute will scale default dpr (1) to match the screen
+        // otherwise, edges will be jagged
+        // Math.min here will limit max value to 2, in case dpr was higher
+        // most screens have a dpr of 1, more than 2 is overkill
+        pixelRatio={Math.min(window.devicePixelRatio, 2)}
         // decide camera settings at beginning of project
         camera={{
           // fov best between 45 and 75, and the latter is a lot
