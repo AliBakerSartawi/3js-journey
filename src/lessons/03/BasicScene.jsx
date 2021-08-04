@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { Canvas, useThree, useFrame } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei';
+import { OrbitControls, TrackballControls } from '@react-three/drei';
 import gsap from 'gsap';
 
 // import * as THREE from 'three';
@@ -34,8 +34,10 @@ function Camera({ box, group }) {
 
     // Math.sin creates a back and forth wave
     // sin & cos combination will make object rotate (move) in a circle
-    group.current.position.y = Math.sin(elapsedTime);
-    group.current.position.x = Math.cos(elapsedTime);
+    //// CIRCLE MOTION ⬇️⬇️⬇️⬇️
+    // group.current.position.y = Math.sin(elapsedTime);
+    // group.current.position.x = Math.cos(elapsedTime);
+    //// CIRCLE MOTION ⬆️⬆️⬆️⬆️
     // group.current.position.y = Math.tan(elapsedTime);
 
     // sin => pronounced sign (starts at 0)
@@ -52,20 +54,24 @@ function Camera({ box, group }) {
     });
     gsap.to(box.current.rotation, {
       duration: 0.5,
-      x: state.mouse.x * -0.25,
-      y: state.mouse.y * -0.25
-    });
-    
-    gsap.to(state.camera.position, {
-      duration: 0.5,
-      x: state.mouse.x * 3,
-      y: state.mouse.y * 3
+      x: state.mouse.y * -0.25,
+      y: -(state.mouse.x * -0.25)
     });
 
-    // box.current.position.x = state.mouse.x * 0.25;
-    // box.current.position.y = state.mouse.y * 0.25;
-    // box.current.rotation.x = state.mouse.x * -0.25;
-    // box.current.rotation.y = state.mouse.y * -0.25;
+    // camera motion
+    // gsap.to(state.camera.position, {
+    //   duration: 0.5,
+    //   x: state.mouse.x * 2,
+    //   y: state.mouse.y * 2
+    // });
+
+    // full circular camera motion
+    // gsap.to(state.camera.position, {
+    //   duration: 0.5,
+    //   x: Math.sin(state.mouse.x / 2 * Math.PI * 2) * 3,
+    //   z: Math.cos(state.mouse.x / 2 * Math.PI * 2) * 3,
+    //   y: state.mouse.y * Math.PI * 2
+    // });
   });
 
   // useFrame helps in accessing the camera
@@ -123,7 +129,7 @@ function BasicScene() {
       camera={{
         // fov best between 45 and 75, and the latter is a lot
         fov: 45,
-        position: [5, 5, 5],
+        position: [1, 1, 5],
         // objects between near and far are the ones captured by the camera
         near: 0.1,
         // even 100 for far is considered a lot
@@ -148,7 +154,11 @@ function BasicScene() {
       // }}
     >
       <axesHelper args={[10]} />
-      <OrbitControls />
+      <OrbitControls
+        // the lower the smoother
+        dampingFactor={0.05}
+      />
+      {/* <TrackballControls /> */}
       <Camera box={box} group={group} />
       <group
         // changes properties of what's inside the group combined
