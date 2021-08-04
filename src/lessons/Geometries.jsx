@@ -1,12 +1,33 @@
-import React, { useEffect, useRef } from 'react';
-import { Canvas, useThree, useFrame } from '@react-three/fiber';
+import React, { useEffect, useMemo, useRef } from 'react';
+import { Canvas, useThree, useFrame, extend } from '@react-three/fiber';
 import { OrbitControls, TrackballControls } from '@react-three/drei';
+import * as THREE from 'three';
 import gsap from 'gsap';
+import { Face3, Geometry } from 'three-stdlib';
 
-// import * as THREE from 'three';
-// const lookAtRef = new THREE.Vector3();
+// // custom geometry not working, either declaratively or imperatively
+// const geo = new Geometry()
+// geo.vertices.push(
+//   new THREE.Vector3(0,0,0),
+//   new THREE.Vector3(0,1,0),
+//   new THREE.Vector3(1,0,0),
+// )
+// geo.faces.push(
+//   new Face3(0,1,2)
+// )
 
-// the camera must be used in a component inside the Canvas component
+// const shapeVertices = [
+//   [0, 0, 0],
+//   [0, 1, 0],
+//   [1, 0, 0]
+// ];
+
+// const shapeFaces = [
+//   [0, 1, 2]
+//   // [0, 1, 0],
+//   // [1, 0, 0]
+// ];
+
 function Camera({ box, group }) {
   return null;
 }
@@ -14,6 +35,12 @@ function Camera({ box, group }) {
 function Geometries() {
   const box = useRef();
   const group = useRef();
+
+  // const vertices = useMemo(
+  //   () => shapeVertices.map((v) => new THREE.Vector3(...v)),
+  //   []
+  // );
+  // const faces = useMemo(() => shapeFaces.map((f) => new Face3(...f)), []);
 
   return (
     <div style={{ height: '100vh', backgroundColor: 'rgb(26, 26, 26)' }}>
@@ -32,17 +59,29 @@ function Geometries() {
         <mesh
           ref={box}
           rotation={[Math.PI * 0.25, Math.PI * 0.25, 0, 'YXZ']}
-          position={[1, 1, 1]}
+          position={[2, 1, 1]}
           scale={[0.5, 0.5, 0.5]}>
           <axesHelper args={[3]} />
           <boxGeometry args={[1, 2, 3, 2, 2, 2]} />
           <meshBasicMaterial wireframe color="crimson" />
         </mesh>
-        <mesh position={[0, 2, 2]} scale={[0.5, 0.5, 0.5]}>
-          <axesHelper args={[3]} />
-          <sphereGeometry />
-          <meshBasicMaterial color="lime" />
+
+        <mesh position={[0, 1, 1]}>
+          {/* easy way to create a triangle, provide 1 to the second arg */}
+          <circleGeometry args={[1, 1]} />
+          <meshBasicMaterial wireframe color="lime" />
         </mesh>
+
+        {/* custom geometry not working */}
+        {/* <mesh geometry={geo} position={[0, 1, 2]}>
+          <axesHelper args={[3]} />
+          <geometry
+            attach="geometry"
+            vertices={vertices}
+            faces={faces}
+          />
+          <meshBasicMaterial attach="material" color="lime" />
+        </mesh> */}
       </Canvas>
     </div>
   );
