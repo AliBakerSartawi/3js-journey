@@ -90,6 +90,7 @@ function Camera({ box, group }) {
 function BasicScene() {
   const box = useRef();
   const group = useRef();
+  const canvas = useRef();
 
   function log() {
     // console.log(box.current.position);
@@ -124,7 +125,16 @@ function BasicScene() {
 
   return (
     // the canvas will take full size of its parent
-    <div style={{ height: '100vh' }}>
+    <div
+      ref={canvas}
+      style={{ height: '100vh', backgroundColor: 'rgb(26, 26, 26)' }}
+      onDoubleClick={() => {
+        if (!document.fullscreenElement) {
+          canvas.current.requestFullscreen();
+        } else {
+          document.exitFullscreen();
+        }
+      }}>
       {/* default camera fov is 75 approximately */}
       <Canvas
         // some screens have a higher dpr than 1,
