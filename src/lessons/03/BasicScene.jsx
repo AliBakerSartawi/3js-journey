@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Canvas, useThree, useFrame } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
+import gsap from 'gsap';
 
 // import * as THREE from 'three';
 // const lookAtRef = new THREE.Vector3();
@@ -22,9 +23,9 @@ function Camera({ box, group }) {
     // delta is explained in notes at bottom of page
   });
 
-  useFrame(state => {
+  useFrame((state) => {
     // clock is another way to normalize animations framerate
-    const {elapsedTime} = state.clock
+    const { elapsedTime } = state.clock;
 
     // multiplied by Math.PI * 2 will give one whole rotation per second
     // group.current.rotation.y = elapsedTime * Math.PI * 2;
@@ -41,20 +42,31 @@ function Camera({ box, group }) {
     // cos => cosign (starts at 1)
     // both give kind of similar wave effect
     // tan => tangent, gives a completely different effect
-
-
-  })
+  });
 
   useFrame((state) => {
-    box.current.position.x = state.mouse.x * 0.25;
-    box.current.position.y = state.mouse.y * 0.25;
-    box.current.rotation.x = state.mouse.x * -0.25;
-    box.current.rotation.y = state.mouse.y * -0.25;
+    gsap.to(box.current.position, {
+      duration: 0.5,
+      x: state.mouse.x * 0.25,
+      y: state.mouse.y * 0.25
+    });
+    gsap.to(box.current.rotation, {
+      duration: 0.5,
+      x: state.mouse.x * -0.25,
+      y: state.mouse.y * -0.25
+    });
+
+    // box.current.position.x = state.mouse.x * 0.25;
+    // box.current.position.y = state.mouse.y * 0.25;
+    // box.current.rotation.x = state.mouse.x * -0.25;
+    // box.current.rotation.y = state.mouse.y * -0.25;
   });
 
   // useFrame helps in accessing the camera
   useFrame((state) => {
     // lookAtRef.x = group.current.position.x;
+    // state.camera.position.y = Math.sin(state.clock.elapsedTime);
+    // state.camera.position.x = Math.cos(state.clock.elapsedTime);
     state.camera.lookAt(group.current.position);
   });
   //// using lookAt() outside useFrame() didn't work for me
