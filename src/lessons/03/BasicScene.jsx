@@ -133,7 +133,7 @@ function BasicScene() {
           position={[1, 1, 1]}
           // scale prop overrides the geometry args
           scale={[0.5, 0.5, 0.5]}>
-          {/* <axesHelper args={[3]} /> */}
+          <axesHelper args={[3]} />
           <boxGeometry
             // if args are not specified, defaults are [1, 1, 1]
             args={[1, 1, 1]}
@@ -143,7 +143,7 @@ function BasicScene() {
         </mesh>
         <mesh position={[0, 2, 2]} scale={[0.5, 0.5, 0.5]}>
           <axesHelper args={[3]} />
-          <boxGeometry args={[1, 1, 1]} />
+          <sphereGeometry  />
           <meshBasicMaterial color="lime" />
         </mesh>
       </group>
