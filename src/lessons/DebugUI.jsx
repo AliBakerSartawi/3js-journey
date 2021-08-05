@@ -10,6 +10,13 @@ import * as dat from 'dat.gui';
  */
 const gui = new dat.GUI();
 
+const parameters = {
+
+  // color: 'crimson', // this naming convention will cause an error
+  color: 0xff0000, // without quotations
+  colorAsWell: '#ff0000', // without quotations
+}
+
 /**
  * Geometries
  */
@@ -34,7 +41,7 @@ const positionsAttribute2 = new THREE.BufferAttribute(positionsArray2, 3);
 /**
  * Debug Component
  */
-function guiAdd(box) {
+function guiAdd(box, material) {
   // console.log(box)
   gui.add(
     // object name
@@ -54,6 +61,16 @@ function guiAdd(box) {
 
   gui.add(box.current, 'visible')
     .name('boxVisibility')
+
+  gui.add(box.current.material, 'wireframe')
+    .name('boxWireframe')
+
+  // the color property is an instance of the Color class in three
+  // ... so we cannot tweak it directly, we need a trick
+  gui.addColor(parameters, 'color')
+  gui.addColor(parameters, 'colorAsWell').onChange(() => {
+    box.current.material.color.set(parameters.colorAsWell)
+  })
 }
 
 /**
@@ -62,9 +79,12 @@ function guiAdd(box) {
 function DebugUI() {
   const box = useRef();
 
+  // or we can access it through box.current.material 
+  const material = useRef();
+
   useEffect(() => {
     setTimeout(() => {
-      guiAdd(box);
+      guiAdd(box, material);
     }, 1000);
   }, []);
 
@@ -88,7 +108,7 @@ function DebugUI() {
           scale={[0.5, 0.5, 0.5]}>
           <axesHelper args={[3]} />
           <boxBufferGeometry args={[1, 2, 3, 2, 2, 2]} />
-          <meshBasicMaterial wireframe color="crimson" />
+          <meshBasicMaterial ref={material} wireframe color="crimson" />
         </mesh>
 
         <mesh position={[0, 1, 0]}>
