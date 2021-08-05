@@ -29,13 +29,26 @@ import { Face3, Geometry } from 'three-stdlib';
 // ];
 
 const positionsArray = new Float32Array([
-  0,0,0,
-  0,1,0,
-  1,0,0,
-])
-const positionsAttribute = new THREE.BufferAttribute(positionsArray, 3)
-const geo = new THREE.BufferGeometry()
-geo.setAttribute('position', positionsAttribute)
+  // first vertex
+  0, 0, 0,
+  // second vertex
+  0, 1, 0,
+  // third vertex
+  1, 0, 0
+]);
+const positionsAttribute = new THREE.BufferAttribute(positionsArray, 3);
+// instead of setting the attribute here
+// ... we provide it in the props in the bufferGeometry JSX element
+// const geo = new THREE.BufferGeometry()
+// geo.setAttribute('position', positionsAttribute)
+
+const count = 500; // number of triangle we want
+// count * 3 (number of vertices) * 3 (x, y, z)
+const positionsArray2 = new Float32Array(count * 3 * 3);
+for (let i = 0; i < positionsArray2.length; i++) {
+  positionsArray2[i] = (Math.random() - 0.5) * 2
+}
+const positionsAttribute2 = new THREE.BufferAttribute(positionsArray2, 3)
 
 function Camera({ box, group }) {
   return null;
@@ -57,7 +70,7 @@ function Geometries() {
         pixelRatio={Math.min(window.devicePixelRatio, 2)}
         camera={{
           fov: 45,
-          position: [1, 1, 5],
+          position: [1, 1, 8],
           near: 0.1,
           far: 2000
         }}>
@@ -82,7 +95,12 @@ function Geometries() {
         </mesh>
 
         <mesh position={[0, 1, 1.5]}>
-          <bufferGeometry attributes={{position: positionsAttribute}} />
+          <bufferGeometry attributes={{ position: positionsAttribute }} />
+          <meshBasicMaterial wireframe color="aqua" />
+        </mesh>
+
+        <mesh position={[0, 1, 2.5]}>
+          <bufferGeometry attributes={{ position: positionsAttribute2 }} />
           <meshBasicMaterial wireframe color="aqua" />
         </mesh>
 
