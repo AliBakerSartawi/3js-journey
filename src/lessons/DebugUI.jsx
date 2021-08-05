@@ -3,31 +3,16 @@ import { Canvas, useThree, useFrame, extend } from '@react-three/fiber';
 import { OrbitControls, TrackballControls } from '@react-three/drei';
 import * as THREE from 'three';
 import gsap from 'gsap';
+import * as dat from 'dat.gui';
 
-// // custom geometry not working, either declaratively or imperatively
-// const geo = new Geometry()
-// geo.vertices.push(
-//   new THREE.Vector3(0,0,0),
-//   new THREE.Vector3(0,1,0),
-//   new THREE.Vector3(1,0,0),
-// )
-// geo.faces.push(
-//   new Face3(0,1,2)
-// )
+/**
+ * Debug
+ */
+const gui = new dat.GUI();
 
-// const shapeVertices = [
-//   [0, 0, 0],
-//   [0, 1, 0],
-//   [1, 0, 0]
-// ];
-
-// const shapeFaces = [
-//   [0, 1, 2]
-//   // [0, 1, 0],
-//   // [1, 0, 0]
-// ];
-
-// // cool thing about bufferGeometry is that we don't have to provide faces
+/**
+ * Geometries
+ */
 const positionsArray = new Float32Array([
   // first vertex
   0, 0, 0,
@@ -37,32 +22,51 @@ const positionsArray = new Float32Array([
   1, 0, 0
 ]);
 const positionsAttribute = new THREE.BufferAttribute(positionsArray, 3);
-// instead of setting the attribute here
-// ... we provide it in the props in the bufferGeometry JSX element
-// const geo = new THREE.BufferGeometry()
-// geo.setAttribute('position', positionsAttribute)
 
 const count = 500; // number of triangle we want
 // count * 3 (number of vertices) * 3 (x, y, z)
 const positionsArray2 = new Float32Array(count * 3 * 3);
 for (let i = 0; i < positionsArray2.length; i++) {
-  positionsArray2[i] = (Math.random() - 0.5) * 2
+  positionsArray2[i] = (Math.random() - 0.5) * 2;
 }
-const positionsAttribute2 = new THREE.BufferAttribute(positionsArray2, 3)
+const positionsAttribute2 = new THREE.BufferAttribute(positionsArray2, 3);
 
-function Camera({ box, group }) {
-  return null;
+/**
+ * Debug Component
+ */
+function guiAdd(box) {
+  // console.log(box)
+  gui.add(
+    // object name
+    box.current.position,
+    // concerned property as a string
+    'x',
+    // min
+    -3,
+    // max
+    3,
+    // step (precision)
+    0.01
+  );
+  gui.add(box.current.position, 'y', -3, 3, 0.01);
+  // or a cleaner way ⬇️
+  gui.add(box.current.position, 'z').min(-3).max(3).step(0.01).name('boxPositionZ');
+
+  gui.add(box.current, 'visible')
+    .name('boxVisibility')
 }
 
-function Geometries() {
+/**
+ * Main Component
+ */
+function DebugUI() {
   const box = useRef();
-  const group = useRef();
 
-  // const vertices = useMemo(
-  //   () => shapeVertices.map((v) => new THREE.Vector3(...v)),
-  //   []
-  // );
-  // const faces = useMemo(() => shapeFaces.map((f) => new Face3(...f)), []);
+  useEffect(() => {
+    setTimeout(() => {
+      guiAdd(box);
+    }, 1000);
+  }, []);
 
   return (
     <div style={{ height: '100vh', backgroundColor: 'rgb(26, 26, 26)' }}>
@@ -76,7 +80,6 @@ function Geometries() {
         }}>
         <axesHelper args={[10]} />
         <OrbitControls dampingFactor={0.05} />
-        <Camera box={box} group={group} />
 
         <mesh
           ref={box}
@@ -103,20 +106,9 @@ function Geometries() {
           <bufferGeometry attributes={{ position: positionsAttribute2 }} />
           <meshBasicMaterial wireframe color="goldenrod" />
         </mesh>
-
-        {/* custom geometry not working */}
-        {/* <mesh geometry={geo} position={[0, 1, 2]}>
-          <axesHelper args={[3]} />
-          <geometry
-            attach="geometry"
-            vertices={vertices}
-            faces={faces}
-          />
-          <meshBasicMaterial attach="material" color="lime" />
-        </mesh> */}
       </Canvas>
     </div>
   );
 }
 
-export default Geometries;
+export default DebugUI;
