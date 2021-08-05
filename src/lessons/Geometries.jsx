@@ -28,6 +28,15 @@ import { Face3, Geometry } from 'three-stdlib';
 //   // [1, 0, 0]
 // ];
 
+const positionsArray = new Float32Array([
+  0,0,0,
+  0,1,0,
+  1,0,0,
+])
+const positionsAttribute = new THREE.BufferAttribute(positionsArray, 3)
+const geo = new THREE.BufferGeometry()
+geo.setAttribute('position', positionsAttribute)
+
 function Camera({ box, group }) {
   return null;
 }
@@ -62,14 +71,19 @@ function Geometries() {
           position={[2, 1, 1]}
           scale={[0.5, 0.5, 0.5]}>
           <axesHelper args={[3]} />
-          <boxGeometry args={[1, 2, 3, 2, 2, 2]} />
+          <boxBufferGeometry args={[1, 2, 3, 2, 2, 2]} />
           <meshBasicMaterial wireframe color="crimson" />
         </mesh>
 
-        <mesh position={[0, 1, 1]}>
+        <mesh position={[0, 1, 0]}>
           {/* easy way to create a triangle, provide 1 to the second arg */}
-          <circleGeometry args={[1, 1]} />
-          <meshBasicMaterial wireframe color="lime" />
+          <circleBufferGeometry args={[1, 1]} />
+          <meshBasicMaterial wireframe color="hotpink" />
+        </mesh>
+
+        <mesh position={[0, 1, 1.5]}>
+          <bufferGeometry attributes={{position: positionsAttribute}} />
+          <meshBasicMaterial wireframe color="aqua" />
         </mesh>
 
         {/* custom geometry not working */}
