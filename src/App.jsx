@@ -1,11 +1,11 @@
 import { Suspense } from 'react';
 import './App.scss';
-import BasicScene from './lessons/BasicScene';
+// import BasicScene from './lessons/BasicScene';
 // import DebugUI from './lessons/DebugUI';
-import Geometries from './lessons/Geometries';
-import Materials from './lessons/Materials';
+// import Geometries from './lessons/Geometries';
+// import Materials from './lessons/Materials';
+// import Textures from './lessons/Textures';
 import Text from './lessons/Text';
-import Textures from './lessons/Textures';
 
 function App() {
   return (
