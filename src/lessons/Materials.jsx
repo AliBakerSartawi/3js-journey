@@ -139,19 +139,6 @@ function Materials() {
   // gradient3Texture.minFilter = THREE.NearestFilter
   // because gradient picture is small, we should alter the magFilter
   gradient3Texture.magFilter = THREE.NearestFilter;
-  // disabling mipmaps increases performance,
-  // ... we don't need them since the minFilter and/or magFilter = NearestFilter
-  gradient3Texture.generateMipmaps = false;
-
-  useLayoutEffect(() => {
-    if (plane.current) {
-      plane.current.geometry.setAttribute(
-        'uv2',
-        new THREE.BufferAttribute(plane.current.geometry.attributes.uv.array, 2)
-      );
-      console.log('aoMap');
-    }
-  }, [plane]);
 
   return (
     <div style={{ height: '100vh', backgroundColor: 'rgb(26, 26, 26)' }}>
