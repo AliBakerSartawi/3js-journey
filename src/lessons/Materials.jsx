@@ -36,6 +36,8 @@ import matcap8 from '../textures/matcaps/8.png';
  * p => positive
  * n => negative
  * https://polyhaven.com/hdris
+ * 
+ * convert hdri to cube map => https://matheowis.github.io/HDRI-to-CubeMap/
  */
 import px from '../textures/environmentMaps/0/px.jpg';
 import nx from '../textures/environmentMaps/0/nx.jpg';
