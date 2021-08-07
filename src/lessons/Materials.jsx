@@ -43,7 +43,7 @@ const material = new THREE.MeshBasicMaterial({ color: 'crimson' });
 /**
  * Camera component
  */
-function Motion({ plane, sphere, torus, torus2 }) {
+function Motion({ plane, sphere, torus, torus2, torus3 }) {
   useFrame(({ camera, clock }, delta) => {
     console.log(clock.elapsedTime);
 
@@ -53,8 +53,21 @@ function Motion({ plane, sphere, torus, torus2 }) {
 
     torus.current.rotation.x = 0.1 * clock.elapsedTime;
     torus2.current.rotation.x = 0.1 * clock.elapsedTime;
+    torus3.current.rotation.x = 0.1 * clock.elapsedTime;
   });
   return null;
+}
+
+/**
+ * Lights component
+ */
+function Lights() {
+  return (
+    <>
+      <ambientLight args={[0xffffff, 0.5]} />
+      <pointLight castShadow args={[0xffffff, 0.5]} position={[2, 3, 4]} />
+    </>
+  );
 }
 
 /**
@@ -65,6 +78,7 @@ function Materials() {
   const sphere = useRef();
   const torus = useRef();
   const torus2 = useRef();
+  const torus3 = useRef();
 
   /**
    * loading textures
@@ -81,7 +95,7 @@ function Materials() {
     matcap1Texture,
     matcap3Texture,
     matcap7Texture,
-    matcap8Texture,
+    matcap8Texture
   ] = useLoader(THREE.TextureLoader, [
     doorColor,
     doorAmbientOcclusion,
@@ -94,12 +108,13 @@ function Materials() {
     matcap1,
     matcap3,
     matcap7,
-    matcap8,
+    matcap8
   ]);
 
   return (
     <div style={{ height: '100vh', backgroundColor: 'rgb(26, 26, 26)' }}>
       <Canvas
+        shadows
         pixelRatio={Math.min(window.devicePixelRatio, 2)}
         camera={{
           fov: 45,
@@ -110,27 +125,26 @@ function Materials() {
       >
         <axesHelper args={[10]} />
         <OrbitControls dampingFactor={0.05} />
-        <Motion plane={plane} sphere={sphere} torus={torus} torus2={torus2}/>
+        <Motion plane={plane} sphere={sphere} torus={torus} torus2={torus2} torus3={torus3} />
+        <Lights />
 
         {/* plane */}
-        <mesh ref={plane} rotation={[-Math.PI / 2, 0, 0]}>
+        <mesh ref={plane} receiveShadow position={[0,0.49,0]} rotation={[-Math.PI / 2, 0, 0]}>
           <planeBufferGeometry args={[10, 10, 10, 10]} />
-          <meshBasicMaterial
+          {/* meshBasicMaterial cannot receive shadows, but Standard does */}
+          <meshStandardMaterial
             map={doorColorTexture}
             transparent
             alphaMap={doorOpacityTexture}
             // DoubleSide requires more GPU calculations, use sparingly
             side={THREE.DoubleSide}
             // color adds tint above the texture
-            color={'#00fe43'}
+            // color={'#00fe43'}
           />
         </mesh>
 
         {/* sphere */}
-        <mesh
-          ref={sphere}
-          position={[2, 1, 1]}
-        >
+        <mesh ref={sphere} position={[2.5, 1, 1]}>
           <axesHelper args={[3]} />
           <sphereBufferGeometry args={[0.5, 16, 16]} />
           <meshNormalMaterial
@@ -139,19 +153,15 @@ function Materials() {
             normalMap={doorNormalTexture}
           />
         </mesh>
-        
-        <mesh
-          position={[0, 1, 1]}
-        >
+
+        <mesh position={[1.25, 1, 1]}>
           <axesHelper args={[3]} />
           <sphereBufferGeometry args={[0.5, 16, 16]} />
-          <meshMatcapMaterial
-          matcap={matcap8Texture}
-          />
+          <meshMatcapMaterial matcap={matcap8Texture} />
         </mesh>
 
         {/* torus */}
-        <mesh  position={[0, 1, 0]}>
+        <mesh position={[0, 1, 0]}>
           <torusBufferGeometry args={[0.3, 0.2, 16, 32]} />
           <meshBasicMaterial
             // transparent must be set to true, then provide opacity value
@@ -164,17 +174,26 @@ function Materials() {
         <mesh ref={torus} position={[0, 1, -1]}>
           <torusBufferGeometry args={[0.3, 0.2, 16, 32]} />
           {/* matcaps can simulate lights and shadow without having them in the scene */}
-          <meshMatcapMaterial
-          matcap={matcap3Texture}
-          />
+          <meshMatcapMaterial matcap={matcap3Texture} />
         </mesh>
-        <mesh ref={torus2} position={[0, 1, -2]}>
+        <mesh position={[0, 1, -2]}>
           <torusBufferGeometry args={[0.3, 0.2, 16, 32]} />
           {/* matcaps can simulate lights and shadow without having them in the scene */}
-          <meshMatcapMaterial
-          matcap={matcap7Texture}
-          />
+          <meshMatcapMaterial matcap={matcap7Texture} />
         </mesh>
+
+        {/* materials that react to light */}
+        <mesh castShadow ref={torus2} position={[0, 1, 1]}>
+          <torusBufferGeometry args={[0.3, 0.2, 16, 32]} />
+          <meshLambertMaterial />
+        </mesh>
+
+        <mesh castShadow ref={torus3} position={[0, 1, 2]}>
+          <torusBufferGeometry args={[0.3, 0.2, 16, 32]} />
+          {/* phong is smoother than lambert */}
+          <meshPhongMaterial />
+        </mesh>
+
       </Canvas>
     </div>
   );
