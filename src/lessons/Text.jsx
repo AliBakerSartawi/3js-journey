@@ -5,6 +5,17 @@ import * as THREE from 'three';
 import gsap from 'gsap';
 
 /**
+ * MATCAPS
+ */
+import matcap1 from '../textures/matcaps/1.png';
+import matcap3 from '../textures/matcaps/3.png';
+import matcap7 from '../textures/matcaps/7.png';
+import matcap8 from '../textures/matcaps/8.png';
+import gradient3 from '../textures/gradients/3.jpg';
+import gradient5 from '../textures/gradients/5.jpg';
+
+
+/**
  * EXAMPLES
  * non-3D text => https://codesandbox.io/embed/troika-3d-text-via-react-three-fiber-ntfx2?fontsize=14
  * 3D text => https://www.ilyameerovich.com/simple-3d-text-meshes-in-three-js/
@@ -22,6 +33,7 @@ import typefaceFont from '../fonts/helvetiker_regular.typeface.json';
 
 const font = new THREE.FontLoader().parse(typefaceFont);
 const textString = `';hello!?<>/*&%$#@!'`;
+const textString2 = `!matcaps are dope!`;
 const textOptions = {
   font,
   size: 1,
@@ -33,12 +45,13 @@ const textOptions = {
 /**
  * Camera component
  */
-function Motion({ textMesh }) {
+function Motion({ textMesh, textMesh2 }) {
   // if not inside a useEffect, will give ref undefined error
   useEffect(() => {
     // easy centering solution instead of computing bounding box and manually translating to -50%'s
     textMesh.current.geometry.center();
-  }, [textMesh]);
+    textMesh2.current.geometry.center();
+  }, [textMesh, textMesh2]);
   // useFrame(({clock: {elapsedTime}}) => {
   //   textMesh.current.rotation.x = elapsedTime * 0.1
   //   textMesh.current.rotation.y = elapsedTime * 0.1
@@ -65,6 +78,10 @@ function Lights() {
  */
 function Text() {
   const textMesh = useRef();
+  const textMesh2 = useRef();
+
+  const [matcap1Texture, matcap3Texture, matcap7Texture, matcap8Texture, gradient3Texture, gradient5Texture] =
+    useLoader(THREE.TextureLoader, [matcap1, matcap3, matcap7, matcap8, gradient3, gradient5]);
 
   return (
     <div style={{ height: '100vh', backgroundColor: 'rgb(26, 26, 26)' }}>
@@ -80,7 +97,7 @@ function Text() {
       >
         <axesHelper args={[10]} />
         <OrbitControls dampingFactor={0.05} />
-        <Motion textMesh={textMesh} />
+        <Motion textMesh={textMesh} textMesh2={textMesh2} />
         <Lights />
 
         {/* MESHES */}
@@ -94,10 +111,14 @@ function Text() {
           <meshStandardMaterial color={'crimson'} />
         </mesh>
 
-        {/* <mesh>
-        <boxBufferGeometry args={[1, 1, 1]} />
-        <meshBasicMaterial color={'whitesmoke'} />
-      </mesh> */}
+        <mesh ref={textMesh2} position={[0, 2, 0]}>
+          <textBufferGeometry
+            // parameters is useful for remembering textOptions, but they must be provided in args as below
+            // parameters
+            args={[textString2, textOptions]}
+          />
+          <meshMatcapMaterial matcap={matcap7Texture} color={'aqua'} />
+        </mesh>
       </Canvas>
     </div>
   );
