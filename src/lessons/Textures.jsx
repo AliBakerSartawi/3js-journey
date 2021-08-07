@@ -51,6 +51,17 @@ function Textures() {
     doorRoughness
   ]);
 
+  // to kind of alter the uv mapping, but there might be stretching
+  doorColorTexture.repeat.x = 2
+  doorColorTexture.repeat.y = 3
+  // to turn stretching into a repeat pattern
+  doorColorTexture.wrapS = THREE.RepeatWrapping // S for x
+  doorColorTexture.wrapT = THREE.RepeatWrapping // T for y
+  // OR MirroredRepeatWrapping => like a mirror camera filter (converges in the middle)
+  // doorColorTexture.wrapS = THREE.MirroredRepeatWrapping
+  // doorColorTexture.wrapT = THREE.MirroredRepeatWrapping
+
+
   return (
     <div style={{ height: '100vh', backgroundColor: 'rgb(26, 26, 26)' }}>
       <Canvas
