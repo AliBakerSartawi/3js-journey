@@ -14,8 +14,11 @@ import doorMetallic from '../textures/door/metallic.jpg';
 import doorNormal from '../textures/door/normal.jpg';
 import doorOpacity from '../textures/door/opacity.jpg'; // opacity is also called alpha
 import doorRoughness from '../textures/door/roughness.jpg';
-import gradient3 from '../textures/gradients/3.jpg'
-import matcap1 from '../textures/matcaps/1.png'
+import gradient3 from '../textures/gradients/3.jpg';
+import matcap1 from '../textures/matcaps/1.png';
+import matcap3 from '../textures/matcaps/3.png';
+import matcap7 from '../textures/matcaps/7.png';
+import matcap8 from '../textures/matcaps/8.png';
 
 /**
  * material
@@ -28,9 +31,19 @@ import matcap1 from '../textures/matcaps/1.png'
 const material = new THREE.MeshBasicMaterial({ color: 'crimson' });
 
 /**
+ * meshNormalMaterial website
+ * https://www.ilithya.rocks/
+ */
+
+/**
+ * MATCAPS
+ * https://github.com/nidorx/matcaps
+ */
+
+/**
  * Camera component
  */
-function Motion({ plane, sphere, torus }) {
+function Motion({ plane, sphere, torus, torus2 }) {
   useFrame(({ camera, clock }, delta) => {
     console.log(clock.elapsedTime);
 
@@ -39,6 +52,7 @@ function Motion({ plane, sphere, torus }) {
     sphere.current.rotation.y = 0.1 * clock.elapsedTime;
 
     torus.current.rotation.x = 0.1 * clock.elapsedTime;
+    torus2.current.rotation.x = 0.1 * clock.elapsedTime;
   });
   return null;
 }
@@ -50,6 +64,7 @@ function Materials() {
   const plane = useRef();
   const sphere = useRef();
   const torus = useRef();
+  const torus2 = useRef();
 
   /**
    * loading textures
@@ -61,7 +76,12 @@ function Materials() {
     doorMetallicTexture,
     doorNormalTexture,
     doorOpacityTexture,
-    doorRoughnessTexture
+    doorRoughnessTexture,
+    gradient3Texture,
+    matcap1Texture,
+    matcap3Texture,
+    matcap7Texture,
+    matcap8Texture,
   ] = useLoader(THREE.TextureLoader, [
     doorColor,
     doorAmbientOcclusion,
@@ -69,7 +89,12 @@ function Materials() {
     doorMetallic,
     doorNormal,
     doorOpacity,
-    doorRoughness
+    doorRoughness,
+    gradient3,
+    matcap1,
+    matcap3,
+    matcap7,
+    matcap8,
   ]);
 
   return (
@@ -85,30 +110,70 @@ function Materials() {
       >
         <axesHelper args={[10]} />
         <OrbitControls dampingFactor={0.05} />
-        <Motion plane={plane} sphere={sphere} torus={torus} />
+        <Motion plane={plane} sphere={sphere} torus={torus} torus2={torus2}/>
 
         {/* plane */}
         <mesh ref={plane} rotation={[-Math.PI / 2, 0, 0]}>
           <planeBufferGeometry args={[10, 10, 10, 10]} />
-          <meshBasicMaterial wireframe color="crimson" />
+          <meshBasicMaterial
+            map={doorColorTexture}
+            transparent
+            alphaMap={doorOpacityTexture}
+            // DoubleSide requires more GPU calculations, use sparingly
+            side={THREE.DoubleSide}
+            // color adds tint above the texture
+            color={'#00fe43'}
+          />
         </mesh>
 
         {/* sphere */}
         <mesh
           ref={sphere}
-          // rotation={[Math.PI * 0.25, Math.PI * 0.25, 0, 'YXZ']}
           position={[2, 1, 1]}
-          // scale={[0.5, 0.5, 0.5]}
         >
           <axesHelper args={[3]} />
           <sphereBufferGeometry args={[0.5, 16, 16]} />
-          <meshBasicMaterial wireframe />
+          <meshNormalMaterial
+            // flatshading can be cool for certain art types
+            flatShading
+            normalMap={doorNormalTexture}
+          />
+        </mesh>
+        
+        <mesh
+          position={[0, 1, 1]}
+        >
+          <axesHelper args={[3]} />
+          <sphereBufferGeometry args={[0.5, 16, 16]} />
+          <meshMatcapMaterial
+          matcap={matcap8Texture}
+          />
         </mesh>
 
         {/* torus */}
-        <mesh ref={torus} position={[0, 1, 0]}>
+        <mesh  position={[0, 1, 0]}>
           <torusBufferGeometry args={[0.3, 0.2, 16, 32]} />
-          <meshBasicMaterial wireframe color="hotpink" />
+          <meshBasicMaterial
+            // transparent must be set to true, then provide opacity value
+            transparent
+            opacity={0.25}
+            wireframe
+            color={0xffffff}
+          />
+        </mesh>
+        <mesh ref={torus} position={[0, 1, -1]}>
+          <torusBufferGeometry args={[0.3, 0.2, 16, 32]} />
+          {/* matcaps can simulate lights and shadow without having them in the scene */}
+          <meshMatcapMaterial
+          matcap={matcap3Texture}
+          />
+        </mesh>
+        <mesh ref={torus2} position={[0, 1, -2]}>
+          <torusBufferGeometry args={[0.3, 0.2, 16, 32]} />
+          {/* matcaps can simulate lights and shadow without having them in the scene */}
+          <meshMatcapMaterial
+          matcap={matcap7Texture}
+          />
         </mesh>
       </Canvas>
     </div>
