@@ -99,7 +99,7 @@ function Text() {
     matcap: matcap7Texture
   });
   const donut = new THREE.TorusBufferGeometry(0.3, 0.2, 20, 45);
-  const arr = new Array(200).fill(0)
+  const arr = new Array(200).fill(0);
 
   return (
     <div style={{ height: '100vh', backgroundColor: 'rgb(26, 26, 26)' }}>
@@ -139,27 +139,23 @@ function Text() {
 
         {/* DONUTS */}
         {arr.map((e, i) => {
-          console.log(i);
-          const scale = Math.random()
-          return <mesh 
-          position={[
-            (Math.random() - 0.5) * 25,
-            (Math.random() - 0.5) * 25,
-            (Math.random() - 0.5) * 25,
-          ]}
-          rotation={[
-            Math.random() * Math.PI, 
-            Math.random() * Math.PI,
-            0 
-          ]}
-          scale={[
-            scale,
-            scale,
-            scale
-          ]}
-          geometry={donut} 
-          material={matcapMaterial}/>;
+          console.time('donuts')
+          const scale = Math.random();
+          return (
+            <mesh
+              position={[
+                (Math.random() - 0.5) * 25,
+                (Math.random() - 0.5) * 25,
+                (Math.random() - 0.5) * 25
+              ]}
+              rotation={[Math.random() * Math.PI, Math.random() * Math.PI, 0]}
+              scale={[scale, scale, scale]}
+              geometry={donut}
+              material={matcapMaterial}
+            />
+          );
         })}
+        {console.timeEnd('donuts')}
       </Canvas>
     </div>
   );
