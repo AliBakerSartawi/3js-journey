@@ -12,6 +12,8 @@ import gsap from 'gsap';
 /**
  * useful links
  * https://3dtextures.me/
+ * https://poligon.com/
+ * https://www.arroway-textures.ch/
  * https://3dtextures.me/2019/04/16/door-wood-001/
  * https://marmoset.co/posts/physically-based-rendering-and-you-can-too/
  * https://marmoset.co/posts/basic-theory-of-physically-based-rendering/
@@ -27,6 +29,17 @@ import doorMetallic from '../textures/door/metallic.jpg';
 import doorNormal from '../textures/door/normal.jpg';
 import doorOpacity from '../textures/door/opacity.jpg'; // opacity is also called alpha
 import doorRoughness from '../textures/door/roughness.jpg';
+
+/**
+ * Camera component
+ */
+
+function Camera({box}) {
+  useFrame(({camera, delta}) => {
+    camera.lookAt(box.current.position)
+  })
+  return null
+}
 
 /**
  * Main Component
@@ -74,12 +87,20 @@ function Textures() {
   // doorColorTexture.offset.x = 0.5
   // doorColorTexture.offset.y = 0.5
 
-  // FUN NOTE: try offset with MirroredRepeatWrapping
+  // // FUN NOTE: try offset with MirroredRepeatWrapping
 
-  doorColorTexture.rotation = Math.PI * 0.25
-  // to control pivot point of rotation
-  doorColorTexture.center.x = 0.5 
-  doorColorTexture.center.y = 0.5 
+  // // rotation
+  // doorColorTexture.rotation = Math.PI * 0.25
+  // // to control pivot point of rotation
+  // doorColorTexture.center.x = 0.5 
+  // doorColorTexture.center.y = 0.5 
+
+  // // minification filters => blurriness vs sharpness => when zoomed out, or texture too big for geometry
+  // doorColorTexture.minFilter = THREE.NearestFilter // can cause moire pattern with some textures
+
+  // // magnification filters => blurriness vs sharpness => when zoomed in, or texture too small for geometry
+  // // similar to creating minecraft boxes from extremely small texture images
+  // doorColorTexture.magFilter = THREE.NearestFilter // will make it sharp and remove pixel stretching
 
   return (
     <div style={{ height: '100vh', backgroundColor: 'rgb(26, 26, 26)' }}>
@@ -87,12 +108,13 @@ function Textures() {
         pixelRatio={Math.min(window.devicePixelRatio, 2)}
         camera={{
           fov: 45,
-          position: [1, 1, 8],
+          // position: [1, 1, 8],
           near: 0.1,
           far: 2000
         }}>
         <axesHelper args={[10]} />
         <OrbitControls dampingFactor={0.05} />
+        <Camera box={box} />
 
         <mesh
           ref={box}
@@ -101,7 +123,7 @@ function Textures() {
           scale={[0.5, 0.5, 0.5]}>
           <axesHelper args={[3]} />
           <boxBufferGeometry args={[1, 2, 3, 2, 2, 2]} />
-          {doorColorTexture && <meshBasicMaterial attach="material" map={doorColorTexture} />}
+          <meshBasicMaterial attach="material" map={doorColorTexture} />
         </mesh>
         <mesh position={[0, 1, 0]}>
           {/* easy way to create a triangle, provide 1 to the second arg */}
