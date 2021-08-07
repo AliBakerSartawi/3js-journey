@@ -14,7 +14,6 @@ import matcap8 from '../textures/matcaps/8.png';
 import gradient3 from '../textures/gradients/3.jpg';
 import gradient5 from '../textures/gradients/5.jpg';
 
-
 /**
  * EXAMPLES
  * non-3D text => https://codesandbox.io/embed/troika-3d-text-via-react-three-fiber-ntfx2?fontsize=14
@@ -80,8 +79,27 @@ function Text() {
   const textMesh = useRef();
   const textMesh2 = useRef();
 
-  const [matcap1Texture, matcap3Texture, matcap7Texture, matcap8Texture, gradient3Texture, gradient5Texture] =
-    useLoader(THREE.TextureLoader, [matcap1, matcap3, matcap7, matcap8, gradient3, gradient5]);
+  const [
+    matcap1Texture,
+    matcap3Texture,
+    matcap7Texture,
+    matcap8Texture,
+    gradient3Texture,
+    gradient5Texture
+  ] = useLoader(THREE.TextureLoader, [
+    matcap1,
+    matcap3,
+    matcap7,
+    matcap8,
+    gradient3,
+    gradient5
+  ]);
+
+  const matcapMaterial = new THREE.MeshMatcapMaterial({
+    matcap: matcap7Texture
+  });
+  const donut = new THREE.TorusBufferGeometry(0.3, 0.2, 20, 45);
+  const arr = new Array(200).fill(0)
 
   return (
     <div style={{ height: '100vh', backgroundColor: 'rgb(26, 26, 26)' }}>
@@ -100,8 +118,7 @@ function Text() {
         <Motion textMesh={textMesh} textMesh2={textMesh2} />
         <Lights />
 
-        {/* MESHES */}
-
+        {/* TEXT MESHES */}
         <mesh ref={textMesh} position={[0, 0.5, 0]}>
           <textBufferGeometry
             // parameters is useful for remembering textOptions, but they must be provided in args as below
@@ -119,6 +136,30 @@ function Text() {
           />
           <meshMatcapMaterial matcap={matcap7Texture} color={'aqua'} />
         </mesh>
+
+        {/* DONUTS */}
+        {arr.map((e, i) => {
+          console.log(i);
+          const scale = Math.random()
+          return <mesh 
+          position={[
+            (Math.random() - 0.5) * 25,
+            (Math.random() - 0.5) * 25,
+            (Math.random() - 0.5) * 25,
+          ]}
+          rotation={[
+            Math.random() * Math.PI, 
+            Math.random() * Math.PI,
+            0 
+          ]}
+          scale={[
+            scale,
+            scale,
+            scale
+          ]}
+          geometry={donut} 
+          material={matcapMaterial}/>;
+        })}
       </Canvas>
     </div>
   );
