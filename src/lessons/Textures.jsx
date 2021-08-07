@@ -1,9 +1,14 @@
 import React, { useEffect, useMemo, useRef, Suspense } from 'react';
-import { Canvas, useThree, useFrame, extend, useLoader } from '@react-three/fiber';
-import { OrbitControls, TrackballControls } from '@react-three/drei';
+import {
+  Canvas,
+  useThree,
+  useFrame,
+  extend,
+  useLoader
+} from '@react-three/fiber';
+import { OrbitControls, TrackballControls, Loader } from '@react-three/drei';
 import * as THREE from 'three';
 import gsap from 'gsap';
-
 /**
  * useful links
  * https://3dtextures.me/
@@ -15,21 +20,36 @@ import gsap from 'gsap';
 /**
  * texture imports
  */
-import doorImg from '../textures/door/basecolor.jpg'
-
-/**
- * loaders
- */
-// const texture = new THREE.Texture(doorImg)
-// console.log(texture)
+import doorColor from '../textures/door/basecolor.jpg';
+import doorAmbientOcclusion from '../textures/door/ambientOcclusion.jpg';
+import doorHeight from '../textures/door/height.png';
+import doorMetallic from '../textures/door/metallic.jpg';
+import doorNormal from '../textures/door/normal.jpg';
+import doorOpacity from '../textures/door/opacity.jpg'; // opacity is also called alpha
+import doorRoughness from '../textures/door/roughness.jpg';
 
 /**
  * Main Component
  */
 function Textures() {
   const box = useRef();
-  const [texture] = useLoader(THREE.TextureLoader, [doorImg])
-  console.log(texture)
+  const [
+    doorColorTexture,
+    doorAmbientOcclusionTexture,
+    doorHeightTexture,
+    doorMetallicTexture,
+    doorNormalTexture,
+    doorOpacityTexture,
+    doorRoughnessTexture
+  ] = useLoader(THREE.TextureLoader, [
+    doorColor,
+    doorAmbientOcclusion,
+    doorHeight,
+    doorMetallic,
+    doorNormal,
+    doorOpacity,
+    doorRoughness
+  ]);
 
   return (
     <div style={{ height: '100vh', backgroundColor: 'rgb(26, 26, 26)' }}>
@@ -44,21 +64,20 @@ function Textures() {
         <axesHelper args={[10]} />
         <OrbitControls dampingFactor={0.05} />
 
-          <mesh
-            ref={box}
-            rotation={[Math.PI * 0.25, Math.PI * 0.25, 0, 'YXZ']}
-            position={[2, 1, 1]}
-            scale={[0.5, 0.5, 0.5]}>
-            <axesHelper args={[3]} />
-            <boxBufferGeometry args={[1, 2, 3, 2, 2, 2]} />
-            {texture && <meshBasicMaterial attach="material" map={texture} />}
-          </mesh>
-          <mesh position={[0, 1, 0]}>
-            {/* easy way to create a triangle, provide 1 to the second arg */}
-            <circleBufferGeometry args={[1, 1]} />
-            <meshBasicMaterial wireframe color="hotpink" />
-          </mesh>
-
+        <mesh
+          ref={box}
+          rotation={[Math.PI * 0.25, Math.PI * 0.25, 0, 'YXZ']}
+          position={[2, 1, 1]}
+          scale={[0.5, 0.5, 0.5]}>
+          <axesHelper args={[3]} />
+          <boxBufferGeometry args={[1, 2, 3, 2, 2, 2]} />
+          {doorColorTexture && <meshBasicMaterial attach="material" map={doorColorTexture} />}
+        </mesh>
+        <mesh position={[0, 1, 0]}>
+          {/* easy way to create a triangle, provide 1 to the second arg */}
+          <circleBufferGeometry args={[1, 1]} />
+          <meshBasicMaterial wireframe color="hotpink" />
+        </mesh>
       </Canvas>
     </div>
   );
