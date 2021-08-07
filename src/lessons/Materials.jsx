@@ -43,7 +43,7 @@ const material = new THREE.MeshBasicMaterial({ color: 'crimson' });
 /**
  * Camera component
  */
-function Motion({ plane, sphere, torus, torus2, torus3 }) {
+function Motion({ plane, sphere, torus, torus2, torus3, torus4, torus5 }) {
   useFrame(({ camera, clock }, delta) => {
     console.log(clock.elapsedTime);
 
@@ -54,6 +54,8 @@ function Motion({ plane, sphere, torus, torus2, torus3 }) {
     torus.current.rotation.x = 0.1 * clock.elapsedTime;
     torus2.current.rotation.x = 0.1 * clock.elapsedTime;
     torus3.current.rotation.x = 0.1 * clock.elapsedTime;
+    torus4.current.rotation.x = 0.1 * clock.elapsedTime;
+    torus5.current.rotation.x = 0.1 * clock.elapsedTime;
   });
   return null;
 }
@@ -79,6 +81,8 @@ function Materials() {
   const torus = useRef();
   const torus2 = useRef();
   const torus3 = useRef();
+  const torus4 = useRef();
+  const torus5 = useRef();
 
   /**
    * loading textures
@@ -111,6 +115,13 @@ function Materials() {
     matcap8
   ]);
 
+  // gradient3Texture.minFilter = THREE.NearestFilter
+  // because gradient picture is small, we should alter the magFilter
+  gradient3Texture.magFilter = THREE.NearestFilter;
+  // disabling mipmaps increases performance,
+  // ... we don't need them since the minFilter and/or magFilter = NearestFilter
+  gradient3Texture.generateMipmaps = false;
+
   return (
     <div style={{ height: '100vh', backgroundColor: 'rgb(26, 26, 26)' }}>
       <Canvas
@@ -125,21 +136,45 @@ function Materials() {
       >
         <axesHelper args={[10]} />
         <OrbitControls dampingFactor={0.05} />
-        <Motion plane={plane} sphere={sphere} torus={torus} torus2={torus2} torus3={torus3} />
+        <Motion
+          plane={plane}
+          sphere={sphere}
+          torus={torus}
+          torus2={torus2}
+          torus3={torus3}
+          torus4={torus4}
+          torus5={torus5}
+        />
         <Lights />
 
         {/* plane */}
-        <mesh ref={plane} receiveShadow position={[0,0.49,0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <mesh
+          ref={plane}
+          receiveShadow
+          position={[0, 0.49, 0]}
+          rotation={[-Math.PI / 2, 0, 0]}
+        >
           <planeBufferGeometry args={[10, 10, 10, 10]} />
           {/* meshBasicMaterial cannot receive shadows, but Standard does */}
           <meshStandardMaterial
             map={doorColorTexture}
-            transparent
-            alphaMap={doorOpacityTexture}
             // DoubleSide requires more GPU calculations, use sparingly
             side={THREE.DoubleSide}
             // color adds tint above the texture
             // color={'#00fe43'}
+            
+            // unlike lambert and phong, standard supports roughness and metalness
+            metalness={1}
+            metalnessMap={doorMetallicTexture}
+            roughness
+            roughnessMap={doorRoughnessTexture}
+            
+            // other maps
+            normalMap={doorNormalTexture}
+            transparent
+            alphaMap={doorOpacityTexture}
+            
+            
           />
         </mesh>
 
@@ -183,17 +218,41 @@ function Materials() {
         </mesh>
 
         {/* materials that react to light */}
+        {/* lambert */}
         <mesh castShadow ref={torus2} position={[0, 1, 1]}>
           <torusBufferGeometry args={[0.3, 0.2, 16, 32]} />
           <meshLambertMaterial />
         </mesh>
 
+        {/* phong */}
         <mesh castShadow ref={torus3} position={[0, 1, 2]}>
           <torusBufferGeometry args={[0.3, 0.2, 16, 32]} />
-          {/* phong is smoother than lambert */}
-          <meshPhongMaterial />
+          {/* phong is smoother than lambert, but lambert is more performant */}
+          <meshPhongMaterial
+            color={0x1f1f1f}
+            shininess={100}
+            // specular => color of reflection
+            specular={0xff2233}
+          />
         </mesh>
 
+        {/* toon */}
+        <mesh castShadow ref={torus4} position={[0, 1, 3]}>
+          <torusBufferGeometry args={[0.3, 0.2, 16, 32]} />
+          {/* phong is smoother than lambert, but lambert is more performant */}
+          <meshToonMaterial
+            color={0x237648}
+            // gradientMap can make it smoother, unless min & mag filters are fixed on the texture
+            gradientMap={gradient3Texture}
+          />
+        </mesh>
+
+        {/* standard => arguably the best one */}
+        <mesh castShadow ref={torus5} position={[0, 1, 4]}>
+          <torusBufferGeometry args={[0.3, 0.2, 16, 32]} />
+          {/* phong is smoother than lambert, but lambert is more performant */}
+          <meshStandardMaterial color={0x237648} />
+        </mesh>
       </Canvas>
     </div>
   );
