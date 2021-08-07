@@ -18,14 +18,33 @@ import doorColor from '../textures/door/basecolor.jpg';
 import doorAmbientOcclusion from '../textures/door/ambientOcclusion.jpg';
 import doorHeight from '../textures/door/height.png';
 import doorMetallic from '../textures/door/metallic.jpg';
-import doorNormal from '../textures/door/normal.jpg';
+import doorNormal from '../textures/door/normal.jpg'; // https://www.ilithya.rocks/
 import doorOpacity from '../textures/door/opacity.jpg'; // opacity is also called alpha
 import doorRoughness from '../textures/door/roughness.jpg';
 import gradient3 from '../textures/gradients/3.jpg';
+/**
+ * MATCAPS
+ * https://github.com/nidorx/matcaps
+ */
 import matcap1 from '../textures/matcaps/1.png';
 import matcap3 from '../textures/matcaps/3.png';
 import matcap7 from '../textures/matcaps/7.png';
 import matcap8 from '../textures/matcaps/8.png';
+
+/**
+ * environment texture imports
+ * p => positive
+ * n => negative
+ * https://polyhaven.com/hdris
+ */
+import px from '../textures/environmentMaps/0/px.jpg';
+import nx from '../textures/environmentMaps/0/nx.jpg';
+import py from '../textures/environmentMaps/0/py.jpg';
+import ny from '../textures/environmentMaps/0/ny.jpg';
+import pz from '../textures/environmentMaps/0/pz.jpg';
+import nz from '../textures/environmentMaps/0/nz.jpg';
+
+console.log(px, nx, py, ny, pz, nz);
 
 /**
  * material
@@ -36,16 +55,6 @@ import matcap8 from '../textures/matcaps/8.png';
  * such as (material-wireframe) on one mesh will affect all the other meshes
  */
 const material = new THREE.MeshBasicMaterial({ color: 'crimson' });
-
-/**
- * meshNormalMaterial website
- * https://www.ilithya.rocks/
- */
-
-/**
- * MATCAPS
- * https://github.com/nidorx/matcaps
- */
 
 /**
  * Camera component
@@ -97,6 +106,9 @@ function ApplyAOMap({ plane }) {
  * Main Component
  */
 function Materials() {
+  /**
+   * refs
+   */
   const plane = useRef();
   const sphere = useRef();
   const torus = useRef();
@@ -135,6 +147,15 @@ function Materials() {
     matcap7,
     matcap8
   ]);
+
+  /**
+   * loading environment cubic texture
+   */
+  const [environmentMapTexture] = useLoader(THREE.CubeTextureLoader, [
+    [px, nx, py, ny, pz, nz]
+  ]);
+
+  console.log(environmentMapTexture)
 
   // gradient3Texture.minFilter = THREE.NearestFilter
   // because gradient picture is small, we should alter the magFilter
@@ -196,6 +217,8 @@ function Materials() {
             // for displacement to work, geometry segments are required
             displacementMap={doorHeightTexture}
             displacementScale={0.5}
+            // environment map (how the scene reflects on this plane)
+            envMap={environmentMapTexture}
           />
           {/* applying aoMap requires setting attribute to geometry, which requires accessing the ref after the component fully mounted */}
           <ApplyAOMap plane={plane} />
@@ -244,7 +267,7 @@ function Materials() {
         {/* lambert */}
         <mesh castShadow ref={torus2} position={[0, 1, 1]}>
           <torusBufferGeometry args={[0.3, 0.2, 16, 32]} />
-          <meshLambertMaterial />
+          <meshLambertMaterial envMap={environmentMapTexture} />
         </mesh>
 
         {/* phong */}
@@ -273,8 +296,7 @@ function Materials() {
         {/* standard => arguably the best one => uses most realistic algorithms */}
         <mesh castShadow ref={torus5} position={[0, 1, 4]}>
           <torusBufferGeometry args={[0.3, 0.2, 16, 32]} />
-          {/* phong is smoother than lambert, but lambert is more performant */}
-          <meshStandardMaterial color={0x237648} />
+          <meshStandardMaterial metalness={0} roughness={0} envMap={environmentMapTexture} color={0x000000} />
         </mesh>
 
         {/* meshPhysicalMaterial => like standard, but has clear coat effect */}
