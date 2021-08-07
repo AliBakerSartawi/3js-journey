@@ -1,8 +1,15 @@
-import React, { useEffect, useMemo, useRef, Suspense } from 'react';
+import React, {
+  useEffect,
+  useMemo,
+  useRef,
+  Suspense,
+  useLayoutEffect
+} from 'react';
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { OrbitControls, TrackballControls, Loader } from '@react-three/drei';
 import * as THREE from 'three';
 import gsap from 'gsap';
+// import * as dat from 'dat.gui'
 
 /**
  * texture imports
@@ -45,8 +52,6 @@ const material = new THREE.MeshBasicMaterial({ color: 'crimson' });
  */
 function Motion({ plane, sphere, torus, torus2, torus3, torus4, torus5 }) {
   useFrame(({ camera, clock }, delta) => {
-    console.log(clock.elapsedTime);
-
     plane.current.rotation.z = 0.1 * clock.elapsedTime;
 
     sphere.current.rotation.y = 0.1 * clock.elapsedTime;
@@ -70,6 +75,22 @@ function Lights() {
       <pointLight castShadow args={[0xffffff, 0.5]} position={[2, 3, 4]} />
     </>
   );
+}
+
+/**
+ * ApplyAOMap Component
+ */
+function ApplyAOMap({ plane }) {
+  useEffect(() => {
+    plane.current &&
+      plane.current.geometry.setAttribute(
+        'uv2',
+        new THREE.BufferAttribute(plane.current.geometry.attributes.uv.array, 2)
+      );
+    console.log('aoMap');
+  }, [plane]);
+
+  return null;
 }
 
 /**
@@ -122,6 +143,16 @@ function Materials() {
   // ... we don't need them since the minFilter and/or magFilter = NearestFilter
   gradient3Texture.generateMipmaps = false;
 
+  useLayoutEffect(() => {
+    if (plane.current) {
+      plane.current.geometry.setAttribute(
+        'uv2',
+        new THREE.BufferAttribute(plane.current.geometry.attributes.uv.array, 2)
+      );
+      console.log('aoMap');
+    }
+  }, [plane]);
+
   return (
     <div style={{ height: '100vh', backgroundColor: 'rgb(26, 26, 26)' }}>
       <Canvas
@@ -151,10 +182,10 @@ function Materials() {
         <mesh
           ref={plane}
           receiveShadow
-          position={[0, 0.49, 0]}
+          position={[0, 0, 0]}
           rotation={[-Math.PI / 2, 0, 0]}
         >
-          <planeBufferGeometry args={[10, 10, 10, 10]} />
+          <planeBufferGeometry args={[10, 10, 64, 64]} />
           {/* meshBasicMaterial cannot receive shadows, but Standard does */}
           <meshStandardMaterial
             map={doorColorTexture}
@@ -162,20 +193,25 @@ function Materials() {
             side={THREE.DoubleSide}
             // color adds tint above the texture
             // color={'#00fe43'}
-            
+
             // unlike lambert and phong, standard supports roughness and metalness
             metalness={1}
             metalnessMap={doorMetallicTexture}
             roughness
             roughnessMap={doorRoughnessTexture}
-            
             // other maps
             normalMap={doorNormalTexture}
-            transparent
+            normalScale={[1, 1]}
+            transparent // enabling transparent is necessary for alphaMap
             alphaMap={doorOpacityTexture}
-            
-            
+            aoMap={doorAmbientOcclusionTexture}
+            aoMapIntensity={1}
+            // for displacement to work, geometry segments are required
+            displacementMap={doorHeightTexture}
+            displacementScale={0.5}
           />
+          {/* applying aoMap requires setting attribute to geometry, which requires accessing the ref after the component fully mounted */}
+          <ApplyAOMap plane={plane} />
         </mesh>
 
         {/* sphere */}
@@ -247,12 +283,15 @@ function Materials() {
           />
         </mesh>
 
-        {/* standard => arguably the best one */}
+        {/* standard => arguably the best one => uses most realistic algorithms */}
         <mesh castShadow ref={torus5} position={[0, 1, 4]}>
           <torusBufferGeometry args={[0.3, 0.2, 16, 32]} />
           {/* phong is smoother than lambert, but lambert is more performant */}
           <meshStandardMaterial color={0x237648} />
         </mesh>
+
+        {/* meshPhysicalMaterial => like standard, but has clear coat effect */}
+        {/* https://threejs.org/examples/?q=physical#webgl_materials_physical_clearcoat */}
       </Canvas>
     </div>
   );
