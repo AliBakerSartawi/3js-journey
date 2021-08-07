@@ -33,6 +33,10 @@ import doorRoughness from '../textures/door/roughness.jpg';
  */
 function Textures() {
   const box = useRef();
+
+  /**
+   * loading textures
+   */
   const [
     doorColorTexture,
     doorAmbientOcclusionTexture,
@@ -51,16 +55,31 @@ function Textures() {
     doorRoughness
   ]);
 
-  // to kind of alter the uv mapping, but there might be stretching
-  doorColorTexture.repeat.x = 2
-  doorColorTexture.repeat.y = 3
-  // to turn stretching into a repeat pattern
-  doorColorTexture.wrapS = THREE.RepeatWrapping // S for x
-  doorColorTexture.wrapT = THREE.RepeatWrapping // T for y
-  // OR MirroredRepeatWrapping => like a mirror camera filter (converges in the middle)
+  /**
+   * texture properties
+   */
+  // // to kind of alter the uv mapping, but there might be stretching
+  // doorColorTexture.repeat.x = 2
+  // doorColorTexture.repeat.y = 3
+
+  // // to turn stretching into a repeat pattern
+  // doorColorTexture.wrapS = THREE.RepeatWrapping // S for x
+  // doorColorTexture.wrapT = THREE.RepeatWrapping // T for y
+  
+  // // OR MirroredRepeatWrapping => like a mirror camera filter (converges in the middle)
   // doorColorTexture.wrapS = THREE.MirroredRepeatWrapping
   // doorColorTexture.wrapT = THREE.MirroredRepeatWrapping
 
+  // // offset
+  // doorColorTexture.offset.x = 0.5
+  // doorColorTexture.offset.y = 0.5
+
+  // FUN NOTE: try offset with MirroredRepeatWrapping
+
+  doorColorTexture.rotation = Math.PI * 0.25
+  // to control pivot point of rotation
+  doorColorTexture.center.x = 0.5 
+  doorColorTexture.center.y = 0.5 
 
   return (
     <div style={{ height: '100vh', backgroundColor: 'rgb(26, 26, 26)' }}>
