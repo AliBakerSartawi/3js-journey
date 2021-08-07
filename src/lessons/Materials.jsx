@@ -5,6 +5,19 @@ import * as THREE from 'three';
 import gsap from 'gsap';
 
 /**
+ * texture imports
+ */
+import doorColor from '../textures/door/basecolor.jpg';
+import doorAmbientOcclusion from '../textures/door/ambientOcclusion.jpg';
+import doorHeight from '../textures/door/height.png';
+import doorMetallic from '../textures/door/metallic.jpg';
+import doorNormal from '../textures/door/normal.jpg';
+import doorOpacity from '../textures/door/opacity.jpg'; // opacity is also called alpha
+import doorRoughness from '../textures/door/roughness.jpg';
+import gradient3 from '../textures/gradients/3.jpg'
+import matcap1 from '../textures/matcaps/1.png'
+
+/**
  * material
  *
  * if multiple meshes have the same material, it is better for performance
@@ -37,6 +50,27 @@ function Materials() {
   const plane = useRef();
   const sphere = useRef();
   const torus = useRef();
+
+  /**
+   * loading textures
+   */
+  const [
+    doorColorTexture,
+    doorAmbientOcclusionTexture,
+    doorHeightTexture,
+    doorMetallicTexture,
+    doorNormalTexture,
+    doorOpacityTexture,
+    doorRoughnessTexture
+  ] = useLoader(THREE.TextureLoader, [
+    doorColor,
+    doorAmbientOcclusion,
+    doorHeight,
+    doorMetallic,
+    doorNormal,
+    doorOpacity,
+    doorRoughness
+  ]);
 
   return (
     <div style={{ height: '100vh', backgroundColor: 'rgb(26, 26, 26)' }}>
