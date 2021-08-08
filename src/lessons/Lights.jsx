@@ -29,8 +29,8 @@ const textOptions = {
   curveSegments: 8
 };
 
-// // softShadows
-// softShadows()
+// // injecting soft shadows shader
+// softShadows() // kind of not working, also nullifies directionalLight
 
 /**
  * Camera component
@@ -61,8 +61,11 @@ function Motion({ textMesh, textMesh2, donut }) {
  * moderate cost lights => directional, point
  *
  * high cost lights     => spot, rectArea
+ *
+ * lights supporting shadows => point, directional, spot
  */
 function Lighting() {
+
   const spotLight = useMemo(
     () => new THREE.SpotLight(0x78ff00, 0.75, 20, Math.PI * 0.1, 0.25, 1),
     []
@@ -74,12 +77,14 @@ function Lighting() {
   const spotLightHelper = useRef();
   const pointLightHelper = useRef();
   const directionalLightHelper = useRef();
+  const directionalLightShadowCameraHelper = useRef();
   const rectAreaLightHelper = useRef();
 
   // works without adding .current
   useHelper(spotLightHelper, THREE.SpotLightHelper, 'black'); // SpotLightHelper takes a color second arg
   useHelper(pointLightHelper, THREE.PointLightHelper, 1); // PointLightHelper takes a size second arg
   useHelper(directionalLightHelper, THREE.DirectionalLightHelper, 1);
+  useHelper(directionalLightShadowCameraHelper, THREE.CameraHelper, 1);
   // RectAreaLightHelper must be imported separately (from somewhere inside three) for some reason
   // useHelper(rectAreaLightHelper, RectAreaLightHelper); // do not use it, it crashes the app
 
@@ -96,6 +101,11 @@ function Lighting() {
     });
     // and it also works without adding the dependency
   }, [spotLightRotation]);
+
+  useEffect(() => {
+    directionalLightShadowCameraHelper.current =
+      directionalLightHelper.current.shadow.camera;
+  }, [directionalLightHelper]);
   return (
     <>
       {/* AMBIENT => applies light on every direction, hence, not shadow-related. It simulates light bouncing */}
@@ -104,9 +114,19 @@ function Lighting() {
       {/* DIRECTIONAL => faces the center of the scene (light starts from infinity to center) */}
       <directionalLight
         ref={directionalLightHelper}
-        castShadow
         position={[2, 3, 4]}
-        args={[0xffffff, 0.1]}
+        args={[0xffffff, 0.2]}
+        // shadow props
+        castShadow
+        shadow-mapSize={[1024, 1024]} // improves shadow map quality, defaults are 512x512, only increase by a power of 2
+        // reducing the amplitude to fit the scene increases shadow resolution
+        shadow-camera-top={4}
+        shadow-camera-right={7.5}
+        shadow-camera-bottom={-2}
+        shadow-camera-left={-7.5}
+        shadow-camera-near={1}
+        shadow-camera-far={20}
+        shadow-radius={20} // radius may not work with softShadows() enabled
       />
 
       {/* HEMISPHERE => like ambient, but with a color from the sky different from the one from the ground */}
@@ -115,6 +135,11 @@ function Lighting() {
 
       {/* POINTLIGHT => illuminates in every direction starting from its position */}
       <pointLight
+        shadow-mapSize={[1024 / 4, 1024 / 4]} // improves shadow map quality, defaults are 512x512, only increase by a power of 2
+        shadow-camera-top={10}
+        shadow-camera-right={10}
+        shadow-camera-bottom={-10}
+        shadow-camera-left={-10}
         ref={pointLightHelper}
         castShadow
         position={[-2, 3, 4]}
