@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Canvas, useFrame, useLoader, useThree } from '@react-three/fiber';
-import { OrbitControls, useHelper } from '@react-three/drei';
+import { OrbitControls, useHelper, Loader } from '@react-three/drei';
 import * as THREE from 'three';
 import gsap from 'gsap';
 import { softShadows } from '@react-three/drei';
@@ -19,7 +19,7 @@ import gradient5 from '../textures/gradients/5.jpg';
 import typefaceFont from '../fonts/helvetiker_regular.typeface.json';
 
 const font = new THREE.FontLoader().parse(typefaceFont);
-const textString = `';hello!?<>/*&%$#@!'`;
+const textString = `marrajaho tamreejan`;
 const textString2 = `!matcaps are dope!`;
 const textOptions = {
   font,
@@ -173,7 +173,7 @@ function Lights() {
 
         {/* PLANE */}
         <mesh receiveShadow rotation-x={-Math.PI / 2}>
-          <planeBufferGeometry args={[15, 15]} />
+          <planeBufferGeometry args={[25, 25]} />
           <meshStandardMaterial color={'orange'} />
         </mesh>
       </Canvas>

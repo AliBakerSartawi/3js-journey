@@ -5,9 +5,9 @@ import Lights from './lessons/Lights';
 // import BasicScene from './lessons/BasicScene';
 // import DebugUI from './lessons/DebugUI';
 // import Geometries from './lessons/Geometries';
-// import Materials from './lessons/Materials';
-// import Textures from './lessons/Textures';
-// import Text from './lessons/Text';
+import Materials from './lessons/Materials';
+import Textures from './lessons/Textures';
+import Text from './lessons/Text';
 
 function App() {
   return (
@@ -15,13 +15,13 @@ function App() {
       {/* <BasicScene /> */}
       {/* <Geometries /> */}
       {/* <DebugUI /> */}
-      <Suspense fallback={null}>
+      <Suspense fallback={<Loader />}>
         {/* <Textures /> */}
         {/* <Materials /> */}
         {/* <Text /> */}
         <Lights />
       </Suspense>
-      <Loader />
+      
     </div>
   );
 }
