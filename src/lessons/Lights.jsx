@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Canvas, useFrame, useLoader, useThree } from '@react-three/fiber';
 import { OrbitControls, useHelper, Loader } from '@react-three/drei';
 import * as THREE from 'three';
@@ -56,10 +56,36 @@ function Motion({ textMesh, textMesh2, donut }) {
  * Lights component
  */
 function Lighting() {
+  const spotLightRotation = useRef();
+  const rotatingSpotLight = useMemo(
+    () => new THREE.SpotLight(0x78ff00, 0.5, 20, Math.PI * 0.1, 0.25, 1),
+    []
+  );
+  // useFrame(({ clock: { elapsedTime } }, delta) => {
+  //   if (spotLightRotation.current.position.x <= 3) {
+  //     spotLightRotation.current.position.x -= delta * 0.1
+  //   } else if (spotLightRotation.current.position.x <= -3) {
+  //     spotLightRotation.current.position.x += delta * 0.1
+  //   }
+  // });
+
+  useEffect(() => {
+    // it also works without this condition
+    // spotLightRotation.current && 
+      gsap.to(spotLightRotation.current.position, {
+      duration: 2,
+      x: -3,
+      repeat: -1,
+      yoyo: true,
+      ease: 'elastic.inOut(1.5, 1)',
+      // ease: 'back.out',
+    })
+    // and it also works without adding the dependency
+  }, [spotLightRotation])
   return (
     <>
       {/* AMBIENT => applies light on every direction, hence, not shadow-related. It simulates light bouncing */}
-      <ambientLight args={[0xffffff, 0.5]} />
+      {/* <ambientLight args={[0xffffff, 0.5]} /> */}
 
       {/* DIRECTIONAL => faces the center of the scene (light starts from infinity to center) */}
       {/* <directionalLight
@@ -92,7 +118,37 @@ function Lighting() {
       {/* light color is mixed with objects, if plane is orange and light is cyan, result would be yellowish */}
       {/* can have nice neon effect if rest of scene is dark */}
       {/* only works with standard and physical materials */}
-      {/* <rectAreaLight rotation-x={-Math.PI /2} position={[0, 2.5, 0]} args={[0x4effee, 2, 5, 5]} /> */}
+      {/* <rectAreaLight
+      lookAt={new THREE.Vector3()}
+        rotation-x={-Math.PI / 2}
+        position={[0, 2.5, 2]}
+        args={[0x4effee, 2, 5, 5]}
+      /> */}
+
+      {/* SPOTLIGHT => like a flashlight */}
+      {/* <spotLight
+        castShadow
+        position={[0, 5, 5]}
+        lookAt={new THREE.Vector3()}
+        args={[
+          0x78ff00, // color
+          0.5, // intensity
+          20, // distance (the bigger the longer it takes to fadee)
+          Math.PI * 0.1, // angle ()
+          0.25, // penumbra => the blurriness at the edges of the light
+          1 // decay
+        ]}
+      /> */}
+
+      {/* to rotate spotlight, we need to add its target property to the scene */}
+      <>
+        <primitive object={rotatingSpotLight} castShadow position={[0, 5, 5]} />
+        <primitive
+          ref={spotLightRotation}
+          object={rotatingSpotLight.target}
+          position={[3, 0, 0]}
+        />
+      </>
     </>
   );
 }
