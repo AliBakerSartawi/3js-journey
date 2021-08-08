@@ -60,15 +60,15 @@ function Lighting() {
       <ambientLight args={[0xffffff, 0.5]} />
 
       {/* DIRECTIONAL => faces the center of the scene (light starts from infinity to center) */}
-      <directionalLight
+      {/* <directionalLight
         // castShadow
         position={[2, 3, 4]}
         args={[0xffffff, 0.3]}
-      />
+      /> */}
 
       {/* HEMISPHERE => like ambient, but with a color from the sky different from the one from the ground */}
       {/* if the scene has sky and grass, top blue and bottom green colors can give a nice effect */}
-      <hemisphereLight args={['crimson', 'orangered', 1]} />
+      <hemisphereLight args={['orangered', 'orangered', 1]} />
 
       {/* POINTLIGHT => illuminates in every direction starting from its position */}
       <pointLight
@@ -89,7 +89,8 @@ function Lighting() {
       {/* RECTAREALIGHT => mix between directional and diffuse light */}
       {/* light color is mixed with objects, if plane is orange and light is cyan, result would be yellowish */}
       {/* can have nice neon effect if rest of scene is dark */}
-      <rectAreaLight rotation-x={-Math.PI /2} position={[0, 2.5, 0]} args={[0x4effee, 2, 5, 5]} />
+      {/* only works with standard and physical materials */}
+      {/* <rectAreaLight rotation-x={-Math.PI /2} position={[0, 2.5, 0]} args={[0x4effee, 2, 5, 5]} /> */}
     </>
   );
 }
@@ -127,14 +128,14 @@ function Lights() {
         <Lighting />
 
         {/* TEXT MESHES */}
-        <mesh castShadow ref={textMesh} position={[0, 0.5, -1]}>
+        <mesh castShadow ref={textMesh} position={[0, 1, -1]}>
           <textBufferGeometry args={[textString, textOptions]} />
           <meshStandardMaterial color={'crimson'} />
         </mesh>
 
-        <mesh castShadow ref={textMesh2} position={[0, 0.5, 1]}>
+        <mesh castShadow ref={textMesh2} position={[0, 1, 1]}>
           <textBufferGeometry args={[textString2, textOptions]} />
-          <meshStandardMaterial color={'lime'} />
+          <meshStandardMaterial color={'limegreen'} />
         </mesh>
 
         {/* DONUTS */}
