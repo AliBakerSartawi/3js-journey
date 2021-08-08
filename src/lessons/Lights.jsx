@@ -65,7 +65,7 @@ function Motion({ textMesh, textMesh2, donut }) {
  * lights supporting shadows => point, directional, spot
  */
 function Lighting() {
-
+  
   const spotLight = useMemo(
     () => new THREE.SpotLight(0x78ff00, 0.75, 20, Math.PI * 0.1, 0.25, 1),
     []
@@ -135,7 +135,7 @@ function Lighting() {
 
       {/* POINTLIGHT => illuminates in every direction starting from its position */}
       <pointLight
-        shadow-mapSize={[1024 / 4, 1024 / 4]} // improves shadow map quality, defaults are 512x512, only increase by a power of 2
+        shadow-mapSize={[1024, 1024]} // improves shadow map quality, defaults are 512x512, only increase by a power of 2
         shadow-camera-top={10}
         shadow-camera-right={10}
         shadow-camera-bottom={-10}
