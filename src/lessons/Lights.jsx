@@ -54,34 +54,40 @@ function Motion({ textMesh, textMesh2, donut }) {
 
 /**
  * Lights component
+ *
+ * minimal cost lights  => ambient, hemisphere (because they simulate light, no castShadows)
+ *
+ * moderate cost lights => directional, point
+ *
+ * high cost lights     => spot, rectArea
  */
 function Lighting() {
-  const spotLightRotation = useRef();
-  const rotatingSpotLight = useMemo(
-    () => new THREE.SpotLight(0x78ff00, 0.5, 20, Math.PI * 0.1, 0.25, 1),
+  const spotLight = useMemo(
+    () => new THREE.SpotLight(0x78ff00, 0.75, 20, Math.PI * 0.1, 0.25, 1),
     []
   );
-  // useFrame(({ clock: { elapsedTime } }, delta) => {
-  //   if (spotLightRotation.current.position.x <= 3) {
-  //     spotLightRotation.current.position.x -= delta * 0.1
-  //   } else if (spotLightRotation.current.position.x <= -3) {
-  //     spotLightRotation.current.position.x += delta * 0.1
-  //   }
-  // });
+
+  const spotLightRotation = useRef();
+  const spotLightHelper = useRef();
+  const pointLightHelper = useRef();
+
+  // works without adding .current
+  useHelper(spotLightHelper, THREE.SpotLightHelper, 'black'); // SpotLightHelper takes a color second arg
+  useHelper(pointLightHelper, THREE.PointLightHelper, 1); // PointLightHelper takes a size second arg
 
   useEffect(() => {
     // it also works without this condition
-    // spotLightRotation.current && 
-      gsap.to(spotLightRotation.current.position, {
+    // spotLightRotation.current &&
+    gsap.to(spotLightRotation.current.position, {
       duration: 2,
       x: -3,
       repeat: -1,
       yoyo: true,
-      ease: 'elastic.inOut(1.5, 1)',
+      ease: 'elastic.inOut(1.5, 1)'
       // ease: 'back.out',
-    })
+    });
     // and it also works without adding the dependency
-  }, [spotLightRotation])
+  }, [spotLightRotation]);
   return (
     <>
       {/* AMBIENT => applies light on every direction, hence, not shadow-related. It simulates light bouncing */}
@@ -100,6 +106,7 @@ function Lighting() {
 
       {/* POINTLIGHT => illuminates in every direction starting from its position */}
       <pointLight
+        ref={pointLightHelper}
         castShadow
         position={[2, 3, 4]}
         args={[
@@ -140,12 +147,17 @@ function Lighting() {
         ]}
       /> */}
 
-      {/* to rotate spotlight, we need to add its target property to the scene */}
+      {/* to rotate SPOTLIGHT, we need to add its target property to the scene */}
       <>
-        <primitive object={rotatingSpotLight} castShadow position={[0, 5, 5]} />
+        <primitive
+          ref={spotLightHelper}
+          object={spotLight}
+          castShadow
+          position={[0, 5, 5]}
+        />
         <primitive
           ref={spotLightRotation}
-          object={rotatingSpotLight.target}
+          object={spotLight.target}
           position={[3, 0, 0]}
         />
       </>
