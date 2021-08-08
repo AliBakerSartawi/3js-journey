@@ -4,6 +4,7 @@ import { OrbitControls, useHelper, Loader } from '@react-three/drei';
 import * as THREE from 'three';
 import gsap from 'gsap';
 import { softShadows } from '@react-three/drei';
+import { RectAreaLightHelper } from 'three-stdlib';
 
 /**
  * MATCAPS
@@ -68,12 +69,19 @@ function Lighting() {
   );
 
   const spotLightRotation = useRef();
+
+  // light helpers
   const spotLightHelper = useRef();
   const pointLightHelper = useRef();
+  const directionalLightHelper = useRef();
+  const rectAreaLightHelper = useRef();
 
   // works without adding .current
   useHelper(spotLightHelper, THREE.SpotLightHelper, 'black'); // SpotLightHelper takes a color second arg
   useHelper(pointLightHelper, THREE.PointLightHelper, 1); // PointLightHelper takes a size second arg
+  useHelper(directionalLightHelper, THREE.DirectionalLightHelper, 1);
+  // RectAreaLightHelper must be imported separately (from somewhere inside three) for some reason
+  // useHelper(rectAreaLightHelper, RectAreaLightHelper); // do not use it, it crashes the app
 
   useEffect(() => {
     // it also works without this condition
@@ -94,11 +102,12 @@ function Lighting() {
       {/* <ambientLight args={[0xffffff, 0.5]} /> */}
 
       {/* DIRECTIONAL => faces the center of the scene (light starts from infinity to center) */}
-      {/* <directionalLight
-        // castShadow
+      <directionalLight
+        ref={directionalLightHelper}
+        castShadow
         position={[2, 3, 4]}
-        args={[0xffffff, 0.3]}
-      /> */}
+        args={[0xffffff, 0.1]}
+      />
 
       {/* HEMISPHERE => like ambient, but with a color from the sky different from the one from the ground */}
       {/* if the scene has sky and grass, top blue and bottom green colors can give a nice effect */}
@@ -108,7 +117,7 @@ function Lighting() {
       <pointLight
         ref={pointLightHelper}
         castShadow
-        position={[2, 3, 4]}
+        position={[-2, 3, 4]}
         args={[
           //color
           0xff9000,
@@ -126,7 +135,8 @@ function Lighting() {
       {/* can have nice neon effect if rest of scene is dark */}
       {/* only works with standard and physical materials */}
       {/* <rectAreaLight
-      lookAt={new THREE.Vector3()}
+        lookAt={new THREE.Vector3()}
+        ref={rectAreaLightHelper}
         rotation-x={-Math.PI / 2}
         position={[0, 2.5, 2]}
         args={[0x4effee, 2, 5, 5]}
