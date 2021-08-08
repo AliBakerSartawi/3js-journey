@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { Canvas, useFrame, useLoader } from '@react-three/fiber';
+import React, { useEffect, useRef, useState } from 'react';
+import { Canvas, useFrame, useLoader, useThree } from '@react-three/fiber';
 import { OrbitControls, useHelper } from '@react-three/drei';
 import * as THREE from 'three';
 import gsap from 'gsap';
@@ -34,7 +34,7 @@ const textOptions = {
 /**
  * Camera component
  */
-function Motion({ textMesh, textMesh2 }) {
+function Motion({ textMesh, textMesh2, donut }) {
   // if not inside a useEffect, will give ref undefined error
   useEffect(() => {
     // easy centering solution instead of computing bounding box and manually translating to -50%'s
@@ -42,10 +42,12 @@ function Motion({ textMesh, textMesh2 }) {
     textMesh2.current.geometry.center();
   }, [textMesh, textMesh2]);
   // useFrame(({clock: {elapsedTime}}) => {
-  //   textMesh.current.rotation.x = elapsedTime * 0.1
-  //   textMesh.current.rotation.y = elapsedTime * 0.1
-  //   textMesh.current.rotation.z = elapsedTime * 0.1
-  //   textMesh.current.geometry.center()
+  //   donut.current.rotation.x = elapsedTime * 0.1
+  //   donut.current.rotation.y = elapsedTime * 0.1
+  //   // textMesh.current.rotation.x = elapsedTime * 0.1
+  //   // textMesh.current.rotation.y = elapsedTime * 0.1
+  //   // textMesh.current.rotation.z = elapsedTime * 0.1
+  //   // textMesh.current.geometry.center()
   // })
   return null;
 }
@@ -96,19 +98,47 @@ function Lighting() {
 }
 
 /**
+ * Donuts component
+ */
+function Donuts() {
+  const donut = new THREE.TorusBufferGeometry(0.3, 0.2, 20, 45);
+  const arr = new Array(200).fill(0);
+
+  const [matcap7Texture] = useLoader(THREE.TextureLoader, [matcap7]);
+  const matcapMaterial = new THREE.MeshMatcapMaterial({
+    matcap: matcap7Texture
+  });
+
+  return (
+    <>
+      {arr.map((e, i) => {
+        const scale = Math.random();
+        return (
+          <mesh
+            key={Math.random() + i}
+            position={[
+              (Math.random() - 0.5) * 25,
+              (Math.random() - 0.5) * 25,
+              (Math.random() - 0.5) * 25
+            ]}
+            rotation={[Math.random() * Math.PI, Math.random() * Math.PI, 0]}
+            scale={[scale, scale, scale]}
+            geometry={donut}
+            material={matcapMaterial}
+          />
+        );
+      })}
+    </>
+  );
+}
+
+/**
  * Main Component
  */
 function Lights() {
   const textMesh = useRef();
   const textMesh2 = useRef();
-
-  const [matcap7Texture] = useLoader(THREE.TextureLoader, [matcap7]);
-
-  const matcapMaterial = new THREE.MeshMatcapMaterial({
-    matcap: matcap7Texture
-  });
-  const donut = new THREE.TorusBufferGeometry(0.3, 0.2, 20, 45);
-  const arr = new Array(200).fill(0);
+  const donutRef = useRef();
 
   return (
     <div style={{ height: '100vh', backgroundColor: 'rgb(26, 26, 26)' }}>
@@ -139,22 +169,7 @@ function Lights() {
         </mesh>
 
         {/* DONUTS */}
-        {arr.map((e, i) => {
-          const scale = Math.random();
-          return (
-            <mesh
-              position={[
-                (Math.random() - 0.5) * 25,
-                (Math.random() - 0.5) * 25,
-                (Math.random() - 0.5) * 25
-              ]}
-              rotation={[Math.random() * Math.PI, Math.random() * Math.PI, 0]}
-              scale={[scale, scale, scale]}
-              geometry={donut}
-              material={matcapMaterial}
-            />
-          );
-        })}
+        <Donuts />
 
         {/* PLANE */}
         <mesh receiveShadow rotation-x={-Math.PI / 2}>
