@@ -60,8 +60,36 @@ function Lighting() {
       <ambientLight args={[0xffffff, 0.5]} />
 
       {/* DIRECTIONAL => faces the center of the scene (light starts from infinity to center) */}
-      <directionalLight castShadow position={[2, 3, 4]} args={[0xffffff, 0.3]} />
-      {/* <pointLight castShadow args={[0xffffff, 0.5]} position={[2, 3, 4]} /> */}
+      <directionalLight
+        // castShadow
+        position={[2, 3, 4]}
+        args={[0xffffff, 0.3]}
+      />
+
+      {/* HEMISPHERE => like ambient, but with a color from the sky different from the one from the ground */}
+      {/* if the scene has sky and grass, top blue and bottom green colors can give a nice effect */}
+      <hemisphereLight args={['crimson', 'orangered', 1]} />
+
+      {/* POINTLIGHT => illuminates in every direction starting from its position */}
+      <pointLight
+        castShadow
+        position={[2, 3, 4]}
+        args={[
+          //color
+          0xff9000,
+          // intensity
+          0.9,
+          // distance
+          20,
+          // decay => how fast the light dims
+          1
+        ]}
+      />
+
+      {/* RECTAREALIGHT => mix between directional and diffuse light */}
+      {/* light color is mixed with objects, if plane is orange and light is cyan, result would be yellowish */}
+      {/* can have nice neon effect if rest of scene is dark */}
+      <rectAreaLight rotation-x={-Math.PI /2} position={[0, 2.5, 0]} args={[0x4effee, 2, 5, 5]} />
     </>
   );
 }
