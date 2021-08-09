@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei';
+import { OrbitControls, useHelper } from '@react-three/drei';
 import * as THREE from 'three';
 import * as dat from 'dat.gui';
 
@@ -11,9 +11,18 @@ function HauntedHouse() {
   const sphere = useRef();
 
   const bushGeo = useMemo(() => new THREE.SphereBufferGeometry(1, 16, 16), []);
-  const bushMat = useMemo(() => new THREE.MeshStandardMaterial({ color: '#89c854' }), []);
-  const graveGeo = useMemo(() => new THREE.BoxBufferGeometry(0.6, 0.8, 0.2), []);
-  const graveMat = useMemo(() => new THREE.MeshStandardMaterial({ color: '#b2b6b1' }), []);
+  const bushMat = useMemo(
+    () => new THREE.MeshStandardMaterial({ color: '#89c854' }),
+    []
+  );
+  const graveGeo = useMemo(
+    () => new THREE.BoxBufferGeometry(0.6, 0.8, 0.2),
+    []
+  );
+  const graveMat = useMemo(
+    () => new THREE.MeshStandardMaterial({ color: '#b2b6b1' }),
+    []
+  );
 
   useEffect(() => {
     setTimeout(() => {
@@ -24,6 +33,7 @@ function HauntedHouse() {
   return (
     <div style={{ height: '100vh', backgroundColor: 'rgb(26, 26, 26)' }}>
       <Canvas
+      shadows
         camera={{
           fov: 45,
           position: [10, 10, 10],
@@ -43,12 +53,12 @@ function HauntedHouse() {
         {/* HOUSE => group */}
         <group>
           {/* WALLS */}
-          <mesh name="walls" position-y={2.5 / 2}>
+          <mesh castShadow name="walls" position-y={2.5 / 2}>
             <boxBufferGeometry args={[4, 2.5, 4]} />
             <meshStandardMaterial color={'#ac8e82'} />
           </mesh>
           {/* ROOF */}
-          <mesh name="roof" rotation-y={Math.PI / 4} position-y={2.5 + 0.5}>
+          <mesh castShadow name="roof" rotation-y={Math.PI / 4} position-y={2.5 + 0.5}>
             <coneBufferGeometry args={[3.5, 1, 4]} />
             <meshStandardMaterial color={'#b35f45'} />
           </mesh>
@@ -59,6 +69,7 @@ function HauntedHouse() {
           </mesh>
           {/* BUSHES */}
           <mesh
+          castShadow
             name="bush1"
             geometry={bushGeo}
             material={bushMat}
@@ -66,6 +77,7 @@ function HauntedHouse() {
             position={[0.8, 0.2, 2.2]}
           />
           <mesh
+          castShadow
             name="bush2"
             geometry={bushGeo}
             material={bushMat}
@@ -73,6 +85,7 @@ function HauntedHouse() {
             position={[1.4, 0.1, 2.1]}
           />
           <mesh
+          castShadow
             name="bush3"
             geometry={bushGeo}
             material={bushMat}
@@ -80,6 +93,7 @@ function HauntedHouse() {
             position={[-0.8, 0.1, 2.2]}
           />
           <mesh
+          castShadow
             name="bush4"
             geometry={bushGeo}
             material={bushMat}
@@ -90,14 +104,21 @@ function HauntedHouse() {
           {/* GRAVES */}
           <group name="graves">
             {new Array(50).fill(0).map((e, i) => {
-              const angle = Math.random() * Math.PI * 2 // to get random point on a full circle
-              const radius = 3.5 + (Math.random() * 6)
+              const angle = Math.random() * Math.PI * 2; // to get random point on a full circle
+              const radius = 3.5 + Math.random() * 6;
               const randomRotation = (Math.random() - 0.5) * 0.5;
-              const x = Math.sin(angle) * radius
-              const z = Math.cos(angle) * radius
+              const x = Math.sin(angle) * radius;
+              const z = Math.cos(angle) * radius;
               return (
-                <mesh geometry={graveGeo} material={graveMat} position={[x, 0.3, z]} rotation={[0, randomRotation, randomRotation]} />
-              )
+                <mesh
+                key={Math.random() + i}
+                castShadow
+                  geometry={graveGeo}
+                  material={graveMat}
+                  position={[x, 0.3, z]}
+                  rotation={[0, randomRotation, randomRotation]}
+                />
+              );
             })}
           </group>
         </group>
@@ -112,22 +133,49 @@ export default HauntedHouse;
 
 function Lights() {
   const ambient = useRef();
-  const directional = useRef();
+  const moonlight = useRef();
+  const doorLight = useRef();
+  const moonlightShadowHelper = useRef();
+
+  // useHelper(moonlight, THREE.DirectionalLightHelper)
+  // useHelper(doorLight, THREE.PointLightHelper)
+  // useHelper(moonlightShadowHelper, THREE.CameraHelper)
+
+  useEffect(() => {
+
+    moonlightShadowHelper.current = moonlight.current.shadow.camera
+  }, [doorLight])
 
   useEffect(() => {
     setTimeout(() => {
-      guiAddLights(ambient.current, directional.current);
+      guiAddLights(ambient.current, moonlight.current);
     }, 50);
   }, []);
   return (
     <>
-      <ambientLight ref={ambient} args={[0xffffff, 0.5]} />
+      <ambientLight ref={ambient} args={['#b9d5ff', 0.12]} />
       <directionalLight
-        ref={directional}
-        castShadow
-        position={[3, 3, -3]}
-        args={[0xffffff, 0.5]}
+        name="moonlight"
+        ref={moonlight}
+        position={[4, 5, -2]}
+        args={['#b9d5ff', 0.12]}
         lookAt={new THREE.Vector3()}
+        // shadows
+        castShadow
+        shadow-mzpSize={1024, 1024}
+        shadow-camera-top={10}
+        shadow-camera-right={15}
+        shadow-camera-bottom={-10}
+        shadow-camera-left={-15}
+        shadow-camera-near={-5}
+        shadow-camera-far={20}
+      />
+      <pointLight
+      name="doorLight"
+      ref={doorLight}
+        castShadow
+        args={['#ff7d46', 1, 7]}
+        position={[0, 2.2, 2.7]}
       />
     </>
   );
@@ -148,5 +196,9 @@ function guiAdd(plane, sphere) {
 function guiAddLights(ambient, directional) {
   const folder = gui.addFolder('Lights');
   folder.add(ambient, 'intensity').min(0).max(1).name('Ambient Intensity');
-  folder.add(directional, 'intensity').min(0).max(1).name('Directional Intensity');
+  folder
+    .add(directional, 'intensity')
+    .min(0)
+    .max(1)
+    .name('Directional Intensity');
 }
