@@ -1,17 +1,29 @@
 import React, { useEffect, useMemo, useRef } from 'react';
-import { Canvas } from '@react-three/fiber';
+import { Canvas, useLoader } from '@react-three/fiber';
 import { OrbitControls, useHelper } from '@react-three/drei';
 import * as THREE from 'three';
 import * as dat from 'dat.gui';
+
+/**
+ * texture imports
+ */
+import doorColor from '../textures/door/basecolor.jpg';
+import doorAmbientOcclusion from '../textures/door/ambientOcclusion.jpg';
+import doorHeight from '../textures/door/height.png';
+import doorMetallic from '../textures/door/metallic.jpg';
+import doorNormal from '../textures/door/normal.jpg';
+import doorOpacity from '../textures/door/opacity.jpg'; // opacity is also called alpha
+import doorRoughness from '../textures/door/roughness.jpg';
 
 const gui = new dat.GUI({ width: 400 });
 
 function HauntedHouse() {
   const plane = useRef();
-  const sphere = useRef();
+  const door = useRef();
   const doorLight = useRef();
   // useHelper(doorLight, THREE.PointLightHelper)
 
+  // reusable geometries and materials
   const bushGeo = useMemo(() => new THREE.SphereBufferGeometry(1, 16, 16), []);
   const bushMat = useMemo(
     () => new THREE.MeshStandardMaterial({ color: '#89c854' }),
@@ -26,14 +38,35 @@ function HauntedHouse() {
     []
   );
 
+  // loading textures
+  const [
+    doorColorTexture,
+    doorAmbientOcclusionTexture,
+    doorHeightTexture,
+    doorMetallicTexture,
+    doorNormalTexture,
+    doorOpacityTexture,
+    doorRoughnessTexture
+  ] = useLoader(THREE.TextureLoader, [
+    doorColor,
+    doorAmbientOcclusion,
+    doorHeight,
+    doorMetallic,
+    doorNormal,
+    doorOpacity,
+    doorRoughness
+  ]);
+
   useEffect(() => {
     setTimeout(() => {
       // guiInit();
-      guiAdd(plane.current, sphere.current);
+      guiAdd(plane.current);
     }, 50);
   }, []);
   return (
-    <div style={{ height: '100vh', backgroundColor: '#262847' /* same as fog */ }}>
+    <div
+      style={{ height: '100vh', backgroundColor: '#262847' /* same as fog */ }}
+    >
       <Canvas
         shadows
         camera={{
@@ -72,9 +105,24 @@ function HauntedHouse() {
             <meshStandardMaterial color={'#b35f45'} />
           </mesh>
           {/* DOOR */}
-          <mesh name="door" position={[0, 1, 2 + 0.01]}>
-            <planeBufferGeometry args={[2, 2]} />
-            <meshStandardMaterial color={'#aa7b7b'} />
+          <mesh ref={door} name="door" position={[0, 1, 2 + 0.01]}>
+            <planeBufferGeometry args={[2, 2, 100, 100]} />
+            <meshStandardMaterial
+              map={doorColorTexture}
+              transparent
+              alphaMap={doorOpacityTexture}
+              aoMap={doorAmbientOcclusionTexture}
+              aoMapIntensity={10}
+              displacementMap={doorHeightTexture}
+              displacementScale={0.1}
+              normalMap={doorNormalTexture}
+              normalScale={[1, 1]}
+              metalnessMap={doorMetallicTexture}
+              metalness={1}
+              roughnessMap={doorRoughnessTexture}
+              roughness
+            />
+            <ApplyAOMap plane={door} />
           </mesh>
           <pointLight
             name="doorLight"
@@ -147,6 +195,9 @@ function HauntedHouse() {
 
 export default HauntedHouse;
 
+/**
+ * Lights Component
+ */
 function Lights() {
   const ambient = useRef();
   const moonlight = useRef();
@@ -166,6 +217,7 @@ function Lights() {
   }, []);
   return (
     <>
+      {/* fog can be added to the light component as well */}
       <ambientLight ref={ambient} args={['#b9d5ff', 0.12]} />
       <directionalLight
         name="moonlight"
@@ -186,6 +238,22 @@ function Lights() {
       {/* the door light is added in the house group */}
     </>
   );
+}
+
+/**
+ * ApplyAOMap Component
+ */
+function ApplyAOMap({ plane }) {
+  useEffect(() => {
+    plane.current &&
+      plane.current.geometry.setAttribute(
+        'uv2',
+        new THREE.BufferAttribute(plane.current.geometry.attributes.uv.array, 2)
+      );
+    console.log('aoMap');
+  }, [plane]);
+
+  return null;
 }
 
 /**
