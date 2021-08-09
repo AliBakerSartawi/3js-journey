@@ -248,7 +248,8 @@ function ApplyAOMap({ plane }) {
     plane.current &&
       plane.current.geometry.setAttribute(
         'uv2',
-        new THREE.BufferAttribute(plane.current.geometry.attributes.uv.array, 2)
+        // also BufferAttribute without Float32 works
+        new THREE.Float32BufferAttribute(plane.current.geometry.attributes.uv.array, 2)
       );
     console.log('aoMap');
   }, [plane]);
