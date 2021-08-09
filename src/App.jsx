@@ -8,6 +8,7 @@ import Lights from './lessons/Lights';
 import Materials from './lessons/Materials';
 import Textures from './lessons/Textures';
 import Text from './lessons/Text';
+import BakingShadows from './lessons/BakingShadows';
 
 function App() {
   return (
@@ -19,7 +20,8 @@ function App() {
         {/* <Textures /> */}
         {/* <Materials /> */}
         {/* <Text /> */}
-        <Lights />
+        {/* <Lights /> */}
+        <BakingShadows />
       </Suspense>
       
     </div>
