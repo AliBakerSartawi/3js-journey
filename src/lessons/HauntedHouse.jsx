@@ -32,6 +32,7 @@ function HauntedHouse() {
   const floor = useRef();
   const door = useRef();
   const walls = useRef();
+  const roof = useRef();
   const doorLight = useRef();
   // useHelper(doorLight, THREE.PointLightHelper)
 
@@ -46,7 +47,7 @@ function HauntedHouse() {
     []
   );
   const graveMat = useMemo(
-    () => new THREE.MeshStandardMaterial({ color: '#b2b6b1' }),
+    () => new THREE.MeshStandardMaterial({ color: '#2e2e2e' }),
     []
   );
 
@@ -66,7 +67,11 @@ function HauntedHouse() {
     grassColorTexture,
     grassNormalTexture,
     grassRoughnessTexture,
-    grassAOTexture
+    grassAOTexture,
+    bushColorTexture,
+    bushNormalTexture,
+    bushRoughnessTexture,
+    bushAOTexture
   ] = useLoader(THREE.TextureLoader, [
     doorColor,
     doorAmbientOcclusion,
@@ -79,6 +84,11 @@ function HauntedHouse() {
     brickNormal,
     brickRoughness,
     brickAO,
+    grassColor,
+    grassNormal,
+    grassRoughness,
+    grassAO,
+    // once again for bushes that won't have repeatWrapping
     grassColor,
     grassNormal,
     grassRoughness,
@@ -100,6 +110,33 @@ function HauntedHouse() {
   grassNormalTexture.wrapT = THREE.RepeatWrapping;
   grassRoughnessTexture.wrapT = THREE.RepeatWrapping;
   grassAOTexture.wrapT = THREE.RepeatWrapping;
+
+  // bush material
+  bushMat.map = bushColorTexture;
+  bushMat.normalMap = bushNormalTexture;
+  bushMat.normalScale.set(1, 1);
+  bushMat.roughnessMap = bushRoughnessTexture;
+  bushMat.roughness = 5;
+  bushMat.aoMap = bushAOTexture;
+  bushMat.aoMapIntensity = 10;
+  bushGeo.setAttribute(
+    'uv2',
+    new THREE.Float32BufferAttribute(bushGeo.attributes.uv.array, 2)
+  );
+
+  // grave material
+  graveMat.color = new THREE.Color('black')
+  graveMat.map = brickColorTexture;
+  graveMat.normalMap = brickNormalTexture;
+  graveMat.normalScale.set(1, 1);
+  graveMat.roughnessMap = brickRoughnessTexture;
+  graveMat.roughness = 1;
+  graveMat.aoMap = brickAOTexture;
+  graveMat.aoMapIntensity = 10;
+  graveGeo.setAttribute(
+    'uv2',
+    new THREE.Float32BufferAttribute(graveGeo.attributes.uv.array, 2)
+  );
 
   useEffect(() => {
     setTimeout(() => {
@@ -160,11 +197,22 @@ function HauntedHouse() {
           <mesh
             castShadow
             name="roof"
+            ref={roof}
             rotation-y={Math.PI / 4}
             position-y={2.5 + 0.5}
           >
             <coneBufferGeometry args={[3.5, 1, 4]} />
-            <meshStandardMaterial color={'#b35f45'} />
+            <meshStandardMaterial
+              color={'#b35f45'}
+              map={brickColorTexture}
+              normalMap={brickNormalTexture}
+              normalScale={[1, 1]}
+              roughnessMap={brickRoughnessTexture}
+              roughness={1}
+              aoMap={brickAOTexture}
+              aoMapIntensity={1}
+            />
+            <ApplyAOMap plane={roof} />
           </mesh>
           {/* DOOR */}
           <mesh ref={door} name="door" position={[0, 1, 2 + 0.01]}>
