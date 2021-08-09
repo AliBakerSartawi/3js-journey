@@ -292,7 +292,7 @@ function Lights() {
         lookAt={new THREE.Vector3()}
         // shadows
         castShadow
-        shadow-mzpSize={(1024, 1024)}
+        shadow-mapSize={[256, 256]}
         shadow-camera-top={10}
         shadow-camera-right={15}
         shadow-camera-bottom={-10}
@@ -343,18 +343,24 @@ function Ghosts() {
         name="ghost1"
         ref={ghost1}
         args={['#ff00ff', 2, 3]}
+        shadow-mapSize={[256, 256]}
+        shadow-camera-far={7}
       />
       <pointLight
         castShadow
         name="ghost2"
         ref={ghost2}
         args={['#00ffff', 2, 3]}
+        shadow-mapSize={[256, 256]}
+        shadow-camera-far={7}
       />
       <pointLight
         castShadow
         name="ghost3"
         ref={ghost3}
         args={['#ffff00', 2, 3]}
+        shadow-mapSize={[256, 256]}
+        shadow-camera-far={7}
       />
     </>
   );
@@ -374,7 +380,7 @@ function ApplyAOMap({ plane }) {
           2
         )
       );
-    console.log('aoMap');
+    // console.log('aoMap');
   }, [plane]);
 
   return null;
