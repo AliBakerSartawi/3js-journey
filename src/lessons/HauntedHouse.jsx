@@ -26,7 +26,7 @@ import grassNormal from '../textures/grass/normal.jpg';
 import grassRoughness from '../textures/grass/roughness.jpg';
 import grassAO from '../textures/grass/ambientOcclusion.jpg';
 
-const gui = new dat.GUI({ width: 400 });
+// const gui = new dat.GUI({ width: 400 });
 
 function HauntedHouse() {
   const floor = useRef();
@@ -138,12 +138,12 @@ function HauntedHouse() {
     new THREE.Float32BufferAttribute(graveGeo.attributes.uv.array, 2)
   );
 
-  useEffect(() => {
-    setTimeout(() => {
-      // guiInit();
-      guiAdd(floor.current);
-    }, 50);
-  }, []);
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     // guiInit();
+  //     guiAdd(floor.current);
+  //   }, 50);
+  // }, []);
   return (
     <div
       style={{ height: '100vh', backgroundColor: '#262847' /* same as fog */ }}
@@ -323,11 +323,11 @@ function Lights() {
     moonlightShadowHelper.current = moonlight.current.shadow.camera;
   }, [moonlight]);
 
-  useEffect(() => {
-    setTimeout(() => {
-      guiAddLights(ambient.current, moonlight.current);
-    }, 50);
-  }, []);
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     guiAddLights(ambient.current, moonlight.current);
+  //   }, 50);
+  // }, []);
   return (
     <>
       {/* fog can be added to the light component as well */}
@@ -442,16 +442,16 @@ function ApplyAOMap({ plane }) {
 //   gui = new dat.GUI({ width: 400 });
 // }
 
-function guiAdd(plane, sphere) {
-  const parameters = {};
-}
+// function guiAdd(plane, sphere) {
+//   const parameters = {};
+// }
 
-function guiAddLights(ambient, directional) {
-  const folder = gui.addFolder('Lights');
-  folder.add(ambient, 'intensity').min(0).max(1).name('Ambient Intensity');
-  folder
-    .add(directional, 'intensity')
-    .min(0)
-    .max(1)
-    .name('Directional Intensity');
-}
+// function guiAddLights(ambient, directional) {
+//   const folder = gui.addFolder('Lights');
+//   folder.add(ambient, 'intensity').min(0).max(1).name('Ambient Intensity');
+//   folder
+//     .add(directional, 'intensity')
+//     .min(0)
+//     .max(1)
+//     .name('Directional Intensity');
+// }
