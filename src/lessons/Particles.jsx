@@ -1,19 +1,55 @@
 import React from 'react';
-import { Canvas } from '@react-three/fiber';
+import { Canvas, useLoader } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 
+// PARTICLE IMPORTS
+import p1 from '../textures/particles/1.png';
+import p2 from '../textures/particles/2.png';
+import p3 from '../textures/particles/3.png';
+import p4 from '../textures/particles/4.png';
+import p5 from '../textures/particles/5.png';
+import p6 from '../textures/particles/6.png';
+import p7 from '../textures/particles/7.png';
+import p8 from '../textures/particles/8.png';
+import p9 from '../textures/particles/9.png';
+import p10 from '../textures/particles/10.png';
+import p11 from '../textures/particles/11.png';
+import p12 from '../textures/particles/12.png';
+import p13 from '../textures/particles/13.png';
+
 /**
  * each particle is composed of a plane (two triangles) always facing the camera
- *
+ * download particle textures => https://kenney.nl/assets/particle-pack
  */
 
+/**
+ * Main Component
+ */
 function Particles() {
   // for custom geometry particles
-  const particlesGeo = customParticleGeometry(5000, 10)
+  const particlesGeo = customParticleGeometry(5000, 10);
+
+  // particle textures
+  const [p1T, p2T, p3T, p4T, p5T, p6T, p7T, p8T, p9T, p10T, p11T, p12T, p13T] =
+    useLoader(THREE.TextureLoader, [
+      p1,
+      p2,
+      p3,
+      p4,
+      p5,
+      p6,
+      p7,
+      p8,
+      p9,
+      p10,
+      p11,
+      p12,
+      p13
+    ]);
 
   return (
-    <div style={{ height: '100vh', backgroundColor: 'rgb(26, 26, 26)' }}>
+    <div style={{ height: '100vh', backgroundColor: 'rgb(0,0,0)' }}>
       <Canvas
         camera={{
           fov: 45,
@@ -36,7 +72,18 @@ function Particles() {
 
         {/* CUSTOM GEOMETRY PARTICLE */}
         <points geometry={particlesGeo} geometry-size={0.02}>
-          <pointsMaterial size={0.01} />
+          <pointsMaterial
+            size={0.05}
+            color={'aqua'}
+            // map={p2T}
+            transparent
+            alphaMap={p2T}
+
+            // fixing unwanted edges hiding the far particles behind
+            // alphaTest={0.001} // => not a bad fix
+            // depthTest={false} // => bad fix, it will render all particles even if behind other 3D Objects in the scene, or can be used as a cool effect
+            depthWrite={false} // => might have bugs in certain situations, but might be the smoothest solution
+          />
         </points>
       </Canvas>
     </div>
@@ -53,5 +100,5 @@ function customParticleGeometry(count, spread) {
     'position',
     new THREE.BufferAttribute(positions, 3)
   );
-  return particlesGeometry
+  return particlesGeometry;
 }
