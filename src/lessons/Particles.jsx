@@ -28,7 +28,7 @@ import p13 from '../textures/particles/13.png';
  */
 function Particles() {
   // for custom geometry particles
-  const particlesGeo = customParticleGeometry(5000, 10);
+  const particlesGeo = customParticleGeometry(50000, 10, true);
 
   // particle textures
   const [p1T, p2T, p3T, p4T, p5T, p6T, p7T, p8T, p9T, p10T, p11T, p12T, p13T] =
@@ -74,15 +74,18 @@ function Particles() {
         <points geometry={particlesGeo} geometry-size={0.02}>
           <pointsMaterial
             size={0.05}
-            color={'aqua'}
+            // color={'pink'}
             // map={p2T}
             transparent
             alphaMap={p2T}
-
-            // fixing unwanted edges hiding the far particles behind
+            // ⬇️ FIXING unwanted edges hiding the far particles behind
             // alphaTest={0.001} // => not a bad fix
             // depthTest={false} // => bad fix, it will render all particles even if behind other 3D Objects in the scene, or can be used as a cool effect
             depthWrite={false} // => might have bugs in certain situations, but might be the smoothest solution
+            blending={THREE.AdditiveBlending} // adds cool effect when particles are on top of each other (brighten effect) but can affect performance
+            // ⬇️ random colors
+            vertexColors={true}
+            color={'pink'} // adding a color will act as tint
           />
         </points>
       </Canvas>
@@ -92,7 +95,7 @@ function Particles() {
 
 export default Particles;
 
-function customParticleGeometry(count, spread) {
+function customParticleGeometry(count, spread, randomColors) {
   const particlesGeometry = new THREE.BufferGeometry();
   let positions = new Float32Array(count * 3);
   positions = positions.map((p) => (p = (Math.random() - 0.5) * spread));
@@ -100,5 +103,14 @@ function customParticleGeometry(count, spread) {
     'position',
     new THREE.BufferAttribute(positions, 3)
   );
+  if (randomColors) {
+    // must enable vertexColors in particle Material
+    let colors = new Float32Array(count * 3);
+    colors = colors.map((p) => (p = Math.random()));
+    particlesGeometry.setAttribute(
+      'color',
+      new THREE.BufferAttribute(colors, 3)
+    );
+  }
   return particlesGeometry;
 }
