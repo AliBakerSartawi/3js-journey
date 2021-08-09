@@ -9,6 +9,7 @@ import Materials from './lessons/Materials';
 import Textures from './lessons/Textures';
 import Text from './lessons/Text';
 import BakingShadows from './lessons/BakingShadows';
+import HauntedHouse from './lessons/HauntedHouse';
 
 function App() {
   return (
@@ -21,7 +22,8 @@ function App() {
         {/* <Materials /> */}
         {/* <Text /> */}
         {/* <Lights /> */}
-        <BakingShadows />
+        {/* <BakingShadows /> */}
+        <HauntedHouse />
       </Suspense>
       
     </div>
