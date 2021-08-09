@@ -41,13 +41,26 @@ const textOptions = {
 /**
  * Camera component
  */
-function Motion({ textMesh, textMesh2, donut }) {
+function Motion({ textMesh, textMesh2, sphere, sphereShadow }) {
   // if not inside a useEffect, will give ref undefined error
   useEffect(() => {
     // easy centering solution instead of computing bounding box and manually translating to -50%'s
     textMesh.current.geometry.center();
     textMesh2.current.geometry.center();
   }, [textMesh, textMesh2]);
+
+  useFrame(({clock: {elapsedTime}}) => {
+    sphere.current.position.x = Math.cos(elapsedTime)
+    sphereShadow.current.position.x = Math.cos(elapsedTime)
+    sphere.current.position.z = Math.sin(elapsedTime)
+    sphereShadow.current.position.z = Math.sin(elapsedTime)
+    // Math.abs forces a positive value, making sin always positive giving a bounce effect
+    sphere.current.position.y = Math.abs(Math.sin(elapsedTime * 3)) + 0.5
+    // sphereShadow.current.position.y = Math.abs(Math.sin(elapsedTime * 3)) + 0.5
+    sphereShadow.current.material.opacity = (1 - sphere.current.position.y) * 0.5 
+    // or (1 - Math.abs(sphere.current.position.y)) * 2
+    // or = (1 - sphere.current.position.y) * 0.3
+  })
 
   return null;
 }
@@ -205,6 +218,7 @@ function BakingShadows() {
   const textMesh = useRef();
   const textMesh2 = useRef();
   const sphere = useRef();
+  const sphereShadow = useRef();
 
   const [bakedShadowTexture, simpleShadowTexture] = useLoader(
     THREE.TextureLoader,
@@ -225,7 +239,12 @@ function BakingShadows() {
       >
         <axesHelper args={[10]} />
         <OrbitControls dampingFactor={0.05} />
-        <Motion textMesh={textMesh} textMesh2={textMesh2} />
+        <Motion
+          textMesh={textMesh}
+          textMesh2={textMesh2}
+          sphere={sphere}
+          sphereShadow={sphereShadow}
+        />
         <Lighting />
 
         {/* TEXT MESHES */}
@@ -253,13 +272,18 @@ function BakingShadows() {
 
         {/* DYNAMIC SHADOW BAKING */}
         {/* the trick is to create a plane under the sphere that will follow it */}
-        <mesh 
-        rotation-x={-Math.PI / 2}
-        // if not positioned a bit above ground, it will cause z-fighting
-        position-y={0 /* plane position */ + 0.01}
+        <mesh
+          ref={sphereShadow}
+          rotation-x={-Math.PI / 2}
+          // if not positioned a bit above ground, it will cause z-fighting
+          position-y={0 /* plane position */ + 0.01}
         >
           <planeBufferGeometry args={[1, 1]} />
-          <meshBasicMaterial transparent alphaMap={simpleShadowTexture} color={0x000000} />
+          <meshBasicMaterial
+            transparent
+            alphaMap={simpleShadowTexture}
+            color={0x000000}
+          />
         </mesh>
 
         {/* for static baking shadows, we can do it with meshBasicMaterial too */}
