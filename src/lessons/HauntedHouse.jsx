@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef } from 'react';
-import { Canvas, useLoader } from '@react-three/fiber';
+import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { OrbitControls, useHelper } from '@react-three/drei';
 import * as THREE from 'three';
 import * as dat from 'dat.gui';
@@ -250,6 +250,9 @@ function HauntedHouse() {
         </group>
 
         <Lights />
+
+        {/* Ghost Lights */}
+        <Ghosts />
       </Canvas>
     </div>
   );
@@ -298,6 +301,61 @@ function Lights() {
         shadow-camera-far={20}
       />
       {/* the door light is added in the house group */}
+    </>
+  );
+}
+
+/**
+ * Ghosts Component
+ */
+function Ghosts() {
+  const ghost1 = useRef();
+  const ghost2 = useRef();
+  const ghost3 = useRef();
+
+  useFrame(({ clock: { elapsedTime } }) => {
+    // minimize elapsedTime to reduce speed
+    const ghost1Angle = elapsedTime * 0.5;
+    // multiply x and z to increase radius
+    ghost1.current.position.x = Math.cos(ghost1Angle) * 4;
+    ghost1.current.position.z = Math.sin(ghost1Angle) * 4;
+    ghost1.current.position.y = Math.sin(elapsedTime * 3);
+
+    const ghost2Angle = -elapsedTime * 0.32;
+    ghost2.current.position.x = Math.cos(ghost2Angle) * 5;
+    ghost2.current.position.z = Math.sin(ghost2Angle) * 5;
+    ghost2.current.position.y =
+      Math.sin(elapsedTime * 4) + Math.sin(elapsedTime * 2.5); // two sinuses for more randomness
+
+    // more multiplications for more randomness, Bruno himself admitted it was a mess, a beautiful mess though to randomize the radius
+    const ghost3Angle = -elapsedTime * 0.18;
+    ghost3.current.position.x =
+      Math.cos(ghost3Angle) * (7 + Math.sin(elapsedTime * 0.32));
+    ghost3.current.position.z =
+      Math.sin(ghost3Angle) * (7 + Math.sin(elapsedTime * 0.5));
+    ghost3.current.position.y =
+      Math.sin(elapsedTime * 5) + Math.sin(elapsedTime * 2);
+  });
+  return (
+    <>
+      <pointLight
+        castShadow
+        name="ghost1"
+        ref={ghost1}
+        args={['#ff00ff', 2, 3]}
+      />
+      <pointLight
+        castShadow
+        name="ghost2"
+        ref={ghost2}
+        args={['#00ffff', 2, 3]}
+      />
+      <pointLight
+        castShadow
+        name="ghost3"
+        ref={ghost3}
+        args={['#ffff00', 2, 3]}
+      />
     </>
   );
 }
