@@ -9,6 +9,8 @@ const gui = new dat.GUI({ width: 400 });
 function HauntedHouse() {
   const plane = useRef();
   const sphere = useRef();
+  const doorLight = useRef();
+  // useHelper(doorLight, THREE.PointLightHelper)
 
   const bushGeo = useMemo(() => new THREE.SphereBufferGeometry(1, 16, 16), []);
   const bushMat = useMemo(
@@ -31,18 +33,20 @@ function HauntedHouse() {
     }, 50);
   }, []);
   return (
-    <div style={{ height: '100vh', backgroundColor: 'rgb(26, 26, 26)' }}>
+    <div style={{ height: '100vh', backgroundColor: '#262847' /* same as fog */ }}>
       <Canvas
-      shadows
+        shadows
         camera={{
           fov: 45,
-          position: [10, 10, 10],
+          position: [8, 8, 8],
           near: 0.1,
           far: 2000
         }}
       >
         <axesHelper args={[10, 10]} />
         <OrbitControls />
+        {/* FOG */}
+        <fog attach="fog" args={['#262847', 0, 20]} />
 
         {/* PLANE */}
         <mesh name="plane" receiveShadow ref={plane} rotation-x={-Math.PI / 2}>
@@ -58,7 +62,12 @@ function HauntedHouse() {
             <meshStandardMaterial color={'#ac8e82'} />
           </mesh>
           {/* ROOF */}
-          <mesh castShadow name="roof" rotation-y={Math.PI / 4} position-y={2.5 + 0.5}>
+          <mesh
+            castShadow
+            name="roof"
+            rotation-y={Math.PI / 4}
+            position-y={2.5 + 0.5}
+          >
             <coneBufferGeometry args={[3.5, 1, 4]} />
             <meshStandardMaterial color={'#b35f45'} />
           </mesh>
@@ -67,9 +76,16 @@ function HauntedHouse() {
             <planeBufferGeometry args={[2, 2]} />
             <meshStandardMaterial color={'#aa7b7b'} />
           </mesh>
+          <pointLight
+            name="doorLight"
+            ref={doorLight}
+            castShadow
+            args={['#ff7d46', 1, 7]}
+            position={[0, 2.2, 2.7]}
+          />
           {/* BUSHES */}
           <mesh
-          castShadow
+            castShadow
             name="bush1"
             geometry={bushGeo}
             material={bushMat}
@@ -77,7 +93,7 @@ function HauntedHouse() {
             position={[0.8, 0.2, 2.2]}
           />
           <mesh
-          castShadow
+            castShadow
             name="bush2"
             geometry={bushGeo}
             material={bushMat}
@@ -85,7 +101,7 @@ function HauntedHouse() {
             position={[1.4, 0.1, 2.1]}
           />
           <mesh
-          castShadow
+            castShadow
             name="bush3"
             geometry={bushGeo}
             material={bushMat}
@@ -93,7 +109,7 @@ function HauntedHouse() {
             position={[-0.8, 0.1, 2.2]}
           />
           <mesh
-          castShadow
+            castShadow
             name="bush4"
             geometry={bushGeo}
             material={bushMat}
@@ -111,8 +127,8 @@ function HauntedHouse() {
               const z = Math.cos(angle) * radius;
               return (
                 <mesh
-                key={Math.random() + i}
-                castShadow
+                  key={Math.random() + i}
+                  castShadow
                   geometry={graveGeo}
                   material={graveMat}
                   position={[x, 0.3, z]}
@@ -134,17 +150,14 @@ export default HauntedHouse;
 function Lights() {
   const ambient = useRef();
   const moonlight = useRef();
-  const doorLight = useRef();
   const moonlightShadowHelper = useRef();
 
   // useHelper(moonlight, THREE.DirectionalLightHelper)
-  // useHelper(doorLight, THREE.PointLightHelper)
   // useHelper(moonlightShadowHelper, THREE.CameraHelper)
 
   useEffect(() => {
-
-    moonlightShadowHelper.current = moonlight.current.shadow.camera
-  }, [doorLight])
+    moonlightShadowHelper.current = moonlight.current.shadow.camera;
+  }, [moonlight]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -162,7 +175,7 @@ function Lights() {
         lookAt={new THREE.Vector3()}
         // shadows
         castShadow
-        shadow-mzpSize={1024, 1024}
+        shadow-mzpSize={(1024, 1024)}
         shadow-camera-top={10}
         shadow-camera-right={15}
         shadow-camera-bottom={-10}
@@ -170,13 +183,7 @@ function Lights() {
         shadow-camera-near={-5}
         shadow-camera-far={20}
       />
-      <pointLight
-      name="doorLight"
-      ref={doorLight}
-        castShadow
-        args={['#ff7d46', 1, 7]}
-        position={[0, 2.2, 2.7]}
-      />
+      {/* the door light is added in the house group */}
     </>
   );
 }
