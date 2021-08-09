@@ -14,12 +14,17 @@ import doorMetallic from '../textures/door/metallic.jpg';
 import doorNormal from '../textures/door/normal.jpg';
 import doorOpacity from '../textures/door/opacity.jpg'; // opacity is also called alpha
 import doorRoughness from '../textures/door/roughness.jpg';
+import brickColor from '../textures/bricks/color.jpg';
+import brickNormal from '../textures/bricks/normal.jpg';
+import brickRoughness from '../textures/bricks/roughness.jpg';
+import brickAO from '../textures/bricks/ambientOcclusion.jpg';
 
 const gui = new dat.GUI({ width: 400 });
 
 function HauntedHouse() {
   const plane = useRef();
   const door = useRef();
+  const walls = useRef();
   const doorLight = useRef();
   // useHelper(doorLight, THREE.PointLightHelper)
 
@@ -46,7 +51,11 @@ function HauntedHouse() {
     doorMetallicTexture,
     doorNormalTexture,
     doorOpacityTexture,
-    doorRoughnessTexture
+    doorRoughnessTexture,
+    brickColorTexture,
+    brickNormalTexture,
+    brickRoughnessTexture,
+    brickAOTexture
   ] = useLoader(THREE.TextureLoader, [
     doorColor,
     doorAmbientOcclusion,
@@ -54,7 +63,11 @@ function HauntedHouse() {
     doorMetallic,
     doorNormal,
     doorOpacity,
-    doorRoughness
+    doorRoughness,
+    brickColor,
+    brickNormal,
+    brickRoughness,
+    brickAO
   ]);
 
   useEffect(() => {
@@ -90,9 +103,18 @@ function HauntedHouse() {
         {/* HOUSE => group */}
         <group>
           {/* WALLS */}
-          <mesh castShadow name="walls" position-y={2.5 / 2}>
+          <mesh ref={walls} castShadow name="walls" position-y={2.5 / 2}>
             <boxBufferGeometry args={[4, 2.5, 4]} />
-            <meshStandardMaterial color={'#ac8e82'} />
+            <meshStandardMaterial
+              map={brickColorTexture}
+              normalMap={brickNormalTexture}
+              normalScale={[1, 1]}
+              roughnessMap={brickRoughnessTexture}
+              roughness={1}
+              aoMap={brickAOTexture}
+              aoMapIntensity={5}
+            />
+            <ApplyAOMap plane={walls} />
           </mesh>
           {/* ROOF */}
           <mesh
@@ -106,7 +128,7 @@ function HauntedHouse() {
           </mesh>
           {/* DOOR */}
           <mesh ref={door} name="door" position={[0, 1, 2 + 0.01]}>
-            <planeBufferGeometry args={[2, 2, 100, 100]} />
+            <planeBufferGeometry args={[2.2, 2.2, 100, 100]} />
             <meshStandardMaterial
               map={doorColorTexture}
               transparent
@@ -120,7 +142,7 @@ function HauntedHouse() {
               metalnessMap={doorMetallicTexture}
               metalness={1}
               roughnessMap={doorRoughnessTexture}
-              roughness
+              roughness={1}
             />
             <ApplyAOMap plane={door} />
           </mesh>
@@ -249,7 +271,10 @@ function ApplyAOMap({ plane }) {
       plane.current.geometry.setAttribute(
         'uv2',
         // also BufferAttribute without Float32 works
-        new THREE.Float32BufferAttribute(plane.current.geometry.attributes.uv.array, 2)
+        new THREE.Float32BufferAttribute(
+          plane.current.geometry.attributes.uv.array,
+          2
+        )
       );
     console.log('aoMap');
   }, [plane]);
