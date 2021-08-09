@@ -7,6 +7,7 @@ import * as dat from 'dat.gui';
 /**
  * texture imports
  */
+// door
 import doorColor from '../textures/door/basecolor.jpg';
 import doorAmbientOcclusion from '../textures/door/ambientOcclusion.jpg';
 import doorHeight from '../textures/door/height.png';
@@ -14,15 +15,21 @@ import doorMetallic from '../textures/door/metallic.jpg';
 import doorNormal from '../textures/door/normal.jpg';
 import doorOpacity from '../textures/door/opacity.jpg'; // opacity is also called alpha
 import doorRoughness from '../textures/door/roughness.jpg';
+// brick
 import brickColor from '../textures/bricks/color.jpg';
 import brickNormal from '../textures/bricks/normal.jpg';
 import brickRoughness from '../textures/bricks/roughness.jpg';
 import brickAO from '../textures/bricks/ambientOcclusion.jpg';
+// grass
+import grassColor from '../textures/grass/color.jpg';
+import grassNormal from '../textures/grass/normal.jpg';
+import grassRoughness from '../textures/grass/roughness.jpg';
+import grassAO from '../textures/grass/ambientOcclusion.jpg';
 
 const gui = new dat.GUI({ width: 400 });
 
 function HauntedHouse() {
-  const plane = useRef();
+  const floor = useRef();
   const door = useRef();
   const walls = useRef();
   const doorLight = useRef();
@@ -55,7 +62,11 @@ function HauntedHouse() {
     brickColorTexture,
     brickNormalTexture,
     brickRoughnessTexture,
-    brickAOTexture
+    brickAOTexture,
+    grassColorTexture,
+    grassNormalTexture,
+    grassRoughnessTexture,
+    grassAOTexture
   ] = useLoader(THREE.TextureLoader, [
     doorColor,
     doorAmbientOcclusion,
@@ -67,13 +78,33 @@ function HauntedHouse() {
     brickColor,
     brickNormal,
     brickRoughness,
-    brickAO
+    brickAO,
+    grassColor,
+    grassNormal,
+    grassRoughness,
+    grassAO
   ]);
+
+  // repeat grass texture for floor
+  grassColorTexture.repeat.set(8, 8);
+  grassNormalTexture.repeat.set(8, 8);
+  grassRoughnessTexture.repeat.set(8, 8);
+  grassAOTexture.repeat.set(8, 8);
+  // wrapS
+  grassColorTexture.wrapS = THREE.RepeatWrapping;
+  grassNormalTexture.wrapS = THREE.RepeatWrapping;
+  grassRoughnessTexture.wrapS = THREE.RepeatWrapping;
+  grassAOTexture.wrapS = THREE.RepeatWrapping;
+  // wrapT
+  grassColorTexture.wrapT = THREE.RepeatWrapping;
+  grassNormalTexture.wrapT = THREE.RepeatWrapping;
+  grassRoughnessTexture.wrapT = THREE.RepeatWrapping;
+  grassAOTexture.wrapT = THREE.RepeatWrapping;
 
   useEffect(() => {
     setTimeout(() => {
       // guiInit();
-      guiAdd(plane.current);
+      guiAdd(floor.current);
     }, 50);
   }, []);
   return (
@@ -95,9 +126,18 @@ function HauntedHouse() {
         <fog attach="fog" args={['#262847', 0, 20]} />
 
         {/* PLANE */}
-        <mesh name="plane" receiveShadow ref={plane} rotation-x={-Math.PI / 2}>
+        <mesh ref={floor} name="plane" receiveShadow rotation-x={-Math.PI / 2}>
           <planeBufferGeometry args={[20, 20]} />
-          <meshStandardMaterial color={'seagreen'} />
+          <meshStandardMaterial
+            map={grassColorTexture} // we need to set all its textures to repeat
+            normalMap={grassNormalTexture}
+            normalScale={[1, 1]}
+            roughnessMap={grassRoughnessTexture}
+            roughness={1}
+            aoMap={grassAOTexture}
+            aoMapIntensity={10}
+          />
+          <ApplyAOMap plane={floor} />
         </mesh>
 
         {/* HOUSE => group */}
