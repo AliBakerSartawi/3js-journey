@@ -20,6 +20,7 @@ import gradient5 from '../textures/gradients/5.jpg';
  * BAKED SHADOW
  */
 import bakedShadow from '../textures/shadows/bakedShadow.jpg';
+import simpleShadow from '../textures/shadows/simpleShadow.jpg';
 
 // font import
 import typefaceFont from '../fonts/helvetiker_regular.typeface.json';
@@ -203,9 +204,12 @@ function Lighting() {
 function BakingShadows() {
   const textMesh = useRef();
   const textMesh2 = useRef();
+  const sphere = useRef();
 
-  const [bakedShadowTexture] = useLoader(THREE.TextureLoader, [bakedShadow]);
-  console.log(bakedShadowTexture);
+  const [bakedShadowTexture, simpleShadowTexture] = useLoader(
+    THREE.TextureLoader,
+    [bakedShadow, simpleShadow]
+  );
 
   return (
     <div style={{ height: '100vh', backgroundColor: 'rgb(26, 26, 26)' }}>
@@ -235,18 +239,35 @@ function BakingShadows() {
           <meshStandardMaterial color={'limegreen'} />
         </mesh>
 
-        <mesh position={[0, 1, 0]}>
-          <sphereBufferGeometry args={[1]} />
+        {/* SPHERE => to be given a baked shadow */}
+        <mesh ref={sphere} position={[0, 0.5, 0]}>
+          <sphereBufferGeometry args={[0.5]} />
           <meshStandardMaterial color={'limegreen'} />
         </mesh>
 
         {/* PLANE */}
-        {/* for baking shadows, we need meshBasicMaterial */}
-        {/* but it's not dynamic, if sphere is moved from center of scene, shadow won't follow */}
         <mesh receiveShadow rotation-x={-Math.PI / 2}>
           <planeBufferGeometry args={[25, 25]} />
-          <meshBasicMaterial map={bakedShadowTexture} color={'orange'} />
+          <meshStandardMaterial color={'orange'} />
         </mesh>
+
+        {/* DYNAMIC SHADOW BAKING */}
+        {/* the trick is to create a plane under the sphere that will follow it */}
+        <mesh 
+        rotation-x={-Math.PI / 2}
+        // if not positioned a bit above ground, it will cause z-fighting
+        position-y={0 /* plane position */ + 0.01}
+        >
+          <planeBufferGeometry args={[1, 1]} />
+          <meshBasicMaterial transparent alphaMap={simpleShadowTexture} color={0x000000} />
+        </mesh>
+
+        {/* for static baking shadows, we can do it with meshBasicMaterial too */}
+        {/* but it's not dynamic, if sphere is moved from center of scene, shadow won't follow */}
+        {/* <mesh receiveShadow rotation-x={-Math.PI / 2}>
+          <planeBufferGeometry args={[25, 25]} />
+          <meshBasicMaterial map={bakedShadowTexture} color={'orange'} />
+        </mesh> */}
       </Canvas>
     </div>
   );
