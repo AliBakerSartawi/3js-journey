@@ -7,8 +7,14 @@ import * as THREE from 'three';
  * DatGui Import and Styles
  */
 // import "react-dat-gui/build/react-dat-gui.css";
-import "react-dat-gui/dist/index.css";
-import DatGui, { DatColor, DatNumber, DatSelect } from "react-dat-gui";
+import 'react-dat-gui/dist/index.css';
+import DatGui, {
+  DatFolder,
+  DatColor,
+  DatNumber,
+  DatSelect,
+  DatBoolean
+} from 'react-dat-gui';
 
 // PARTICLE IMPORTS
 import p1 from '../textures/particles/1.png';
@@ -35,11 +41,10 @@ import p13 from '../textures/particles/13.png';
  */
 function GalaxyGenerator() {
   // refs
-  const particledSphere = useRef()
-  const particles = useRef()
+  const particledSphere = useRef();
+  const particles = useRef();
 
-  // for custom geometry particles
-  const particlesGeo = customParticleGeometry(50000, 10, true);
+  
 
   // particle textures
   const [p1T, p2T, p3T, p4T, p5T, p6T, p7T, p8T, p9T, p10T, p11T, p12T, p13T] =
@@ -60,14 +65,22 @@ function GalaxyGenerator() {
     ]);
 
   const [opts, setOpts] = useState({
-    size: 0.05,
-    transparent: true, 
-    alphaMap: p2T,
-    depthWrite: false,
-    blending: THREE.AdditiveBlending,
-    vertexColors: true,
-    color: 'pink',
-  })
+    particles: {
+      size: 0.05,
+      transparent: true,
+      alphaMap: p2T,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+      vertexColors: true,
+      color: 'pink'
+    },
+    count: 1000,
+    spread: 3,
+    randomColors: true
+  });
+
+  // for custom geometry particles
+  const particlesGeo = customParticleGeometry(opts.count, opts.spread, opts.randomColors);
 
   return (
     <div style={{ height: '100vh', backgroundColor: 'rgb(0,0,0)' }}>
@@ -94,9 +107,7 @@ function GalaxyGenerator() {
 
         {/* CUSTOM GEOMETRY PARTICLE */}
         <points ref={particles} geometry={particlesGeo} geometry-size={0.02}>
-          <pointsMaterial
-            {...opts}
-          />
+          <pointsMaterial {...opts.particles} />
           <AnimateParticles particles={particles} />
         </points>
       </Canvas>
@@ -107,24 +118,29 @@ function GalaxyGenerator() {
 
 export default GalaxyGenerator;
 
-function DebugPanel({opts, setOpts}) {
-  console.log(opts)
+function DebugPanel({ opts, setOpts }) {
+  console.log(opts);
   return (
-    <div className="datGui" style={{position: 'fixed', top: 0, right: 0, color: 'white'}}>
-      <DatGui data={opts} onUpdate={setOpts} >
-        <DatNumber path="size" min={0} max={1} step={0.001} />
+    <>
+      <DatGui data={opts} onUpdate={setOpts}>
+        <DatFolder title="Particles">
+          <DatNumber path="particles.size" min={0} max={0.1} step={0.0001} />
+        </DatFolder>
+        <DatFolder title="Particles">
+          <DatNumber path="particles.size" min={0} max={0.1} step={0.0001} />
+        </DatFolder>
       </DatGui>
-    </div>
-  )
+    </>
+  );
 }
 
 function AnimateParticles({ particles }) {
-  useFrame(({clock: {elapsedTime}, camera}) => {
-    particles.current.rotation.y = elapsedTime * 0.05
-    particles.current.rotation.z = elapsedTime * 0.05
-    camera.rotation.z = elapsedTime * 0.1
-  })
-  return null
+  useFrame(({ clock: { elapsedTime }, camera }) => {
+    particles.current.rotation.y = elapsedTime * 0.05;
+    particles.current.rotation.z = elapsedTime * 0.05;
+    camera.rotation.z = elapsedTime * 0.1;
+  });
+  return null;
 }
 
 function customParticleGeometry(count, spread, randomColors) {
