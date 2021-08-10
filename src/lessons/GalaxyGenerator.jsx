@@ -30,6 +30,7 @@ import p10 from '../textures/particles/10.png';
 import p11 from '../textures/particles/11.png';
 import p12 from '../textures/particles/12.png';
 import p13 from '../textures/particles/13.png';
+import { Triangle } from 'three';
 
 /**
  * each particle is composed of a plane (two triangles) always facing the camera
@@ -43,8 +44,6 @@ function GalaxyGenerator() {
   // refs
   const particledSphere = useRef();
   const particles = useRef();
-
-  
 
   // particle textures
   const [p1T, p2T, p3T, p4T, p5T, p6T, p7T, p8T, p9T, p10T, p11T, p12T, p13T] =
@@ -65,8 +64,9 @@ function GalaxyGenerator() {
     ]);
 
   const [opts, setOpts] = useState({
-    particles: {
+    particlesMat: {
       size: 0.05,
+      sizeAttenuation: true,
       transparent: true,
       alphaMap: p2T,
       depthWrite: false,
@@ -74,13 +74,34 @@ function GalaxyGenerator() {
       vertexColors: true,
       color: 'pink'
     },
-    count: 1000,
-    spread: 3,
-    randomColors: true
+    particlesGeo: {
+      count: 1000,
+      spread: 3,
+      randomColors: true
+    },
+    particlesTexture: {
+      p1T,
+      p2T,
+      p3T,
+      p4T,
+      p5T,
+      p6T,
+      p7T,
+      p8T,
+      p9T,
+      p10T,
+      p11T,
+      p12T,
+      p13T
+    }
   });
 
   // for custom geometry particles
-  const particlesGeo = customParticleGeometry(opts.count, opts.spread, opts.randomColors);
+  const particlesGeo = customParticleGeometry(
+    opts.particlesGeo.count,
+    opts.particlesGeo.spread,
+    opts.particlesGeo.randomColors
+  );
 
   return (
     <div style={{ height: '100vh', backgroundColor: 'rgb(0,0,0)' }}>
@@ -107,7 +128,7 @@ function GalaxyGenerator() {
 
         {/* CUSTOM GEOMETRY PARTICLE */}
         <points ref={particles} geometry={particlesGeo} geometry-size={0.02}>
-          <pointsMaterial {...opts.particles} />
+          <pointsMaterial {...opts.particlesMat} />
           <AnimateParticles particles={particles} />
         </points>
       </Canvas>
@@ -119,16 +140,16 @@ function GalaxyGenerator() {
 export default GalaxyGenerator;
 
 function DebugPanel({ opts, setOpts }) {
-  console.log(opts);
+  console.log(Object.values(opts.particlesTexture));
   return (
     <>
-      <DatGui data={opts} onUpdate={setOpts}>
-        <DatFolder title="Particles">
-          <DatNumber path="particles.size" min={0} max={0.1} step={0.0001} />
-        </DatFolder>
-        <DatFolder title="Particles">
-          <DatNumber path="particles.size" min={0} max={0.1} step={0.0001} />
-        </DatFolder>
+      <DatGui data={opts} onUpdate={setOpts} liveUpdate={false}>
+          <DatFolder title="Particles">
+            <DatNumber label="size" path="particlesMat.size" min={0} max={0.1} step={0.001} />
+            {/* <DatSelect label="texture" path="particlesMat.alphaMap" options={Object.keys(opts.particlesTexture)} /> */}
+            <DatNumber label="Count" path="particlesGeo.count" min={0} max={10000} step={1} />
+            <DatNumber label="spread" path="particlesGeo.spread" min={1} max={10} step={0.01} />
+          </DatFolder>
       </DatGui>
     </>
   );
@@ -145,12 +166,14 @@ function AnimateParticles({ particles }) {
 
 function customParticleGeometry(count, spread, randomColors) {
   const particlesGeometry = new THREE.BufferGeometry();
+  // positions
   let positions = new Float32Array(count * 3);
   positions = positions.map((p) => (p = (Math.random() - 0.5) * spread));
   particlesGeometry.setAttribute(
     'position',
     new THREE.BufferAttribute(positions, 3)
   );
+  // colors
   if (randomColors) {
     // must enable vertexColors in particle Material
     let colors = new Float32Array(count * 3);
