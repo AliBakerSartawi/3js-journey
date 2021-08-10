@@ -65,34 +65,17 @@ function GalaxyGenerator() {
 
   const [opts, setOpts] = useState({
     particlesMat: {
-      size: 0.05,
+      size: 0.01,
       sizeAttenuation: true,
-      transparent: true,
-      alphaMap: p2T,
       depthWrite: false,
       blending: THREE.AdditiveBlending,
-      vertexColors: true,
-      color: 'pink'
+      vertexColors: false,
+      color: 'white'
     },
     particlesGeo: {
-      count: 1000,
+      count: 10000,
       spread: 3,
-      randomColors: true
-    },
-    particlesTexture: {
-      p1T,
-      p2T,
-      p3T,
-      p4T,
-      p5T,
-      p6T,
-      p7T,
-      p8T,
-      p9T,
-      p10T,
-      p11T,
-      p12T,
-      p13T
+      randomColors: false
     }
   });
 
@@ -140,7 +123,6 @@ function GalaxyGenerator() {
 export default GalaxyGenerator;
 
 function DebugPanel({ opts, setOpts }) {
-  console.log(Object.values(opts.particlesTexture));
   return (
     <>
       <DatGui data={opts} onUpdate={setOpts} liveUpdate={false}>

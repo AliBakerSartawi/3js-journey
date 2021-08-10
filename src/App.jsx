@@ -27,6 +27,8 @@ function App() {
         {/* <BakingShadows /> */}
         {/* <HauntedHouse /> */}
         {/* <Particles /> */}
+
+        {/* GalaxyGenerator has a functional react-dat-gui panel */}
         <GalaxyGenerator />
       </Suspense>
     </div>
