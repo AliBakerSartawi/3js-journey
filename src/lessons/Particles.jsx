@@ -1,5 +1,5 @@
-import React from 'react';
-import { Canvas, useLoader } from '@react-three/fiber';
+import React, { useRef } from 'react';
+import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 
@@ -27,6 +27,10 @@ import p13 from '../textures/particles/13.png';
  * Main Component
  */
 function Particles() {
+  // refs
+  const particledSphere = useRef()
+  const particles = useRef()
+
   // for custom geometry particles
   const particlesGeo = customParticleGeometry(50000, 10, true);
 
@@ -62,16 +66,17 @@ function Particles() {
         <OrbitControls />
 
         {/* PARTICLES */}
-        <points>
+        <points ref={particledSphere}>
           <sphereBufferGeometry args={[0.5, 32, 32]} />
           <pointsMaterial
             size={0.02}
             sizeAttenuation={true} // particle size is relative to distance from camera
           />
+          <AnimateParticles particles={particledSphere} />
         </points>
 
         {/* CUSTOM GEOMETRY PARTICLE */}
-        <points geometry={particlesGeo} geometry-size={0.02}>
+        <points ref={particles} geometry={particlesGeo} geometry-size={0.02}>
           <pointsMaterial
             size={0.05}
             // color={'pink'}
@@ -87,6 +92,7 @@ function Particles() {
             vertexColors={true}
             color={'pink'} // adding a color will act as tint
           />
+          <AnimateParticles particles={particles} />
         </points>
       </Canvas>
     </div>
@@ -94,6 +100,15 @@ function Particles() {
 }
 
 export default Particles;
+
+function AnimateParticles({ particles }) {
+  useFrame(({clock: {elapsedTime}, camera}) => {
+    particles.current.rotation.y = elapsedTime * 0.05
+    particles.current.rotation.z = elapsedTime * 0.05
+    camera.rotation.z = elapsedTime * 0.1
+  })
+  return null
+}
 
 function customParticleGeometry(count, spread, randomColors) {
   const particlesGeometry = new THREE.BufferGeometry();
