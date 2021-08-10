@@ -5,6 +5,7 @@ import * as THREE from 'three';
 
 /**
  * DatGui Import and Styles
+ * good example => https://codesandbox.io/embed/troika-3d-text-via-react-three-fiber-ntfx2?fontsize=14
  */
 // import "react-dat-gui/build/react-dat-gui.css";
 import 'react-dat-gui/dist/index.css';
@@ -30,12 +31,6 @@ import p10 from '../textures/particles/10.png';
 import p11 from '../textures/particles/11.png';
 import p12 from '../textures/particles/12.png';
 import p13 from '../textures/particles/13.png';
-import { Triangle } from 'three';
-
-/**
- * each particle is composed of a plane (two triangles) always facing the camera
- * download particle textures => https://kenney.nl/assets/particle-pack
- */
 
 /**
  * Main Component
@@ -69,16 +64,18 @@ function GalaxyGenerator() {
       sizeAttenuation: true,
       depthWrite: false,
       blending: THREE.AdditiveBlending,
-      vertexColors: false,
-      color: 'white'
+      vertexColors: true
+      // color: 'white',
     },
     particlesGeo: {
-      count: 10000,
-      randomColors: false,
+      count: 100000,
       radius: 5,
       branches: 3,
       spin: 1,
-      randomness: 0.2
+      randomness: 0.2,
+      randomnessPower: 3,
+      insideColor: '#F13800',
+      outsideColor: '#0033B4'
     },
     debugPanelWidth: 350
   });
@@ -91,12 +88,12 @@ function GalaxyGenerator() {
       <Canvas
         camera={{
           fov: 45,
-          position: [3, 3, 3],
+          position: [5, 5, 5],
           near: 0.1,
           far: 2000
         }}
       >
-        <axesHelper args={[10]} />
+        {/* <axesHelper args={[10]} /> */}
         <OrbitControls />
 
         {/* CUSTOM GEOMETRY PARTICLE */}
@@ -142,7 +139,7 @@ function DebugPanel({ opts, setOpts }) {
             label="Count"
             path="particlesGeo.count"
             min={0}
-            max={20000}
+            max={200000}
             step={1}
           />
           <DatNumber
@@ -173,6 +170,15 @@ function DebugPanel({ opts, setOpts }) {
             max={2}
             step={0.001}
           />
+          <DatNumber
+            label="Randomness Power"
+            path="particlesGeo.randomnessPower"
+            min={1}
+            max={10}
+            step={0.001}
+          />
+          <DatColor label="Inside Color" path="particlesGeo.insideColor" />
+          <DatColor label="Outside Color" path="particlesGeo.outsideColor" />
         </DatFolder>
       </DatGui>
     </>
@@ -194,11 +200,18 @@ function customParticleGeometry({
   radius,
   spin,
   randomness,
-  randomColors
+  randomnessPower: pow,
+  insideColor,
+  outsideColor
 }) {
   const particlesGeometry = new THREE.BufferGeometry();
-  // positions
-  let positions = new Float32Array(count * 3);
+  const positions = new Float32Array(count * 3);
+  const colors = new Float32Array(count * 3);
+  const colorInside = new THREE.Color(insideColor);
+  const colorOutside = new THREE.Color(outsideColor);
+
+  // // will give perfect mix of the two, but will mutate first variable
+  // colorInside.lerp(colorOutside, 0.5);
 
   for (let i = 0; i < count; i++) {
     const i3 = i * 3;
@@ -217,14 +230,33 @@ function customParticleGeometry({
     const spinAngle = spin * randomRadius;
 
     // randomness
-    const randomX = (Math.random() - 0.5) * randomness * randomRadius;
-    const randomY = (Math.random() - 0.5) * randomness * randomRadius;
-    const randomZ = (Math.random() - 0.5) * randomness * randomRadius;
+    // multiplied by randomRadius to decrease randomness in the center, and increase with distance from center
+    // const randomX = (Math.random() - 0.5) * randomness * randomRadius;
+    // const randomY = (Math.random() - 0.5) * randomness * randomRadius;
+    // const randomZ = (Math.random() - 0.5) * randomness * randomRadius;
 
-    // positions
+    // more randomness
+    // pow === randomnessPower
+    const randomX =
+      Math.pow(Math.random(), pow) * (Math.random() < 0.5 ? -1 : 1);
+    const randomY =
+      Math.pow(Math.random(), pow) * (Math.random() < 0.5 ? -1 : 1);
+    const randomZ =
+      Math.pow(Math.random(), pow) * (Math.random() < 0.5 ? -1 : 1);
+
+    // positions x, y, z
     positions[i3 + 0] = Math.cos(angle + spinAngle) * randomRadius + randomX;
     positions[i3 + 1] = randomY;
     positions[i3 + 2] = Math.sin(angle + spinAngle) * randomRadius + randomZ;
+
+    // Colors
+    const mixedColor = colorInside.clone(); // we clone to prevent mutating
+    mixedColor.lerp(colorOutside, randomRadius / radius);
+
+    // colors r, g, b
+    colors[i3 + 0] = mixedColor.r;
+    colors[i3 + 1] = mixedColor.g;
+    colors[i3 + 2] = mixedColor.b;
   }
 
   // setting position attribute
@@ -232,16 +264,6 @@ function customParticleGeometry({
     'position',
     new THREE.BufferAttribute(positions, 3)
   );
-  // colors
-  if (randomColors) {
-    // must enable vertexColors in particle Material
-    let colors = new Float32Array(count * 3);
-    colors = colors.map((p) => (p = Math.random()));
-    // setting color attribute
-    particlesGeometry.setAttribute(
-      'color',
-      new THREE.BufferAttribute(colors, 3)
-    );
-  }
+  particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
   return particlesGeometry;
 }
