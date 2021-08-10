@@ -161,25 +161,34 @@ function DebugPanel({ opts, setOpts }) {
 
 function AnimateParticles({ particles }) {
   useFrame(({ clock: { elapsedTime }, camera }) => {
-    particles.current.rotation.y = elapsedTime * 0.05;
-    particles.current.rotation.z = elapsedTime * 0.05;
-    camera.rotation.z = elapsedTime * 0.1;
+    // particles.current.rotation.y = elapsedTime * 0.05;
+    // particles.current.rotation.z = elapsedTime * 0.05;
+    // camera.rotation.z = elapsedTime * 0.1;
   });
   return null;
 }
 
-function customParticleGeometry({count, branches, radius, randomColors}) {
+function customParticleGeometry({ count, branches, radius, randomColors }) {
   const particlesGeometry = new THREE.BufferGeometry();
   // positions
   let positions = new Float32Array(count * 3);
-   
+
   for (let i = 0; i < count; i++) {
-    const i3 = i * 3
-    const randomRadius = Math.random() * radius; 
-    
-    positions[i3 + 0] = randomRadius;
-    positions[i3 + 1] = randomRadius;
-    positions[i3 + 2] = randomRadius;
+    const i3 = i * 3;
+    const randomRadius = Math.random() * radius;
+
+    // example: if branches is 3 ⬇️
+    // i               => 0  1   2  3  4   5  6  7  8   9
+    // angleModulo     => 0  1   2  0  1   2  0  1  2   0
+    // anglePercentage => 0 .33 .66 0 .33 .66 0 .33 .66 0
+    // angle           => the real angle value on the circle
+    const angleModulo = i % branches;
+    const anglePercentage = angleModulo / branches;
+    const angle = anglePercentage * Math.PI * 2
+
+    positions[i3 + 0] /* x */ = Math.cos(angle) * randomRadius;
+    positions[i3 + 1] /* y */ = 0;
+    positions[i3 + 2] /* z */ = Math.sin(angle) * randomRadius;
   }
 
   // setting position attribute
