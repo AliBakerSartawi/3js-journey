@@ -11,6 +11,7 @@ import { Loader } from '@react-three/drei';
 // import BakingShadows from './lessons/BakingShadows';
 // import HauntedHouse from './lessons/HauntedHouse';
 import Particles from './lessons/Particles';
+import GalaxyGenerator from './lessons/GalaxyGenerator';
 
 function App() {
   return (
@@ -25,7 +26,8 @@ function App() {
         {/* <Lights /> */}
         {/* <BakingShadows /> */}
         {/* <HauntedHouse /> */}
-        <Particles />
+        {/* <Particles /> */}
+        <GalaxyGenerator />
       </Suspense>
     </div>
   );
