@@ -74,17 +74,14 @@ function GalaxyGenerator() {
     },
     particlesGeo: {
       count: 10000,
-      spread: 3,
-      randomColors: false
+      randomColors: false,
+      radius: 5,
+      branches: 3
     }
   });
 
   // for custom geometry particles
-  const particlesGeo = customParticleGeometry(
-    opts.particlesGeo.count,
-    opts.particlesGeo.spread,
-    opts.particlesGeo.randomColors
-  );
+  const particlesGeo = customParticleGeometry(opts.particlesGeo);
 
   return (
     <div style={{ height: '100vh', backgroundColor: 'rgb(0,0,0)' }}>
@@ -126,12 +123,37 @@ function DebugPanel({ opts, setOpts }) {
   return (
     <>
       <DatGui data={opts} onUpdate={setOpts} liveUpdate={false}>
-          <DatFolder title="Particles">
-            <DatNumber label="size" path="particlesMat.size" min={0} max={0.1} step={0.001} />
-            {/* <DatSelect label="texture" path="particlesMat.alphaMap" options={Object.keys(opts.particlesTexture)} /> */}
-            <DatNumber label="Count" path="particlesGeo.count" min={0} max={10000} step={1} />
-            <DatNumber label="spread" path="particlesGeo.spread" min={1} max={10} step={0.01} />
-          </DatFolder>
+        <DatFolder closed={false} title="Particles">
+          <DatNumber
+            label="size"
+            path="particlesMat.size"
+            min={0}
+            max={0.1}
+            step={0.001}
+          />
+          {/* <DatSelect label="texture" path="particlesMat.alphaMap" options={Object.keys(opts.particlesTexture)} /> */}
+          <DatNumber
+            label="Count"
+            path="particlesGeo.count"
+            min={0}
+            max={20000}
+            step={1}
+          />
+          <DatNumber
+            label="Radius"
+            path="particlesGeo.radius"
+            min={1}
+            max={20}
+            step={0.01}
+          />
+          <DatNumber
+            label="Branches"
+            path="particlesGeo.branches"
+            min={2}
+            max={20}
+            step={1}
+          />
+        </DatFolder>
       </DatGui>
     </>
   );
@@ -146,11 +168,21 @@ function AnimateParticles({ particles }) {
   return null;
 }
 
-function customParticleGeometry(count, spread, randomColors) {
+function customParticleGeometry({count, branches, radius, randomColors}) {
   const particlesGeometry = new THREE.BufferGeometry();
   // positions
   let positions = new Float32Array(count * 3);
-  positions = positions.map((p) => (p = (Math.random() - 0.5) * spread));
+   
+  for (let i = 0; i < count; i++) {
+    const i3 = i * 3
+    const randomRadius = Math.random() * radius; 
+    
+    positions[i3 + 0] = randomRadius;
+    positions[i3 + 1] = randomRadius;
+    positions[i3 + 2] = randomRadius;
+  }
+
+  // setting position attribute
   particlesGeometry.setAttribute(
     'position',
     new THREE.BufferAttribute(positions, 3)
@@ -160,6 +192,7 @@ function customParticleGeometry(count, spread, randomColors) {
     // must enable vertexColors in particle Material
     let colors = new Float32Array(count * 3);
     colors = colors.map((p) => (p = Math.random()));
+    // setting color attribute
     particlesGeometry.setAttribute(
       'color',
       new THREE.BufferAttribute(colors, 3)
