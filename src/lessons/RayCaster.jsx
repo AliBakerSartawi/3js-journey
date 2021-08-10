@@ -82,3 +82,12 @@ function DebugPanel({ opts, setOpts }) {
       </DatGui>
   );
 }
+
+function AnimateParticles({ particles }) {
+  useFrame(({ clock: { elapsedTime }, camera }) => {
+    particles.current.rotation.y = elapsedTime * 0.05;
+    particles.current.rotation.z = elapsedTime * 0.001;
+    // camera.rotation.z = elapsedTime * 0.01;
+  });
+  return null;
+}
