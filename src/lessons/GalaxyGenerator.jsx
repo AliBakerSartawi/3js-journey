@@ -76,8 +76,11 @@ function GalaxyGenerator() {
       count: 10000,
       randomColors: false,
       radius: 5,
-      branches: 3
-    }
+      branches: 3,
+      spin: 1,
+      randomness: 0.2
+    },
+    debugPanelWidth: 350
   });
 
   // for custom geometry particles
@@ -96,16 +99,6 @@ function GalaxyGenerator() {
         <axesHelper args={[10]} />
         <OrbitControls />
 
-        {/* PARTICLES */}
-        <points ref={particledSphere}>
-          <sphereBufferGeometry args={[0.5, 32, 32]} />
-          <pointsMaterial
-            size={0.02}
-            sizeAttenuation={true} // particle size is relative to distance from camera
-          />
-          <AnimateParticles particles={particledSphere} />
-        </points>
-
         {/* CUSTOM GEOMETRY PARTICLE */}
         <points ref={particles} geometry={particlesGeo} geometry-size={0.02}>
           <pointsMaterial {...opts.particlesMat} />
@@ -122,7 +115,20 @@ export default GalaxyGenerator;
 function DebugPanel({ opts, setOpts }) {
   return (
     <>
-      <DatGui data={opts} onUpdate={setOpts} liveUpdate={false}>
+      <DatGui
+        data={opts}
+        onUpdate={setOpts}
+        style={{ width: `${opts.debugPanelWidth}px` }}
+      >
+        <DatFolder closed={false} title="Panel">
+          <DatNumber
+            label="Panel Width"
+            path="debugPanelWidth"
+            min={300}
+            max={500}
+            step={1}
+          />
+        </DatFolder>
         <DatFolder closed={false} title="Particles">
           <DatNumber
             label="size"
@@ -153,6 +159,20 @@ function DebugPanel({ opts, setOpts }) {
             max={20}
             step={1}
           />
+          <DatNumber
+            label="Spin"
+            path="particlesGeo.spin"
+            min={-3}
+            max={3}
+            step={0.001}
+          />
+          <DatNumber
+            label="Randomness"
+            path="particlesGeo.randomness"
+            min={0}
+            max={2}
+            step={0.001}
+          />
         </DatFolder>
       </DatGui>
     </>
@@ -168,7 +188,14 @@ function AnimateParticles({ particles }) {
   return null;
 }
 
-function customParticleGeometry({ count, branches, radius, randomColors }) {
+function customParticleGeometry({
+  count,
+  branches,
+  radius,
+  spin,
+  randomness,
+  randomColors
+}) {
   const particlesGeometry = new THREE.BufferGeometry();
   // positions
   let positions = new Float32Array(count * 3);
@@ -184,11 +211,20 @@ function customParticleGeometry({ count, branches, radius, randomColors }) {
     // angle           => the real angle value on the circle
     const angleModulo = i % branches;
     const anglePercentage = angleModulo / branches;
-    const angle = anglePercentage * Math.PI * 2
+    const angle = anglePercentage * Math.PI * 2;
 
-    positions[i3 + 0] /* x */ = Math.cos(angle) * randomRadius;
-    positions[i3 + 1] /* y */ = 0;
-    positions[i3 + 2] /* z */ = Math.sin(angle) * randomRadius;
+    // spin
+    const spinAngle = spin * randomRadius;
+
+    // randomness
+    const randomX = (Math.random() - 0.5) * randomness * randomRadius;
+    const randomY = (Math.random() - 0.5) * randomness * randomRadius;
+    const randomZ = (Math.random() - 0.5) * randomness * randomRadius;
+
+    // positions
+    positions[i3 + 0] = Math.cos(angle + spinAngle) * randomRadius + randomX;
+    positions[i3 + 1] = randomY;
+    positions[i3 + 2] = Math.sin(angle + spinAngle) * randomRadius + randomZ;
   }
 
   // setting position attribute
