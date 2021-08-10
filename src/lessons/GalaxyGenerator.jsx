@@ -252,7 +252,7 @@ function customParticleGeometry({
 
     // positions x, y, z
     positions[i3 + 0] = Math.cos(angle + spinAngle) * randomRadius + randomX;
-    positions[i3 + 1] = randomY;
+    positions[i3 + 1] = Math.random() * randomness * randomY;
     positions[i3 + 2] = Math.sin(angle + spinAngle) * randomRadius + randomZ;
 
     // Colors
