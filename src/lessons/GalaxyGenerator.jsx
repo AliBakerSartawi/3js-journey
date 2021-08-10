@@ -72,7 +72,7 @@ function GalaxyGenerator() {
       radius: 5,
       branches: 3,
       spin: 1,
-      randomness: 0.2,
+      randomness: 1,
       randomnessPower: 3,
       insideColor: '#F13800',
       outsideColor: '#0033B4'
@@ -88,7 +88,7 @@ function GalaxyGenerator() {
       <Canvas
         camera={{
           fov: 45,
-          position: [5, 5, 5],
+          position: [0, 7, 7],
           near: 0.1,
           far: 2000
         }}
@@ -187,9 +187,9 @@ function DebugPanel({ opts, setOpts }) {
 
 function AnimateParticles({ particles }) {
   useFrame(({ clock: { elapsedTime }, camera }) => {
-    // particles.current.rotation.y = elapsedTime * 0.05;
-    // particles.current.rotation.z = elapsedTime * 0.05;
-    // camera.rotation.z = elapsedTime * 0.1;
+    particles.current.rotation.y = elapsedTime * 0.05;
+    particles.current.rotation.z = elapsedTime * 0.001;
+    // camera.rotation.z = elapsedTime * 0.01;
   });
   return null;
 }
@@ -238,11 +238,17 @@ function customParticleGeometry({
     // more randomness
     // pow === randomnessPower
     const randomX =
-      Math.pow(Math.random(), pow) * (Math.random() < 0.5 ? -1 : 1);
+      Math.pow(Math.random(), pow) *
+      (Math.random() < 0.5 ? -1 : 1) *
+      Math.pow(randomness, pow);
     const randomY =
-      Math.pow(Math.random(), pow) * (Math.random() < 0.5 ? -1 : 1);
+      Math.pow(Math.random(), pow) *
+      (Math.random() < 0.5 ? -1 : 1) *
+      Math.pow(randomness, pow);
     const randomZ =
-      Math.pow(Math.random(), pow) * (Math.random() < 0.5 ? -1 : 1);
+      Math.pow(Math.random(), pow) *
+      (Math.random() < 0.5 ? -1 : 1) *
+      Math.pow(randomness, pow);
 
     // positions x, y, z
     positions[i3 + 0] = Math.cos(angle + spinAngle) * randomRadius + randomX;
