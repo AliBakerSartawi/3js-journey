@@ -12,11 +12,16 @@ import { Loader } from '@react-three/drei';
 // import HauntedHouse from './lessons/HauntedHouse';
 import Particles from './lessons/Particles';
 import GalaxyGenerator from './lessons/GalaxyGenerator';
+import Template from './lessons/Template';
 
 function App() {
   return (
     <div className="app">
       <Suspense fallback={<Loader />}>
+        {/* TEMPLATE */}
+        <Template />
+
+        {/* SCENES */}
         {/* <BasicScene /> */}
         {/* <Geometries /> */}
         {/* <DebugUI /> */}
@@ -29,7 +34,7 @@ function App() {
         {/* <Particles /> */}
 
         {/* GalaxyGenerator has a functional react-dat-gui panel */}
-        <GalaxyGenerator />
+        {/* <GalaxyGenerator /> */}
       </Suspense>
     </div>
   );
