@@ -13,13 +13,14 @@ import { Loader } from '@react-three/drei';
 import Particles from './lessons/Particles';
 import GalaxyGenerator from './lessons/GalaxyGenerator';
 import Template from './lessons/Template';
+import RayCaster from './lessons/RayCaster';
 
 function App() {
   return (
     <div className="app">
       <Suspense fallback={<Loader />}>
         {/* TEMPLATE */}
-        <Template />
+        {/* <Template /> */}
 
         {/* SCENES */}
         {/* <BasicScene /> */}
@@ -35,6 +36,7 @@ function App() {
 
         {/* GalaxyGenerator has a functional react-dat-gui panel */}
         {/* <GalaxyGenerator /> */}
+        <RayCaster />
       </Suspense>
     </div>
   );
