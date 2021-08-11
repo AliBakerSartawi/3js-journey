@@ -5,9 +5,7 @@ import * as THREE from 'three';
 
 /**
  * DatGui Import and Styles
- * good example => https://codesandbox.io/embed/troika-3d-text-via-react-three-fiber-ntfx2?fontsize=14
  */
-// import "react-dat-gui/build/react-dat-gui.css";
 import 'react-dat-gui/dist/index.css';
 import DatGui, {
   DatFolder,
@@ -18,12 +16,20 @@ import DatGui, {
 } from 'react-dat-gui';
 
 /**
+ * Ray Caster Usage
+ *  1. detect wall in front of player
+ *  2. test if laser gun hit something
+ *  3. test if something is currently under the mouse to simulate mouse events
+ *  4. show an alert message if the spaceship is heading toward a planet 
+ */
+
+/**
  * Main Component
  */
 function RayCaster() {
   // refs
   const plane = useRef();
-  const cube = useRef();
+  const sphere = useRef();
 
   // state
   const [opts, setOpts] = useState({
@@ -46,13 +52,21 @@ function RayCaster() {
         {/* PLANE */}
         <mesh ref={plane} rotation-x={-Math.PI / 2}>
           <planeBufferGeometry args={[10, 10]} />
-          <meshBasicMaterial color={'gray'} />
+          <meshBasicMaterial color={'lightgreen'} />
         </mesh>
 
-        {/* CUBE */}
-        <mesh ref={cube} position-y={0.5}>
-          <boxBufferGeometry args={[1, 1]} />
-          <meshBasicMaterial color={'crimson'} />
+        {/* SPHERES */}
+        <mesh position={[0, 0.5, -2]}>
+          <sphereBufferGeometry args={[0.5]} />
+          <meshBasicMaterial color={'seagreen'} />
+        </mesh>
+        <mesh position={[0, 0.5, 0]}>
+          <sphereBufferGeometry args={[0.5]} />
+          <meshBasicMaterial color={'seagreen'} />
+        </mesh>
+        <mesh position={[0, 0.5, 2]}>
+          <sphereBufferGeometry args={[0.5]} />
+          <meshBasicMaterial color={'seagreen'} />
         </mesh>
         
       </Canvas>

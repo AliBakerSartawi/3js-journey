@@ -46,13 +46,13 @@ function Template() {
         {/* PLANE */}
         <mesh ref={plane} rotation-x={-Math.PI / 2}>
           <planeBufferGeometry args={[10, 10]} />
-          <meshBasicMaterial color={'gray'} />
+          <meshBasicMaterial color={'lightgreen'} />
         </mesh>
 
         {/* CUBE */}
         <mesh ref={cube} position-y={0.5}>
           <boxBufferGeometry args={[1, 1]} />
-          <meshBasicMaterial color={'crimson'} />
+          <meshBasicMaterial color={'seagreen'} />
         </mesh>
         
       </Canvas>
