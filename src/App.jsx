@@ -13,7 +13,8 @@ import { Loader } from '@react-three/drei';
 // import Particles from './lessons/Particles';
 // import GalaxyGenerator from './lessons/GalaxyGenerator';
 // import Template from './lessons/Template';
-import RayCaster from './lessons/RayCaster';
+// import RayCaster from './lessons/RayCaster';
+import Physics from './lessons/Physics';
 
 function App() {
   return (
@@ -36,7 +37,8 @@ function App() {
 
         {/* GalaxyGenerator has a functional react-dat-gui panel */}
         {/* <GalaxyGenerator /> */}
-        <RayCaster />
+        {/* <RayCaster /> */}
+        <Physics />
       </Suspense>
     </div>
   );

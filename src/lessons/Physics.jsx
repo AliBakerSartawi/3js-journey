@@ -20,7 +20,7 @@ import DatGui, {
 /**
  * Main Component
  */
-function Template() {
+function Physics() {
   // refs
   const plane = useRef();
   const cube = useRef();
@@ -62,7 +62,7 @@ function Template() {
   );
 }
 
-export default Template;
+export default Physics;
 
 function Lights() {
   return (
