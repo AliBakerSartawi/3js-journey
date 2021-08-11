@@ -1,8 +1,8 @@
 import React, { useRef, useState } from 'react';
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
+import { Physics, useBox, usePlane } from '@react-three/cannon';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
-import { Physics, usePlane, useBox } from '@react-three/cannon';
 
 /**
  * DatGui Import and Styles
@@ -18,20 +18,31 @@ import DatGui, {
   DatBoolean
 } from 'react-dat-gui';
 
-function Plane() {
-  const [plane] = usePlane();
+function Plane(props) {
+  const [plane] = usePlane(() => ({
+    rotation: [-Math.PI / 2, 0, 0],
+    ...props
+  }));
   return (
-    <mesh ref={plane} receiveShadow rotation-x={-Math.PI / 2}>
+    <mesh
+      ref={plane}
+      receiveShadow
+      // rotation-x={-Math.PI / 2}
+    >
       <planeBufferGeometry args={[10, 10]} />
       <meshStandardMaterial color={'grey'} />
     </mesh>
   );
 }
 
-function Box() {
-  const [box] = useBox()
+function Box(props) {
+  const [box] = useBox(() => ({ mass: 1, position: [0, 5, 0], ...props }));
   return (
-    <mesh ref={box} castShadow position={[0, 5, 0]}>
+    <mesh
+      ref={box}
+      castShadow
+      // position={[0, 5, 0]}
+    >
       <boxBufferGeometry args={[1, 1]} />
       <meshStandardMaterial color={'lightgrey'} />
     </mesh>
@@ -63,6 +74,7 @@ function Template() {
 
         <Physics>
           <Plane />
+          <Box />
         </Physics>
 
         <Lights />

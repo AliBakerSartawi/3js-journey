@@ -12,7 +12,7 @@ import { Loader } from '@react-three/drei';
 // import HauntedHouse from './lessons/HauntedHouse';
 // import Particles from './lessons/Particles';
 // import GalaxyGenerator from './lessons/GalaxyGenerator';
-// import Template from './lessons/Template';
+import Template from './lessons/Template';
 // import RayCaster from './lessons/RayCaster';
 import Physics from './lessons/Physics';
 
