@@ -60,15 +60,30 @@ function RayCaster() {
         </mesh>
 
         {/* SPHERES */}
-        <mesh ref={sphere1} position={[-2, 0, 0]}>
+        <mesh
+          ref={sphere1}
+          position={[-2, 0, 0]}
+          name="sphere1"
+          onClick={() => console.log(sphere1.current.name)}
+        >
           <sphereBufferGeometry args={[0.5]} />
           <meshBasicMaterial color={'seagreen'} />
         </mesh>
-        <mesh ref={sphere2} position={[0, 0, 0]}>
+        <mesh
+          ref={sphere2}
+          position={[0, 0, 0]}
+          name="sphere2"
+          onClick={() => console.log(sphere2.current.name)}
+        >
           <sphereBufferGeometry args={[0.5]} />
           <meshBasicMaterial color={'seagreen'} />
         </mesh>
-        <mesh ref={sphere3} position={[2, 0, 0]}>
+        <mesh
+          ref={sphere3}
+          position={[2, 0, 0]}
+          name="sphere3"
+          onClick={() => console.log(sphere3.current.name)}
+        >
           <sphereBufferGeometry args={[0.5]} />
           <meshBasicMaterial color={'seagreen'} />
         </mesh>
@@ -116,8 +131,6 @@ function RayCasterHelper2({
   spheres: { sphere1, sphere2, sphere3 }
 }) {
   useFrame(({ clock: { elapsedTime } }) => {
-    
-
     // const intersect1 = raycaster.current.intersectObject(sphere1.current);
     // intersect1.length > 0
     //   ? sphere1.current.material.color.set('crimson')
@@ -127,11 +140,11 @@ function RayCasterHelper2({
     const intersects = raycaster.current.intersectObjects(testObjects);
     // reverting colors to defaults
     for (const object of testObjects) {
-      object.material.color.set('#00ff00')
+      object.material.color.set('#00ff00');
     }
     // changing colors if intersects
     for (const intersect of intersects) {
-      intersect.object.material.color.set('#ff0000')
+      intersect.object.material.color.set('#ff0000');
     }
   });
   return null;
@@ -142,33 +155,61 @@ function RayCasterHelper({
   raycaster,
   spheres: { sphere1, sphere2, sphere3 }
 }) {
-  useFrame(({mouse, camera}) => {
+  /**
+   * The Witness Variable => contains if there is a hovered object
+   * - If an object intersects 🟢, but there wasn't one before it, a mouseenter happens
+   * - If no object intersects 🔴, but there was one before it, a mouseleave happens
+   */
+  let currentIntersect = null;
+
+  useFrame(({ mouse, camera }) => {
     // attaching raycaster to camera and mouse
-    raycaster.current.setFromCamera(mouse, camera)
+    raycaster.current.setFromCamera(mouse, camera);
 
     // casting the ray
     const testObjects = [sphere1.current, sphere2.current, sphere3.current];
     const intersects = raycaster.current.intersectObjects(testObjects);
+
     // reverting colors to defaults
     for (const object of testObjects) {
-      object.material.color.set('#00ff00')
+      object.material.color.set('#00ff00');
     }
     // changing colors if intersects
     for (const intersect of intersects) {
-      intersect.object.material.color.set('#0000ff')
+      intersect.object.material.color.set('#0000ff');
     }
-  })
+
+    // mouse events (enter | leave)
+    if (intersects.length) {
+      if (!currentIntersect) {
+        console.log('mouse enter');
+      }
+      currentIntersect = intersects[0]; // or simply equals any truthy value
+    } else {
+      if (currentIntersect) {
+        console.log('mouse leave');
+      }
+      currentIntersect = null;
+    }
+  });
+
+  // one click event for all intersectable objects
+  window.addEventListener('click', () => {
+    currentIntersect && console.log('SIMULATION', currentIntersect.object.name);
+  });
+
+  // no JSX here
   return null;
 }
 
 // SPHERE MOTION
-function SphereMotion({spheres: {sphere1, sphere2, sphere3}}) {
-  useFrame(({clock: {elapsedTime}}) => {
+function SphereMotion({ spheres: { sphere1, sphere2, sphere3 } }) {
+  useFrame(({ clock: { elapsedTime } }) => {
     // tan is AWESOME 😲
     sphere1.current.position.y = Math.tan(elapsedTime * 0.6) * 0.25;
     sphere2.current.position.y = Math.tan(elapsedTime * 1) * 0.25;
     sphere3.current.position.y = Math.tan(elapsedTime * 1.4) * 0.25;
-  })
+  });
   return null;
 }
 
