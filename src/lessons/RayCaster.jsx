@@ -20,7 +20,7 @@ import DatGui, {
  *  1. detect wall in front of player
  *  2. test if laser gun hit something
  *  3. test if something is currently under the mouse to simulate mouse events
- *  4. show an alert message if the spaceship is heading toward a planet 
+ *  4. show an alert message if the spaceship is heading toward a planet
  */
 
 /**
@@ -29,19 +29,19 @@ import DatGui, {
 function RayCaster() {
   // refs
   const plane = useRef();
-  const sphere = useRef();
+  const raycaster = useRef();
 
   // state
   const [opts, setOpts] = useState({
     datGuiWidth: 350
-  })
+  });
 
   return (
     <div style={{ height: '100vh', backgroundColor: 'rgb(0,0,0)' }}>
       <Canvas
         camera={{
           fov: 45,
-          position: [0, 3, 3],
+          position: [5, 5, 5],
           near: 0.1,
           far: 2000
         }}
@@ -68,7 +68,16 @@ function RayCaster() {
           <sphereBufferGeometry args={[0.5]} />
           <meshBasicMaterial color={'seagreen'} />
         </mesh>
-        
+
+        {/* RAYCASTER */}
+        <raycaster
+          ref={raycaster}
+          args={[
+            [0, 0, 5], // origin
+            [0, 0, -5] // direction
+          ]}
+        />
+        <RayCasterHelper raycaster={raycaster} />
       </Canvas>
       <DebugPanel opts={opts} setOpts={setOpts} />
     </div>
@@ -77,22 +86,31 @@ function RayCaster() {
 
 export default RayCaster;
 
+function RayCasterHelper({ raycaster }) {
+  useFrame(({ clock: { elapsedTime } }) => {
+    if (elapsedTime > 1 && elapsedTime < 2) {
+      console.log(raycaster.current);
+    }
+  });
+  return null;
+}
+
 function DebugPanel({ opts, setOpts }) {
   return (
-      <DatGui
-        data={opts}
-        onUpdate={setOpts}
-        style={{ width: `${opts.datGuiWidth}px` }}
-      >
-        <DatFolder closed={false} title="Panel">
-          <DatNumber
-            label="Panel Width"
-            path="datGuiWidth"
-            min={300}
-            max={500}
-            step={1}
-          />
-        </DatFolder>        
-      </DatGui>
+    <DatGui
+      data={opts}
+      onUpdate={setOpts}
+      style={{ width: `${opts.datGuiWidth}px` }}
+    >
+      <DatFolder closed={false} title="Panel">
+        <DatNumber
+          label="Panel Width"
+          path="datGuiWidth"
+          min={300}
+          max={500}
+          step={1}
+        />
+      </DatFolder>
+    </DatGui>
   );
 }

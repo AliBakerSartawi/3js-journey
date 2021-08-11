@@ -10,9 +10,9 @@ import { Loader } from '@react-three/drei';
 // import Text from './lessons/Text';
 // import BakingShadows from './lessons/BakingShadows';
 // import HauntedHouse from './lessons/HauntedHouse';
-import Particles from './lessons/Particles';
-import GalaxyGenerator from './lessons/GalaxyGenerator';
-import Template from './lessons/Template';
+// import Particles from './lessons/Particles';
+// import GalaxyGenerator from './lessons/GalaxyGenerator';
+// import Template from './lessons/Template';
 import RayCaster from './lessons/RayCaster';
 
 function App() {
