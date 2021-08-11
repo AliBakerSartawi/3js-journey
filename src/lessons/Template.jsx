@@ -18,6 +18,9 @@ import DatGui, {
   DatBoolean
 } from 'react-dat-gui';
 
+/**
+ * Plane
+ */
 function Plane(props) {
   const [plane] = usePlane(() => ({
     rotation: [-Math.PI / 2, 0, 0],
@@ -35,8 +38,20 @@ function Plane(props) {
   );
 }
 
+/**
+ * Box
+ */
 function Box(props) {
-  const [box] = useBox(() => ({ mass: 1, position: [0, 5, 0], ...props }));
+  const [box] = useBox(() => ({
+    mass: 1,
+    position: [0, 5, 0],
+    rotation: [
+      (Math.random() * Math.PI) / 2,
+      (Math.random() * Math.PI) / 2,
+      (Math.random() * Math.PI) / 2
+    ],
+    ...props
+  }));
   return (
     <mesh
       ref={box}

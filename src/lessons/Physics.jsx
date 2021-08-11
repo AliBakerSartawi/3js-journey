@@ -40,14 +40,16 @@ function Plane(props) {
 
 /**
  * Box
- * @param {{mass, position, rotation}} props
- * @returns
  */
 function Box(props) {
   const [box] = useBox(() => ({
     mass: 1,
     position: [0, 5, 0],
-    rotation: [Math.PI / 4, Math.PI / 4, 0],
+    rotation: [
+      (Math.random() * Math.PI) / 2,
+      (Math.random() * Math.PI) / 2,
+      (Math.random() * Math.PI) / 2
+    ],
     ...props
   }));
   return (
