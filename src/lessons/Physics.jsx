@@ -24,6 +24,7 @@ import DatGui, {
 function Plane(props) {
   const [plane] = usePlane(() => ({
     rotation: [-Math.PI / 2, 0, 0],
+    position: [0, 0, 0],
     ...props
   }));
   return (
@@ -32,7 +33,7 @@ function Plane(props) {
       receiveShadow
       // rotation-x={-Math.PI / 2}
     >
-      <planeBufferGeometry args={[10, 10]} />
+      <planeBufferGeometry args={[25, 25]} />
       <meshStandardMaterial color={'grey'} />
     </mesh>
   );
@@ -44,7 +45,7 @@ function Plane(props) {
 function Box(props) {
   const [box] = useBox(() => ({
     mass: 1,
-    position: [0, 5, 0],
+    position: [0, props.y, 0],
     rotation: [
       (Math.random() * Math.PI) / 2,
       (Math.random() * Math.PI) / 2,
@@ -58,7 +59,7 @@ function Box(props) {
       castShadow
       // position={[0, 5, 0]}
     >
-      <boxBufferGeometry args={[1, 1]} />
+      <boxBufferGeometry args={[1, 1, 1]} />
       <meshStandardMaterial color={'lightgrey'} />
     </mesh>
   );
@@ -74,12 +75,12 @@ function Template() {
   });
 
   return (
-    <div style={{ height: '100vh', backgroundColor: 'rgb(0,0,0)' }}>
+    <div style={{ height: '100vh', backgroundColor: 'black' }}>
       <Canvas
         shadows
         camera={{
           fov: 45,
-          position: [5, 3, 5],
+          position: [15, 10, 15],
           near: 0.1,
           far: 2000
         }}
@@ -87,9 +88,14 @@ function Template() {
         <axesHelper args={[10]} />
         <OrbitControls />
 
-        <Physics>
+        <Physics 
+        // gravity={[0, -10, 0]}
+         >
           <Plane />
-          <Box />
+          <Box y={3} />
+          <Box y={4} />
+          <Box y={5} />
+          <Box y={6} />
         </Physics>
 
         <Lights />
