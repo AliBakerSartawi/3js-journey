@@ -72,6 +72,7 @@ function RayCaster() {
           <sphereBufferGeometry args={[0.5]} />
           <meshBasicMaterial color={'seagreen'} />
         </mesh>
+        <SphereMotion spheres={{ sphere1, sphere2, sphere3 }} />
 
         {/* RAYCASTER */}
         <raycaster
@@ -97,10 +98,10 @@ function RayCaster() {
             // or instead of normalizing, make it (1, 0, 0)
           ]}
         />
-        <RayCasterHelper2
-          raycaster={raycaster}
+        {/* <RayCasterHelper2
+          raycaster={raycaster2}
           spheres={{ sphere1, sphere2, sphere3 }}
-        />
+        /> */}
       </Canvas>
       <DebugPanel opts={opts} setOpts={setOpts} />
     </div>
@@ -109,15 +110,13 @@ function RayCaster() {
 
 export default RayCaster;
 
+// INTERSECTIONS
 function RayCasterHelper2({
   raycaster,
   spheres: { sphere1, sphere2, sphere3 }
 }) {
   useFrame(({ clock: { elapsedTime } }) => {
-    // tan is AWESOME 😲
-    sphere1.current.position.y = Math.tan(elapsedTime * 0.6) * 0.25;
-    sphere2.current.position.y = Math.tan(elapsedTime * 1) * 0.25;
-    sphere3.current.position.y = Math.tan(elapsedTime * 1.4) * 0.25;
+    
 
     // const intersect1 = raycaster.current.intersectObject(sphere1.current);
     // intersect1.length > 0
@@ -138,14 +137,42 @@ function RayCasterHelper2({
   return null;
 }
 
+// MOUSE HOVER
 function RayCasterHelper({
   raycaster,
   spheres: { sphere1, sphere2, sphere3 }
 }) {
-  
+  useFrame(({mouse, camera}) => {
+    // attaching raycaster to camera and mouse
+    raycaster.current.setFromCamera(mouse, camera)
+
+    // casting the ray
+    const testObjects = [sphere1.current, sphere2.current, sphere3.current];
+    const intersects = raycaster.current.intersectObjects(testObjects);
+    // reverting colors to defaults
+    for (const object of testObjects) {
+      object.material.color.set('#00ff00')
+    }
+    // changing colors if intersects
+    for (const intersect of intersects) {
+      intersect.object.material.color.set('#0000ff')
+    }
+  })
   return null;
 }
 
+// SPHERE MOTION
+function SphereMotion({spheres: {sphere1, sphere2, sphere3}}) {
+  useFrame(({clock: {elapsedTime}}) => {
+    // tan is AWESOME 😲
+    sphere1.current.position.y = Math.tan(elapsedTime * 0.6) * 0.25;
+    sphere2.current.position.y = Math.tan(elapsedTime * 1) * 0.25;
+    sphere3.current.position.y = Math.tan(elapsedTime * 1.4) * 0.25;
+  })
+  return null;
+}
+
+// DAT.GUI
 function DebugPanel({ opts, setOpts }) {
   return (
     <DatGui
