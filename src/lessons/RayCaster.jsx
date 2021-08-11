@@ -30,6 +30,7 @@ function RayCaster() {
   // refs
   const plane = useRef();
   const raycaster = useRef();
+  const raycaster2 = useRef();
   const sphere1 = useRef();
   const sphere2 = useRef();
   const sphere3 = useRef();
@@ -44,7 +45,7 @@ function RayCaster() {
       <Canvas
         camera={{
           fov: 45,
-          position: [5, 5, 5],
+          position: [7, 2, 7],
           near: 0.1,
           far: 2000
         }}
@@ -85,6 +86,21 @@ function RayCaster() {
           raycaster={raycaster}
           spheres={{ sphere1, sphere2, sphere3 }}
         />
+
+        {/* RAYCASTER 2 */}
+        <raycaster
+          ref={raycaster2}
+          // these args must be passed as new instances of Vector3 manually
+          args={[
+            new THREE.Vector3(-3, 0, 0), // origin
+            new THREE.Vector3(10, 0, 0).normalize() // direction, must be normalized
+            // or instead of normalizing, make it (1, 0, 0)
+          ]}
+        />
+        <RayCasterHelper2
+          raycaster={raycaster}
+          spheres={{ sphere1, sphere2, sphere3 }}
+        />
       </Canvas>
       <DebugPanel opts={opts} setOpts={setOpts} />
     </div>
@@ -93,31 +109,40 @@ function RayCaster() {
 
 export default RayCaster;
 
+function RayCasterHelper2({
+  raycaster,
+  spheres: { sphere1, sphere2, sphere3 }
+}) {
+  useFrame(({ clock: { elapsedTime } }) => {
+    // tan is AWESOME 😲
+    sphere1.current.position.y = Math.tan(elapsedTime * 0.6) * 0.25;
+    sphere2.current.position.y = Math.tan(elapsedTime * 1) * 0.25;
+    sphere3.current.position.y = Math.tan(elapsedTime * 1.4) * 0.25;
+
+    // const intersect1 = raycaster.current.intersectObject(sphere1.current);
+    // intersect1.length > 0
+    //   ? sphere1.current.material.color.set('crimson')
+    //   : sphere1.current.material.color.set('seagreen');
+
+    const testObjects = [sphere1.current, sphere2.current, sphere3.current];
+    const intersects = raycaster.current.intersectObjects(testObjects);
+    // reverting colors to defaults
+    for (const object of testObjects) {
+      object.material.color.set('#00ff00')
+    }
+    // changing colors if intersects
+    for (const intersect of intersects) {
+      intersect.object.material.color.set('#ff0000')
+    }
+  });
+  return null;
+}
+
 function RayCasterHelper({
   raycaster,
   spheres: { sphere1, sphere2, sphere3 }
 }) {
-  // useFrame(({ clock: { elapsedTime } }) => {
-  //   if (elapsedTime > 1 && elapsedTime < 1.2) {
-  //     console.log(raycaster.current);
-  //   }
-  // });
-
-  useEffect(() => {
-    // raycaster.current.set(
-    //   new THREE.Vector3(0,0,5), // origin
-    //   new THREE.Vector3(0,0,-5).normalize() // direction, must be normalized
-    // )
-    console.log(raycaster.current);
-    const intersect = raycaster.current.intersectObject(sphere1.current);
-    console.log(intersect);
-    const intersects = raycaster.current.intersectObjects([
-      sphere1.current,
-      sphere2.current,
-      sphere3.current
-    ]);
-    console.log(intersects);
-  }, [raycaster, sphere1, sphere2, sphere3]);
+  
   return null;
 }
 
