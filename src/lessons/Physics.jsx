@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
+// import { Physics, usePlane, useBox } from '@react-three/cannon';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 
@@ -17,14 +18,34 @@ import DatGui, {
   DatBoolean
 } from 'react-dat-gui';
 
+function Plane() {
+  // const [plane] = usePlane();
+  return (
+    <mesh
+    //  ref={plane}
+      receiveShadow rotation-x={-Math.PI / 2}>
+      <planeBufferGeometry args={[10, 10]} />
+      <meshStandardMaterial color={'grey'} />
+    </mesh>
+  );
+}
+
+function Box() {
+  // const [box] = useBox()
+  return (
+    <mesh 
+    // ref={box} 
+    castShadow position={[0, 5, 0]}>
+      <boxBufferGeometry args={[1, 1]} />
+      <meshStandardMaterial color={'lightgrey'} />
+    </mesh>
+  );
+}
+
 /**
  * Main Component
  */
-function Physics() {
-  // refs
-  const plane = useRef();
-  const cube = useRef();
-
+function Template() {
   // state
   const [opts, setOpts] = useState({
     datGuiWidth: 350
@@ -44,17 +65,11 @@ function Physics() {
         <axesHelper args={[10]} />
         <OrbitControls />
 
-        {/* PLANE */}
-        <mesh ref={plane} receiveShadow rotation-x={-Math.PI / 2}>
-          <planeBufferGeometry args={[10, 10]} />
-          <meshStandardMaterial color={'grey'} />
-        </mesh>
+          <Plane />
+          <Box />
+        {/* <Physics>
+        </Physics> */}
 
-        {/* CUBE */}
-        <mesh ref={cube} castShadow position-y={0.5}>
-          <boxBufferGeometry args={[1, 1]} />
-          <meshStandardMaterial color={'lightgrey'} />
-        </mesh>
         <Lights />
       </Canvas>
       <DebugPanel opts={opts} setOpts={setOpts} />
@@ -62,7 +77,7 @@ function Physics() {
   );
 }
 
-export default Physics;
+export default Template;
 
 function Lights() {
   return (
