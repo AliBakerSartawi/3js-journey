@@ -47,13 +47,13 @@ function Template() {
         {/* PLANE */}
         <mesh ref={plane} receiveShadow rotation-x={-Math.PI / 2}>
           <planeBufferGeometry args={[10, 10]} />
-          <meshStandardMaterial color={'orangered'} />
+          <meshStandardMaterial color={'grey'} />
         </mesh>
 
         {/* CUBE */}
         <mesh ref={cube} castShadow position-y={0.5}>
           <boxBufferGeometry args={[1, 1]} />
-          <meshStandardMaterial color={'royalblue'} />
+          <meshStandardMaterial color={'lightgrey'} />
         </mesh>
         <Lights />
       </Canvas>
