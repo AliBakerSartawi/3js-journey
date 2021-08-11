@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
@@ -30,6 +30,9 @@ function RayCaster() {
   // refs
   const plane = useRef();
   const raycaster = useRef();
+  const sphere1 = useRef();
+  const sphere2 = useRef();
+  const sphere3 = useRef();
 
   // state
   const [opts, setOpts] = useState({
@@ -52,19 +55,19 @@ function RayCaster() {
         {/* PLANE */}
         <mesh ref={plane} rotation-x={-Math.PI / 2}>
           <planeBufferGeometry args={[10, 10]} />
-          <meshBasicMaterial color={'lightgreen'} />
+          <meshBasicMaterial wireframe color={'lightgreen'} />
         </mesh>
 
         {/* SPHERES */}
-        <mesh position={[0, 0.5, -2]}>
+        <mesh ref={sphere1} position={[-2, 0, 0]}>
           <sphereBufferGeometry args={[0.5]} />
           <meshBasicMaterial color={'seagreen'} />
         </mesh>
-        <mesh position={[0, 0.5, 0]}>
+        <mesh ref={sphere2} position={[0, 0, 0]}>
           <sphereBufferGeometry args={[0.5]} />
           <meshBasicMaterial color={'seagreen'} />
         </mesh>
-        <mesh position={[0, 0.5, 2]}>
+        <mesh ref={sphere3} position={[2, 0, 0]}>
           <sphereBufferGeometry args={[0.5]} />
           <meshBasicMaterial color={'seagreen'} />
         </mesh>
@@ -72,12 +75,16 @@ function RayCaster() {
         {/* RAYCASTER */}
         <raycaster
           ref={raycaster}
+          // these args must be passed as new instances of Vector3 manually
           args={[
-            [0, 0, 5], // origin
-            [0, 0, -5] // direction
+            new THREE.Vector3(-3, 0, 0), // origin
+            new THREE.Vector3(10, 0, 0).normalize() // direction, must be normalized
           ]}
         />
-        <RayCasterHelper raycaster={raycaster} />
+        <RayCasterHelper
+          raycaster={raycaster}
+          spheres={{ sphere1, sphere2, sphere3 }}
+        />
       </Canvas>
       <DebugPanel opts={opts} setOpts={setOpts} />
     </div>
@@ -86,12 +93,31 @@ function RayCaster() {
 
 export default RayCaster;
 
-function RayCasterHelper({ raycaster }) {
-  useFrame(({ clock: { elapsedTime } }) => {
-    if (elapsedTime > 1 && elapsedTime < 2) {
-      console.log(raycaster.current);
-    }
-  });
+function RayCasterHelper({
+  raycaster,
+  spheres: { sphere1, sphere2, sphere3 }
+}) {
+  // useFrame(({ clock: { elapsedTime } }) => {
+  //   if (elapsedTime > 1 && elapsedTime < 1.2) {
+  //     console.log(raycaster.current);
+  //   }
+  // });
+
+  useEffect(() => {
+    // raycaster.current.set(
+    //   new THREE.Vector3(0,0,5), // origin
+    //   new THREE.Vector3(0,0,-5).normalize() // direction, must be normalized
+    // )
+    console.log(raycaster.current);
+    const intersect = raycaster.current.intersectObject(sphere1.current);
+    console.log(intersect);
+    const intersects = raycaster.current.intersectObjects([
+      sphere1.current,
+      sphere2.current,
+      sphere3.current
+    ]);
+    console.log(intersects);
+  }, [raycaster, sphere1, sphere2, sphere3]);
   return null;
 }
 
