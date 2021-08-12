@@ -19,4 +19,14 @@
     useGLTF.preload('../../duck/Duck.gltf')
     ```
 
+  - Or even copy the original files to the `src` directory
+
+    ```js
+    // in Model component
+    const { nodes, materials } = useGLTF('./duck/Duck.gltf')
+
+    // end of file
+    useGLTF.preload('./duck/Duck.gltf')
+    ```
+
   - And happy hacking!

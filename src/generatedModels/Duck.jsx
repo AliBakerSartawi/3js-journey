@@ -8,7 +8,7 @@ import { useGLTF, PerspectiveCamera } from '@react-three/drei'
 export default function Model(props) {
   const group = useRef()
   // fix path to public folder
-  const { nodes, materials } = useGLTF('../../duck/Duck.gltf')
+  const { nodes, materials } = useGLTF('./duck/Duck.gltf')
   return (
     <group ref={group} {...props} dispose={null}>
       <group scale={0.01}>
@@ -27,4 +27,4 @@ export default function Model(props) {
 }
 
 // fix path to public folder
-useGLTF.preload('../../duck/Duck.gltf')
+useGLTF.preload('./duck/Duck.gltf')
