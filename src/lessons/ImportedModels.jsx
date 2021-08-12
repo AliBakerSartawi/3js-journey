@@ -29,8 +29,12 @@ import FoxModel from '../generatedModels/Fox';
  * One file only in binary / usually lighter / hard to alter its data
  *
  * GLTF-Draco Structure ⬇️
+ * Draco is a compression algorithm developed by Google (open source)
  * Like GLTF, but buffer data is compressed using the Draco Algorithm
  * Much lighter
+ * Site => https://google.github.io/draco/
+ * GitHub => https://github.com/google/draco
+ * Using Web Assembly, the Draco decoder can run in worker, increasing performance significantly
  *
  * GLTF-Embedded Structure ⬇️
  * One file only in JSON / heaviest type with structure and buffer in JSON
