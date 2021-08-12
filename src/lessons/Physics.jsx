@@ -4,6 +4,7 @@ import { Physics, useBox, usePlane, useSphere } from '@react-three/cannon';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 import { useControls } from 'leva';
+import hit from '../sounds/hit.mp3'
 
 /**
  * THREE.js rendering is on GPU
@@ -11,16 +12,37 @@ import { useControls } from 'leva';
  */
 
 /**
+ * Hit Sound
+ */
+const hitSound = new Audio(hit)
+function playHitSound(collision) {
+  // impact strength => to remove unnecessary repetition
+  const impact = collision.contact.impactVelocity
+  const impactVolume = impact > 10 ? 1 : impact / 10
+  
+  if (impact > 1) { // or 1.5
+    // reset sound if there is a new collision before the previous sound ended
+    // if not reset, the current collision sound will be delayed until the previous ends
+    hitSound.volume = impactVolume / 2 // or Math.random()
+    hitSound.currentTime = 0
+    hitSound.play()
+  }
+}
+
+/**
  * Plane
  */
 function Plane({ position, rotation, color }) {
   const { receiveShadow } = useControls({ receiveShadow: true });
-  const [plane] = usePlane(() => ({
+  const [plane, api] = usePlane(() => ({
     mass: 0,
     type: 'Static', // if mass is 0, type defaults automatically to static
     rotation,
     position,
-    args: [25, 25]
+    args: [25, 25],
+    // onCollide: e => {
+    //   playHitSound(e)
+    // }
     // // no need for material here, just add it defaultContactMaterial to Physics and that's enough for most projects
     // material: 'concrete',
     // material: {
@@ -80,7 +102,12 @@ function Box({ geometry, color, x, y, z }) {
       (Math.random() * Math.PI) / 2,
       (Math.random() * Math.PI) / 2
     ],
-    args: [random, random, random]
+    args: [random, random, random],
+
+    // placing a sound on boxes collision will result in a funny radio static effect, don't do it
+    // onCollide: (e) => {
+    //   playHitSound()
+    // }
   }));
 
   useFrame(({ clock: { elapsedTime } }) => {
@@ -107,7 +134,7 @@ function Box({ geometry, color, x, y, z }) {
 
 function Boxes() {
   const { boxes } = useControls({
-    boxes: { value: 50, min: 50, max: 100, step: 1 }
+    boxes: { value: 50, min: 1, max: 100, step: 1 }
   });
   const geometry = new THREE.BoxBufferGeometry(1, 1, 1);
   return (
@@ -142,7 +169,10 @@ function Sphere(props) {
   const [sphere, api] = useSphere(() => ({
     mass: 1,
     args: [1],
-    position: [0, 3, 0]
+    position: [0, 3, 0],
+    onCollide: (e) => {
+      playHitSound(e)
+    }
   }));
 
   useFrame(({ clock: { elapsedTime } }) => {
@@ -175,7 +205,7 @@ function Sphere(props) {
 /**
  * Main Component
  */
-function Template() {
+function PhysicsComponent() {
   // state
   const [opts, setOpts] = useState({
     datGuiWidth: 350
@@ -233,7 +263,7 @@ function Template() {
   );
 }
 
-export default Template;
+export default PhysicsComponent;
 
 function Lights() {
   return (
