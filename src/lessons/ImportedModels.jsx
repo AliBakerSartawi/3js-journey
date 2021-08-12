@@ -3,8 +3,8 @@ import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { Physics, useBox, usePlane, useSphere } from '@react-three/cannon';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
-import { useControls } from 'leva';
-import Duck from '../generatedModels/Duck';
+import { useControls, Leva } from 'leva';
+import DuckModel from '../generatedModels/Duck';
 
 /**
  * GLTF Models ⬇️
@@ -18,30 +18,32 @@ import Duck from '../generatedModels/Duck';
  * 
  * Note: OS might hide GLTF file extensions, use code editor to verify 
  * 
- * GLTF Structure Example ⬇️
+ * GLTF Structure ⬇️
  * Duck.gltf => JSON containing cameras, lights, materials & object transformation
  * Duck0.bin => binary that usually contains geometries (vertices positions, UV coordinates, normal, colors, etc...)
  * DuckCM.png => textures
  * 
- * GLTF-Binary Structure Example ⬇️
- * Only one file / usually lighter / hard to alter its data
+ * GLTF-Binary Structure ⬇️
+ * One file only in binary / usually lighter / hard to alter its data
+ * 
+ * GLTF-Draco Structure ⬇️
+ * Like GLTF, but buffer data is compressed using the Draco Algorithm
+ * Much lighter
+ * 
+ * GLTF-Embedded Structure ⬇️
+ * One file only in JSON / heaviest type with structure and buffer in JSON
  */
 
 /**
- * Plane
+ * Duck Component
  */
-function Plane(props) {
-  return (
-    <mesh
-      // ref={plane}
-      receiveShadow
-      rotation-x={-Math.PI / 2}
-    >
-      <planeBufferGeometry args={[25, 25]} />
-      <meshStandardMaterial color={'grey'} />
-    </mesh>
-  );
+function Duck() {
+  const { Duck_Scale: scale } = useControls({
+    Duck_Scale: [1, 1, 1]
+  })
+  return <DuckModel scale={scale} />
 }
+
 
 /**
  * Main Component
@@ -69,11 +71,28 @@ function ImportedModels() {
 
         <Lights />
       </Canvas>
+      <Leva oneLineLabels />
     </div>
   );
 }
 
 export default ImportedModels;
+
+/**
+ * Plane
+ */
+ function Plane(props) {
+  return (
+    <mesh
+      // ref={plane}
+      receiveShadow
+      rotation-x={-Math.PI / 2}
+    >
+      <planeBufferGeometry args={[25, 25]} />
+      <meshStandardMaterial color={'grey'} />
+    </mesh>
+  );
+}
 
 function Lights() {
   return (
