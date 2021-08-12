@@ -38,9 +38,9 @@ function App() {
         {/* 🌟 GalaxyGenerator has a functional react-dat-gui panel */}
         {/* <GalaxyGenerator /> */}
         {/* <RayCaster /> */}
-        {/* ➗ Physics with Leva GUI */}
-        <Physics />
-        {/* <ImportedModels /> */}
+        {/* ➗ Physics with Leva GUI and 🔉 collision sounds */}
+        {/* <Physics /> */}
+        <ImportedModels />
       </Suspense>
     </div>
   );
