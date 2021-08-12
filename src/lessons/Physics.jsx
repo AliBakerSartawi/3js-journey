@@ -69,7 +69,7 @@ function PlaneAndWalls() {
 /**
  * Box
  */
-function Box({ color, x, y, z }) {
+function Box({ geometry, color, x, y, z }) {
   const random = Math.random();
   const randomForce = (random - 0.5) * 2;
   const [box, api] = useBox(() => ({
@@ -83,7 +83,7 @@ function Box({ color, x, y, z }) {
     args: [random, random, random]
   }));
 
-  useFrame(({clock: {elapsedTime}}) => {
+  useFrame(({ clock: { elapsedTime } }) => {
     // // mimicking wind
     // api.applyForce([randomForce, 0, randomForce], [0, 0, 0]);
     api.applyForce(
@@ -93,8 +93,13 @@ function Box({ color, x, y, z }) {
   });
 
   return (
-    <mesh ref={box} castShadow>
-      <boxBufferGeometry args={[random, random, random]} />
+    <mesh
+      ref={box}
+      castShadow
+      geometry={geometry}
+      scale={[random, random, random]}
+    >
+      {/* <boxBufferGeometry args={[random, random, random]} /> */}
       <meshStandardMaterial color={color} />
     </mesh>
   );
@@ -104,6 +109,7 @@ function Boxes() {
   const { boxes } = useControls({
     boxes: { value: 50, min: 50, max: 100, step: 1 }
   });
+  const geometry = new THREE.BoxBufferGeometry(1, 1, 1);
   return (
     <>
       {new Array(boxes).fill(1).map((box, i) => {
@@ -114,6 +120,7 @@ function Boxes() {
         return (
           <Box
             key={Math.random() * i}
+            geometry={geometry}
             x={x}
             y={i + 3}
             z={z}
@@ -129,6 +136,9 @@ function Boxes() {
  * Sphere
  */
 function Sphere(props) {
+  const { sphereSpeed } = useControls({
+    sphereSpeed: { value: 10, min: 1, max: 50, step: 0.1 }
+  });
   const [sphere, api] = useSphere(() => ({
     mass: 1,
     args: [1],
@@ -137,7 +147,11 @@ function Sphere(props) {
 
   useFrame(({ clock: { elapsedTime } }) => {
     api.applyForce(
-      [Math.sin(elapsedTime) * 10, 0, Math.cos(elapsedTime) * 10],
+      [
+        Math.sin(elapsedTime) * sphereSpeed,
+        0,
+        Math.cos(elapsedTime) * sphereSpeed
+      ],
       [0, 0, 0]
     );
   });
@@ -197,6 +211,11 @@ function Template() {
             // if > 1, bounce will be higher than gravity (higher than original position if object is falling)
             restitution: 0.7
           }}
+          // Naive will test a body with all other bodies on each collision
+          // SAP (sweep and prune) tests bodies on arbitrary aces during multiple steps
+          // SAP is way better for performance
+          // ... but, if object is moving too fast, it might phase through
+          broadphase={'SAP'}
         >
           {/* plane and walls */}
           <PlaneAndWalls />
