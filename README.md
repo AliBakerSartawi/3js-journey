@@ -34,3 +34,8 @@
   - Or even simply `duck/Duck.gltf`
 
   - And happy hacking!
+  
+  - ## Draco
+    - Converting the **Draco** compressed version of the `gltf` can be rewarding, as it has a much smaller size in the `public` directory
+
+
