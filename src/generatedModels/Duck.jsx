@@ -21,7 +21,7 @@ export default function Model(props) {
           position={[400.11, 463.26, -431.08]}
           rotation={[-2.31, 0.57, 2.61]}
         /> */}
-        <mesh geometry={nodes.LOD3spShape.geometry} material={materials['blinn3-fx']} />
+        <mesh castShadow geometry={nodes.LOD3spShape.geometry} material={materials['blinn3-fx']} />
       </group>
     </group>
   )

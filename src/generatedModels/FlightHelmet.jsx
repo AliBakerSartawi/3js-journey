@@ -10,12 +10,12 @@ export default function Model(props) {
   const { nodes, materials } = useGLTF('./flightHelmet/FlightHelmet.gltf')
   return (
     <group ref={group} {...props} dispose={null}>
-      <mesh geometry={nodes.Hose_low.geometry} material={materials.HoseMat} />
-      <mesh geometry={nodes.RubberWood_low.geometry} material={materials.RubberWoodMat} />
-      <mesh geometry={nodes.GlassPlastic_low.geometry} material={materials.GlassPlasticMat} />
-      <mesh geometry={nodes.MetalParts_low.geometry} material={materials.MetalPartsMat} />
-      <mesh geometry={nodes.LeatherParts_low.geometry} material={materials.LeatherPartsMat} />
-      <mesh geometry={nodes.Lenses_low.geometry} material={materials.LensesMat} />
+      <mesh castShadow geometry={nodes.Hose_low.geometry} material={materials.HoseMat} />
+      <mesh castShadow geometry={nodes.RubberWood_low.geometry} material={materials.RubberWoodMat} />
+      <mesh castShadow geometry={nodes.GlassPlastic_low.geometry} material={materials.GlassPlasticMat} />
+      <mesh castShadow geometry={nodes.MetalParts_low.geometry} material={materials.MetalPartsMat} />
+      <mesh castShadow geometry={nodes.LeatherParts_low.geometry} material={materials.LeatherPartsMat} />
+      <mesh castShadow geometry={nodes.Lenses_low.geometry} material={materials.LensesMat} />
     </group>
   )
 }

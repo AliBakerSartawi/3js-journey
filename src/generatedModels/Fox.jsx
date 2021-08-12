@@ -13,7 +13,7 @@ export default function Model(props) {
     <group ref={group} {...props} dispose={null}>
       <group scale={[0.025, 0.025, 0.025]}>
         <primitive object={nodes._rootJoint} />
-        <skinnedMesh geometry={nodes.fox.geometry} material={materials.fox_material} skeleton={nodes.fox.skeleton} />
+        <skinnedMesh castShadow geometry={nodes.fox.geometry} material={materials.fox_material} skeleton={nodes.fox.skeleton} />
       </group>
     </group>
   )
