@@ -18,11 +18,15 @@ import 'react-dat-gui/dist/index.css';
 function Plane(props) {
   const [plane] = usePlane(() => ({
     mass: 0,
-    type: 'Static',
+    type: 'Static', // if mass is 0, type defaults automatically to static
     rotation: [-Math.PI / 2, 0, 0],
     position: [0, 0, 0],
     args: [25, 25],
-    ...props,
+    material: 'concrete'
+    // material: {
+    //   friction: 1, // rub
+    //   restitution: 1, // bounce => default is 0.3 (maybe only in vanilla CANNON)
+    // },
   }));
   return (
     <mesh
@@ -41,7 +45,7 @@ function Plane(props) {
  */
 function Box({ color, x, y, z }) {
   const [box] = useBox(() => ({
-    mass: 1,
+    mass: 0.25,
     position: [x, y, z],
     rotation: [
       (Math.random() * Math.PI) / 2,
@@ -69,14 +73,14 @@ function Sphere(props) {
   const [sphere] = useSphere(() => ({
     mass: 1,
     args: [1],
-    position: [0, .75, 0]
-  }))
+    position: [0, 0.75, 0]
+  }));
   return (
     <mesh castShadow ref={sphere}>
       <sphereBufferGeometry args={[1]} />
       <meshStandardMaterial color={'lightgrey'} />
     </mesh>
-  )
+  );
 }
 
 /**
@@ -103,7 +107,12 @@ function Template() {
         <OrbitControls />
 
         <Physics
-        gravity={[0, -9.82, 0]}
+          // Earth's default gravity constant
+          gravity={[0, -9.82, 0]}
+          defaultContactMaterial={{ 
+            friction: 1, // rub 
+            restitution: 0.01 // bounce => default=0.3, (try 1 && 0.01)
+           }}
         >
           <Plane />
           {/* Raining Boxes */}
