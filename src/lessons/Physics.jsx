@@ -42,16 +42,16 @@ function Plane(props) {
 /**
  * Box
  */
-function Box(props) {
+function Box({ color, y }) {
   const [box] = useBox(() => ({
     mass: 1,
-    position: [0, props.y, 0],
+    position: [0, y, 0],
     rotation: [
       (Math.random() * Math.PI) / 2,
       (Math.random() * Math.PI) / 2,
       (Math.random() * Math.PI) / 2
     ],
-    ...props
+    args: [0.5, 0.5, 0.5]
   }));
   return (
     <mesh
@@ -59,8 +59,8 @@ function Box(props) {
       castShadow
       // position={[0, 5, 0]}
     >
-      <boxBufferGeometry args={[1, 1, 1]} />
-      <meshStandardMaterial color={'lightgrey'} />
+      <boxBufferGeometry args={[0.5, 0.5, 0.5]} />
+      <meshStandardMaterial color={color} />
     </mesh>
   );
 }
@@ -88,14 +88,21 @@ function Template() {
         <axesHelper args={[10]} />
         <OrbitControls />
 
-        <Physics 
+        <Physics
         // gravity={[0, -10, 0]}
-         >
+        >
           <Plane />
-          <Box y={3} />
-          <Box y={4} />
-          <Box y={5} />
-          <Box y={6} />
+          {new Array(25).fill(1).map((box, i) => {
+            const colors = ['lime', 'orange', 'royalblue', 'crimson'];
+            const colorIndex = i % 4;
+            return (
+              <Box
+                key={Math.random() * i}
+                y={i + 3}
+                color={colors[colorIndex]}
+              />
+            );
+          })}
         </Physics>
 
         <Lights />
