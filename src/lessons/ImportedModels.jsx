@@ -1,35 +1,36 @@
-import React, { useRef, useState, useMemo } from 'react';
+import React, { useRef, useState, useMemo, Suspense } from 'react';
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { Physics, useBox, usePlane, useSphere } from '@react-three/cannon';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 import { useControls, Leva } from 'leva';
 import DuckModel from '../generatedModels/Duck';
+import FlightHelmetModel from '../generatedModels/FlightHelmet';
 
 /**
  * GLTF Models ⬇️
  * https://github.com/KhronosGroup/glTF-Sample-Models/tree/master/2.0
- * 
+ *
  * GLTF Types ⬇️
- * GLTF 
- * GLTF-Binary 
- * GLTF-Draco 
+ * GLTF
+ * GLTF-Binary
+ * GLTF-Draco
  * GLTF-Embedded
- * 
- * Note: OS might hide GLTF file extensions, use code editor to verify 
- * 
+ *
+ * Note: OS might hide GLTF file extensions, use code editor to verify
+ *
  * GLTF Structure ⬇️
  * Duck.gltf => JSON containing cameras, lights, materials & object transformation
  * Duck0.bin => binary that usually contains geometries (vertices positions, UV coordinates, normal, colors, etc...)
  * DuckCM.png => textures
- * 
+ *
  * GLTF-Binary Structure ⬇️
  * One file only in binary / usually lighter / hard to alter its data
- * 
+ *
  * GLTF-Draco Structure ⬇️
  * Like GLTF, but buffer data is compressed using the Draco Algorithm
  * Much lighter
- * 
+ *
  * GLTF-Embedded Structure ⬇️
  * One file only in JSON / heaviest type with structure and buffer in JSON
  */
@@ -40,10 +41,19 @@ import DuckModel from '../generatedModels/Duck';
 function Duck() {
   const { Duck_Scale: scale } = useControls({
     Duck_Scale: [1, 1, 1]
-  })
-  return <DuckModel scale={scale} />
+  });
+  return <DuckModel scale={scale} />;
 }
 
+/**
+ * FlightHelmet Component
+ */
+function FlightHelmet() {
+  const { FlightHelmet_Scale: scale } = useControls({
+    FlightHelmet_Scale: [1, 1, 1]
+  });
+  return <FlightHelmetModel scale={scale} />;
+}
 
 /**
  * Main Component
@@ -66,8 +76,9 @@ function ImportedModels() {
         {/* OBJECTS */}
         <Plane />
 
-        {/* MODELS */}
+        {/* MODELS / no need for suspense here as it is provided higher in the tree */}
         <Duck />
+        <FlightHelmet />
 
         <Lights />
       </Canvas>
@@ -81,7 +92,7 @@ export default ImportedModels;
 /**
  * Plane
  */
- function Plane(props) {
+function Plane(props) {
   return (
     <mesh
       // ref={plane}

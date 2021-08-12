@@ -19,7 +19,7 @@
     useGLTF.preload('../../duck/Duck.gltf')
     ```
 
-  - Or even copy the original files to the `src` directory
+  - Another way to reference `public` directory
 
     ```js
     // in Model component
@@ -28,5 +28,7 @@
     // end of file
     useGLTF.preload('./duck/Duck.gltf')
     ```
+
+  - Or even simply `duck/Duck.gltf`
 
   - And happy hacking!
