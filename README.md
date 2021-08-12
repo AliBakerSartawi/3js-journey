@@ -18,3 +18,5 @@
     // end of file
     useGLTF.preload('../../duck/Duck.gltf')
     ```
+
+  - And happy hacking!
