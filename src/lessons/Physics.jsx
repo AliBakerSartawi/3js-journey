@@ -36,7 +36,7 @@ function playHitSound(collision) {
  * Plane
  */
 function Plane({ position, rotation, color }) {
-  const { receiveShadow } = useControls({ receiveShadow: true });
+  const { shadows } = useControls({ shadows: true });
   const [plane, api] = usePlane(() => ({
     mass: 0,
     type: 'Static', // if mass is 0, type defaults automatically to static
@@ -54,7 +54,7 @@ function Plane({ position, rotation, color }) {
     // },
   }));
   return (
-    <mesh ref={plane} receiveShadow={receiveShadow}>
+    <mesh ref={plane} receiveShadow={shadows}>
       <planeBufferGeometry args={[25, 25]} />
       <meshStandardMaterial color={color} />
     </mesh>
@@ -213,11 +213,15 @@ function PhysicsComponent() {
   const [opts, setOpts] = useState({
     datGuiWidth: 350
   });
+  // const [showSphere, setShowSphere] = useState(true)
+  // const [showBoxes, setShowBoxes] = useState(true)
 
-  const { gravity, bounce, friction } = useControls({
-    gravity: { value: -9.82, min: -9.82, max: 0, step: 0.1 }
+  const { gravity, bounce, friction, showSphere, showBoxes } = useControls({
+    gravity: { value: -9.82, min: -9.82, max: 0, step: 0.1 },
     // bounce: { value: 5, min: 0, max: 10, step: 0.1 },
     // friction: { value: 1, min: 0, max: 10, step: 0.1 },
+    showSphere: true,
+    showBoxes: true,
   });
 
   return (
@@ -256,8 +260,8 @@ function PhysicsComponent() {
           {/* plane and walls */}
           <PlaneAndWalls />
           {/* Raining Boxes */}
-          <Boxes />
-          <Sphere />
+          {showBoxes && <Boxes />}
+          {showSphere && <Sphere />}
         </Physics>
 
         <Lights />
