@@ -216,6 +216,9 @@ function Template() {
           // SAP is way better for performance
           // ... but, if object is moving too fast, it might phase through
           broadphase={'SAP'}
+          // allowing sleep will drastically improve performance
+          // while true, won't test slow/non-moving objects
+          allowSleep={true}
         >
           {/* plane and walls */}
           <PlaneAndWalls />
