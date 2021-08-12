@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { Physics, useBox, usePlane, useSphere } from '@react-three/cannon';
 import { OrbitControls } from '@react-three/drei';
@@ -21,8 +21,9 @@ function Plane(props) {
     type: 'Static', // if mass is 0, type defaults automatically to static
     rotation: [-Math.PI / 2, 0, 0],
     position: [0, 0, 0],
-    args: [25, 25],
-    material: 'concrete'
+    args: [25, 25]
+    // // no need for material here, just add it defaultContactMaterial to Physics and that's enough for most projects
+    // material: 'concrete',
     // material: {
     //   friction: 1, // rub
     //   restitution: 1, // bounce => default is 0.3 (maybe only in vanilla CANNON)
@@ -58,7 +59,7 @@ function Box({ color, x, y, z }) {
     <mesh
       ref={box}
       castShadow
-      // position={[0, 5, 0]}
+      receiveShadow
     >
       <boxBufferGeometry args={[0.5, 0.5, 0.5]} />
       <meshStandardMaterial color={color} />
@@ -70,13 +71,16 @@ function Box({ color, x, y, z }) {
  * Sphere
  */
 function Sphere(props) {
-  const [sphere] = useSphere(() => ({
+  const [sphere, api] = useSphere(() => ({
     mass: 1,
     args: [1],
-    position: [0, 0.75, 0]
+    position: [0, 0.75, 0],
   }));
+  useEffect(() => {
+    api.applyLocalForce([0, 500, 0], [0,0,0])
+  }, [api, sphere])
   return (
-    <mesh castShadow ref={sphere}>
+    <mesh castShadow receiveShadow ref={sphere}>
       <sphereBufferGeometry args={[1]} />
       <meshStandardMaterial color={'lightgrey'} />
     </mesh>
@@ -109,10 +113,13 @@ function Template() {
         <Physics
           // Earth's default gravity constant
           gravity={[0, -9.82, 0]}
-          defaultContactMaterial={{ 
-            friction: 1, // rub 
-            restitution: 0.01 // bounce => default=0.3, (try 1 && 0.01)
-           }}
+          defaultContactMaterial={{
+            friction: 1, // rub
+            // restitution === bounce
+            // default=0.3, (try 1 && 0.01)
+            // if > 1, bounce will be higher than gravity (higher than original position if object is falling)
+            restitution: 0.01
+          }}
         >
           <Plane />
           {/* Raining Boxes */}
