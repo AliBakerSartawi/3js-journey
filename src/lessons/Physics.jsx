@@ -4,19 +4,11 @@ import { Physics, useBox, usePlane, useSphere } from '@react-three/cannon';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 import { useControls } from 'leva';
-// import DatGui, {
-//   DatFolder,
-//   DatColor,
-//   DatNumber,
-//   DatSelect,
-//   DatBoolean
-// } from 'react-dat-gui';
-// import 'react-dat-gui/dist/index.css';
 
 /**
  * Plane
  */
-function Plane({ position, rotation, color}) {
+function Plane({ position, rotation, color }) {
   const { receiveShadow } = useControls({ receiveShadow: true });
   const [plane] = usePlane(() => ({
     mass: 0,
@@ -32,11 +24,7 @@ function Plane({ position, rotation, color}) {
     // },
   }));
   return (
-    <mesh
-      ref={plane}
-      receiveShadow={receiveShadow}
-      
-    >
+    <mesh ref={plane} receiveShadow={receiveShadow}>
       <planeBufferGeometry args={[25, 25]} />
       <meshStandardMaterial color={color} />
     </mesh>
@@ -46,33 +34,29 @@ function Plane({ position, rotation, color}) {
 function PlaneAndWalls() {
   return (
     <>
-    {/* PLANE */}
-    <Plane
-      rotation={[-Math.PI / 2, 0, 0]}
-      position={[0, 0, 0]}
-      color={'grey'}
-    />
-    {/* WALLS */}
-    <Plane
-      rotation={[0, 0, 0]}
-      position={[0, 12.5, -12.5]}
-      color={'grey'}
-    />
-    <Plane
-      rotation={[Math.PI, 0, 0]}
-      position={[0, 12.5, 12.5]}
-      color={'grey'}
-    />
-    <Plane
-      rotation={[0, -Math.PI / 2, 0]}
-      position={[12.5, 12.5, 0]}
-      color={'grey'}
-    />
-    <Plane
-      rotation={[0, Math.PI / 2, 0]}
-      position={[-12.5, 12.5, 0]}
-      color={'grey'}
-    />
+      {/* PLANE */}
+      <Plane
+        rotation={[-Math.PI / 2, 0, 0]}
+        position={[0, 0, 0]}
+        color={'grey'}
+      />
+      {/* WALLS */}
+      <Plane rotation={[0, 0, 0]} position={[0, 12.5, -12.5]} color={'grey'} />
+      <Plane
+        rotation={[Math.PI, 0, 0]}
+        position={[0, 12.5, 12.5]}
+        color={'grey'}
+      />
+      <Plane
+        rotation={[0, -Math.PI / 2, 0]}
+        position={[12.5, 12.5, 0]}
+        color={'grey'}
+      />
+      <Plane
+        rotation={[0, Math.PI / 2, 0]}
+        position={[-12.5, 12.5, 0]}
+        color={'grey'}
+      />
     </>
   );
 }
@@ -102,6 +86,31 @@ function Box({ color, x, y, z }) {
       <boxBufferGeometry args={[0.5, 0.5, 0.5]} />
       <meshStandardMaterial color={color} />
     </mesh>
+  );
+}
+
+function Boxes() {
+  const { boxes } = useControls({
+    boxes: { value: 50, min: 50, max: 100, step: 1 }
+  });
+  return (
+    <>
+      {new Array(boxes).fill(1).map((box, i) => {
+        const colors = ['lime', 'orange', 'royalblue', 'crimson'];
+        const colorIndex = i % 4;
+        const x = Math.random() < 0.5 ? 1 : -1;
+        const z = Math.random() < 0.5 ? 1 : -1;
+        return (
+          <Box
+            key={Math.random() * i}
+            x={x}
+            y={i + 3}
+            z={z}
+            color={colors[colorIndex]}
+          />
+        );
+      })}
+    </>
   );
 }
 
@@ -144,9 +153,10 @@ function Template() {
     datGuiWidth: 350
   });
 
-  const { boxes, gravity } = useControls({
-    boxes: { value: 50, min: 50, max: 100, step: 1 },
-    gravity: { value: -9.82, min: -9.82, max: 0, step: 0.1 }
+  const { gravity, bounce, friction } = useControls({
+    gravity: { value: -9.82, min: -9.82, max: 0, step: 0.1 },
+    // bounce: { value: 5, min: 0, max: 10, step: 0.1 },
+    // friction: { value: 1, min: 0, max: 10, step: 0.1 },
   });
 
   return (
@@ -167,7 +177,7 @@ function Template() {
           // Earth's default gravity constant
           gravity={[0, gravity, 0]}
           defaultContactMaterial={{
-            // friction: 1, // rub
+            friction: 1, // rub
             // restitution === bounce
             // default=0.3, (try 1 && 0.01)
             // if > 1, bounce will be higher than gravity (higher than original position if object is falling)
@@ -177,27 +187,12 @@ function Template() {
           {/* plane and walls */}
           <PlaneAndWalls />
           {/* Raining Boxes */}
-          {new Array(boxes).fill(1).map((box, i) => {
-            const colors = ['lime', 'orange', 'royalblue', 'crimson'];
-            const colorIndex = i % 4;
-            const x = Math.random() < 0.5 ? 1 : -1;
-            const z = Math.random() < 0.5 ? 1 : -1;
-            return (
-              <Box
-                key={Math.random() * i}
-                x={x}
-                y={i + 3}
-                z={z}
-                color={colors[colorIndex]}
-              />
-            );
-          })}
+          <Boxes/>
           <Sphere />
         </Physics>
 
         <Lights />
       </Canvas>
-      {/* <DebugPanel opts={opts} setOpts={setOpts} /> */}
     </div>
   );
 }
@@ -216,23 +211,3 @@ function Lights() {
     </>
   );
 }
-
-// function DebugPanel({ opts, setOpts }) {
-//   return (
-//     <DatGui
-//       data={opts}
-//       onUpdate={setOpts}
-//       style={{ width: `${opts.datGuiWidth}px` }}
-//     >
-//       <DatFolder closed={false} title="Panel">
-//         <DatNumber
-//           label="Panel Width"
-//           path="datGuiWidth"
-//           min={300}
-//           max={500}
-//           step={1}
-//         />
-//       </DatFolder>
-//     </DatGui>
-//   );
-// }

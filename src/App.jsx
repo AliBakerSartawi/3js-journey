@@ -38,6 +38,8 @@ function App() {
         {/* GalaxyGenerator has a functional react-dat-gui panel */}
         {/* <GalaxyGenerator /> */}
         {/* <RayCaster /> */}
+
+        {/* Physics with Leva GUI */}
         <Physics />
       </Suspense>
     </div>
