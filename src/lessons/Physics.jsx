@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { Physics, useBox, usePlane, useSphere } from '@react-three/cannon';
 import { OrbitControls } from '@react-three/drei';
@@ -148,31 +148,31 @@ function Box({ geometry, color, x, y, z }) {
   );
 }
 
-function Boxes() {
-  const { boxes } = useControls({
-    boxes: { value: 50, min: 1, max: 100, step: 1 }
-  });
+function Boxes({boxes}) {
   const geometry = new THREE.BoxBufferGeometry(1, 1, 1);
-  return (
-    <>
-      {new Array(boxes).fill(1).map((box, i) => {
-        const colors = ['lime', 'orange', 'royalblue', 'crimson'];
-        const colorIndex = i % 4;
-        const x = Math.random() < 0.5 ? 1 : -1;
-        const z = Math.random() < 0.5 ? 1 : -1;
-        return (
-          <Box
-            key={Math.random() * i}
-            geometry={geometry}
-            x={x}
-            y={i + 3}
-            z={z}
-            color={colors[colorIndex]}
-          />
-        );
-      })}
-    </>
-  );
+  const rainingBoxes = useMemo(() => {
+    return (
+      <>
+        {new Array(boxes).fill(1).map((box, i) => {
+          const colors = ['lime', 'orange', 'royalblue', 'crimson'];
+          const colorIndex = i % 4;
+          const x = Math.random() < 0.5 ? 1 : -1;
+          const z = Math.random() < 0.5 ? 1 : -1;
+          return (
+            <Box
+              key={Math.random() * i}
+              geometry={geometry}
+              x={x}
+              y={i + 3}
+              z={z}
+              color={colors[colorIndex]}
+            />
+          );
+        })}
+      </>
+    );
+  }, [boxes])
+  return rainingBoxes;
 }
 
 /**
@@ -229,8 +229,9 @@ function PhysicsComponent() {
   // const [showSphere, setShowSphere] = useState(true)
   // const [showBoxes, setShowBoxes] = useState(true)
 
-  const { gravity, bounce, friction, showSphere, showBoxes } = useControls({
+  const { gravity, boxes, bounce, friction, showSphere, showBoxes } = useControls({
     gravity: { value: -9.82, min: -9.82, max: 0, step: 0.1 },
+    boxes: { value: 50, min: 1, max: 100, step: 1 },
     // bounce: { value: 5, min: 0, max: 10, step: 0.1 },
     // friction: { value: 1, min: 0, max: 10, step: 0.1 },
     showSphere: true,
@@ -273,7 +274,7 @@ function PhysicsComponent() {
           {/* plane and walls */}
           <PlaneAndWalls />
           {/* Raining Boxes */}
-          {showBoxes && <Boxes />}
+          {showBoxes && <Boxes boxes={boxes} />}
           {showSphere && <Sphere />}
         </Physics>
 

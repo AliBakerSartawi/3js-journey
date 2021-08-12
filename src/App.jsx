@@ -22,7 +22,7 @@ function App() {
     <div className="app">
       <Suspense fallback={<Loader />}>
         {/* TEMPLATE */}
-        <Template />
+        {/* <Template /> */}
 
         {/* 🤓 SCENES */}
         {/* <BasicScene /> */}
@@ -39,7 +39,7 @@ function App() {
         {/* <GalaxyGenerator /> */}
         {/* <RayCaster /> */}
         {/* ➗ Physics with Leva GUI */}
-        {/* <Physics /> */}
+        <Physics />
         {/* <ImportedModels /> */}
       </Suspense>
     </div>
