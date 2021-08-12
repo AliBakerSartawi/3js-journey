@@ -35,6 +35,9 @@ import FoxModel from '../generatedModels/Fox';
  * Site => https://google.github.io/draco/
  * GitHub => https://github.com/google/draco
  * Using Web Assembly, the Draco decoder can run in worker, increasing performance significantly
+ * ❔ When to use => if models are more than a handful of megabytes
+ *    for example: loading might be reduced from 2 seconds to half a second,
+ *    but in that half a second, the computer might freeze, because decoding is expensive  
  *
  * GLTF-Embedded Structure ⬇️
  * One file only in JSON / heaviest type with structure and buffer in JSON
