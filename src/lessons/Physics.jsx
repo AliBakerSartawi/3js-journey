@@ -6,6 +6,11 @@ import * as THREE from 'three';
 import { useControls } from 'leva';
 
 /**
+ * THREE.js rendering is on GPU
+ * But, physics still run on CPU
+ */
+
+/**
  * Plane
  */
 function Plane({ position, rotation, color }) {
@@ -65,6 +70,8 @@ function PlaneAndWalls() {
  * Box
  */
 function Box({ color, x, y, z }) {
+  const random = Math.random();
+  const randomForce = (random - 0.5) * 2;
   const [box, api] = useBox(() => ({
     mass: 0.25,
     position: [x, y, z - 10],
@@ -73,17 +80,21 @@ function Box({ color, x, y, z }) {
       (Math.random() * Math.PI) / 2,
       (Math.random() * Math.PI) / 2
     ],
-    args: [0.5, 0.5, 0.5]
+    args: [random, random, random]
   }));
 
-  useFrame(() => {
-    // mimicking wind
-    api.applyForce([0, 0, 1], [0, 0, 0]);
+  useFrame(({clock: {elapsedTime}}) => {
+    // // mimicking wind
+    // api.applyForce([randomForce, 0, randomForce], [0, 0, 0]);
+    api.applyForce(
+      [-Math.sin(elapsedTime) * 2, 0, -Math.cos(elapsedTime) * 2],
+      [0, 0, 0]
+    );
   });
 
   return (
     <mesh ref={box} castShadow>
-      <boxBufferGeometry args={[0.5, 0.5, 0.5]} />
+      <boxBufferGeometry args={[random, random, random]} />
       <meshStandardMaterial color={color} />
     </mesh>
   );
@@ -124,8 +135,11 @@ function Sphere(props) {
     position: [0, 3, 0]
   }));
 
-  useFrame(() => {
-    api.applyForce([0, 0, -1], [0, 0, 0]);
+  useFrame(({ clock: { elapsedTime } }) => {
+    api.applyForce(
+      [Math.sin(elapsedTime) * 10, 0, Math.cos(elapsedTime) * 10],
+      [0, 0, 0]
+    );
   });
 
   useEffect(() => {
@@ -154,7 +168,7 @@ function Template() {
   });
 
   const { gravity, bounce, friction } = useControls({
-    gravity: { value: -9.82, min: -9.82, max: 0, step: 0.1 },
+    gravity: { value: -9.82, min: -9.82, max: 0, step: 0.1 }
     // bounce: { value: 5, min: 0, max: 10, step: 0.1 },
     // friction: { value: 1, min: 0, max: 10, step: 0.1 },
   });
@@ -170,7 +184,7 @@ function Template() {
           far: 2000
         }}
       >
-        <axesHelper args={[10]} />
+        {/* <axesHelper args={[10]} /> */}
         <OrbitControls />
 
         <Physics
@@ -187,7 +201,7 @@ function Template() {
           {/* plane and walls */}
           <PlaneAndWalls />
           {/* Raining Boxes */}
-          <Boxes/>
+          <Boxes />
           <Sphere />
         </Physics>
 
