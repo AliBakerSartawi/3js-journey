@@ -15,15 +15,16 @@ import { Loader } from '@react-three/drei';
 import Template from './lessons/Template';
 // import RayCaster from './lessons/RayCaster';
 import Physics from './lessons/Physics';
+import ImportedModels from './lessons/ImportedModels';
 
 function App() {
   return (
     <div className="app">
       <Suspense fallback={<Loader />}>
         {/* TEMPLATE */}
-        {/* <Template /> */}
+        <Template />
 
-        {/* SCENES */}
+        {/* 🤓 SCENES */}
         {/* <BasicScene /> */}
         {/* <Geometries /> */}
         {/* <DebugUI /> */}
@@ -34,13 +35,12 @@ function App() {
         {/* <BakingShadows /> */}
         {/* <HauntedHouse /> */}
         {/* <Particles /> */}
-
-        {/* GalaxyGenerator has a functional react-dat-gui panel */}
+        {/* 🌟 GalaxyGenerator has a functional react-dat-gui panel */}
         {/* <GalaxyGenerator /> */}
         {/* <RayCaster /> */}
-
-        {/* Physics with Leva GUI */}
-        <Physics />
+        {/* ➗ Physics with Leva GUI */}
+        {/* <Physics /> */}
+        {/* <ImportedModels /> */}
       </Suspense>
     </div>
   );

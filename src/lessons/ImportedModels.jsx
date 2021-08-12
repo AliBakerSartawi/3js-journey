@@ -1,9 +1,16 @@
-import React, { useRef, useState, useMemo } from 'react';
+import React, { useRef, useState } from 'react';
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { Physics, useBox, usePlane, useSphere } from '@react-three/cannon';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
-import { useControls } from 'leva';
+import DatGui, {
+  DatFolder,
+  DatColor,
+  DatNumber,
+  DatSelect,
+  DatBoolean
+} from 'react-dat-gui';
+import 'react-dat-gui/dist/index.css';
 
 /**
  * Plane
@@ -15,7 +22,7 @@ function Plane(props) {
     rotation: [-Math.PI / 2, 0, 0],
     position: [0, 0, 0],
     args: [25, 25],
-    ...props
+    ...props,
   }));
   return (
     <mesh
@@ -55,31 +62,6 @@ function Box({ color, x, y, z }) {
   );
 }
 
-function Boxes({boxes}) {
-  const rainingBoxes = useMemo(() => {
-    return (
-      <>
-        {new Array(boxes).fill(1).map((box, i) => {
-          const colors = ['lime', 'orange', 'royalblue', 'crimson'];
-          const colorIndex = i % 4;
-          const x = Math.random() < 0.5 ? 1 : -1;
-          const z = Math.random() < 0.5 ? 1 : -1;
-          return (
-            <Box
-              key={Math.random() * i}
-              x={x}
-              y={i + 3}
-              z={z}
-              color={colors[colorIndex]}
-            />
-          );
-        })}
-      </>
-    );
-  }, [boxes]);
-  return rainingBoxes;
-}
-
 /**
  * Sphere
  */
@@ -87,24 +69,23 @@ function Sphere(props) {
   const [sphere] = useSphere(() => ({
     mass: 1,
     args: [1],
-    position: [0, 0.75, 0]
-  }));
+    position: [0, .75, 0]
+  }))
   return (
     <mesh castShadow ref={sphere}>
       <sphereBufferGeometry args={[1]} />
       <meshStandardMaterial color={'lightgrey'} />
     </mesh>
-  );
+  )
 }
 
 /**
  * Main Component
  */
-function Template() {
-  // controls
-  const { gravity, boxes } = useControls({
-    gravity: { value: -9.82, min: -9.82, max: 0, step: 0.1 },
-    boxes: { value: 50, min: 1, max: 100, step: 1 },
+function ImportedModels() {
+  // state
+  const [opts, setOpts] = useState({
+    datGuiWidth: 350
   });
 
   return (
@@ -121,20 +102,37 @@ function Template() {
         <axesHelper args={[10]} />
         <OrbitControls />
 
-        <Physics gravity={[0, gravity, 0]}>
+        <Physics
+        gravity={[0, -9.82, 0]}
+        >
           <Plane />
           {/* Raining Boxes */}
-          <Boxes boxes={boxes} />
+          {new Array(50).fill(1).map((box, i) => {
+            const colors = ['lime', 'orange', 'royalblue', 'crimson'];
+            const colorIndex = i % 4;
+            const x = Math.random() < 0.5 ? 1 : -1;
+            const z = Math.random() < 0.5 ? 1 : -1;
+            return (
+              <Box
+                key={Math.random() * i}
+                x={x}
+                y={i + 3}
+                z={z}
+                color={colors[colorIndex]}
+              />
+            );
+          })}
           <Sphere />
         </Physics>
 
         <Lights />
       </Canvas>
+      <DebugPanel opts={opts} setOpts={setOpts} />
     </div>
   );
 }
 
-export default Template;
+export default ImportedModels;
 
 function Lights() {
   return (
@@ -146,5 +144,25 @@ function Lights() {
         position={[-5, 5, 5]}
       />
     </>
+  );
+}
+
+function DebugPanel({ opts, setOpts }) {
+  return (
+    <DatGui
+      data={opts}
+      onUpdate={setOpts}
+      style={{ width: `${opts.datGuiWidth}px` }}
+    >
+      <DatFolder closed={false} title="Panel">
+        <DatNumber
+          label="Panel Width"
+          path="datGuiWidth"
+          min={300}
+          max={500}
+          step={1}
+        />
+      </DatFolder>
+    </DatGui>
   );
 }
