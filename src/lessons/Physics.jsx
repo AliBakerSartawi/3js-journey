@@ -45,9 +45,9 @@ function Plane(props) {
  * Box
  */
 function Box({ color, x, y, z }) {
-  const [box] = useBox(() => ({
+  const [box, api] = useBox(() => ({
     mass: 0.25,
-    position: [x, y, z],
+    position: [x, y, z - 10],
     rotation: [
       (Math.random() * Math.PI) / 2,
       (Math.random() * Math.PI) / 2,
@@ -55,11 +55,14 @@ function Box({ color, x, y, z }) {
     ],
     args: [0.5, 0.5, 0.5]
   }));
+  useFrame(() => {
+    // mimicking wind
+    api.applyForce([0, 0, 1], [0, 0, 0])
+  })
   return (
     <mesh
       ref={box}
       castShadow
-      receiveShadow
     >
       <boxBufferGeometry args={[0.5, 0.5, 0.5]} />
       <meshStandardMaterial color={color} />
@@ -76,8 +79,13 @@ function Sphere(props) {
     args: [1],
     position: [0, 0.75, 0],
   }));
+  console.log(sphere)
   useEffect(() => {
-    api.applyLocalForce([0, 500, 0], [0,0,0])
+    // // force local to the sphere
+    // api.applyLocalForce([0, 500, 0], [0,0,0])
+    // OR, even better => using applyForce to the position of the sphere
+    const {x, y, z} = sphere.current.position
+    api.applyForce([0, 500, 0], [x, y, z])
   }, [api, sphere])
   return (
     <mesh castShadow receiveShadow ref={sphere}>
@@ -114,11 +122,11 @@ function Template() {
           // Earth's default gravity constant
           gravity={[0, -9.82, 0]}
           defaultContactMaterial={{
-            friction: 1, // rub
+            // friction: 1, // rub
             // restitution === bounce
             // default=0.3, (try 1 && 0.01)
             // if > 1, bounce will be higher than gravity (higher than original position if object is falling)
-            restitution: 0.01
+            restitution: 0.3
           }}
         >
           <Plane />
