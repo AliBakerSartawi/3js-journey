@@ -1,15 +1,8 @@
 import React, { useRef, useState } from 'react';
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
-import { Physics, useBox, usePlane } from '@react-three/cannon';
+import { Physics, useBox, usePlane, useSphere } from '@react-three/cannon';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
-
-/**
- * DatGui Import and Styles
- * good example => https://codesandbox.io/embed/troika-3d-text-via-react-three-fiber-ntfx2?fontsize=14
- */
-// import "react-dat-gui/build/react-dat-gui.css";
-import 'react-dat-gui/dist/index.css';
 import DatGui, {
   DatFolder,
   DatColor,
@@ -17,15 +10,19 @@ import DatGui, {
   DatSelect,
   DatBoolean
 } from 'react-dat-gui';
+import 'react-dat-gui/dist/index.css';
 
 /**
  * Plane
  */
 function Plane(props) {
   const [plane] = usePlane(() => ({
+    mass: 0,
+    type: 'Static',
     rotation: [-Math.PI / 2, 0, 0],
     position: [0, 0, 0],
-    ...props
+    args: [25, 25],
+    ...props,
   }));
   return (
     <mesh
@@ -42,10 +39,10 @@ function Plane(props) {
 /**
  * Box
  */
-function Box({ color, y }) {
+function Box({ color, x, y, z }) {
   const [box] = useBox(() => ({
     mass: 1,
-    position: [0, y, 0],
+    position: [x, y, z],
     rotation: [
       (Math.random() * Math.PI) / 2,
       (Math.random() * Math.PI) / 2,
@@ -63,6 +60,23 @@ function Box({ color, y }) {
       <meshStandardMaterial color={color} />
     </mesh>
   );
+}
+
+/**
+ * Sphere
+ */
+function Sphere(props) {
+  const [sphere] = useSphere(() => ({
+    mass: 1,
+    args: [1],
+    position: [0, .75, 0]
+  }))
+  return (
+    <mesh castShadow ref={sphere}>
+      <sphereBufferGeometry args={[1]} />
+      <meshStandardMaterial color={'lightgrey'} />
+    </mesh>
+  )
 }
 
 /**
@@ -89,20 +103,26 @@ function Template() {
         <OrbitControls />
 
         <Physics
-        // gravity={[0, -10, 0]}
+        gravity={[0, -9.82, 0]}
         >
           <Plane />
-          {new Array(25).fill(1).map((box, i) => {
+          {/* Raining Boxes */}
+          {new Array(50).fill(1).map((box, i) => {
             const colors = ['lime', 'orange', 'royalblue', 'crimson'];
             const colorIndex = i % 4;
+            const x = Math.random() < 0.5 ? 1 : -1;
+            const z = Math.random() < 0.5 ? 1 : -1;
             return (
               <Box
                 key={Math.random() * i}
+                x={x}
                 y={i + 3}
+                z={z}
                 color={colors[colorIndex]}
               />
             );
           })}
+          <Sphere />
         </Physics>
 
         <Lights />
