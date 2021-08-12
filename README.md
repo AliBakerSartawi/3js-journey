@@ -7,6 +7,8 @@
 
     ```
     $ npx gltfjsx public/duck/Duck.gltf
+    # or
+    $ npx gltfjsx src/models/Fox/glTF/Fox.gltf
     ```
 
   - Don't forget to fix the path in the generated `js` file to point to the directory of the original `gltf` file

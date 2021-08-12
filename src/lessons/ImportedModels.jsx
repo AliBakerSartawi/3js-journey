@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import { useControls, Leva } from 'leva';
 import DuckModel from '../generatedModels/Duck';
 import FlightHelmetModel from '../generatedModels/FlightHelmet';
+import FoxModel from '../generatedModels/Fox';
 
 /**
  * GLTF Models ⬇️
@@ -39,20 +40,35 @@ import FlightHelmetModel from '../generatedModels/FlightHelmet';
  * Duck Component
  */
 function Duck() {
-  const { Duck_Scale: scale } = useControls({
-    Duck_Scale: [1, 1, 1]
+  const { Duck_Scale: scale, Duck_Position: position } = useControls({
+    Duck_Scale: [1, 1, 1],
+    Duck_Position: [0, 0, 0]
   });
-  return <DuckModel scale={scale} />;
+  return <DuckModel scale={scale} position={position} />;
 }
 
 /**
  * FlightHelmet Component
  */
 function FlightHelmet() {
-  const { FlightHelmet_Scale: scale } = useControls({
-    FlightHelmet_Scale: [1, 1, 1]
-  });
-  return <FlightHelmetModel scale={scale} />;
+  const { FlightHelmet_Scale: scale, FlightHelmet_Position: position } =
+    useControls({
+      FlightHelmet_Scale: [2.5, 2.5, 2.5],
+      FlightHelmet_Position: [0, 0, 2]
+    });
+  return <FlightHelmetModel scale={scale} position={position} />;
+}
+
+/**
+ * Fox Component
+ */
+function Fox() {
+  const { Fox_Scale: scale, Fox_Position: position } =
+    useControls({
+      Fox_Scale: [1, 1, 1],
+      Fox_Position: [0, 0, -3]
+    });
+  return <FoxModel scale={scale} position={position} />;
 }
 
 /**
@@ -79,6 +95,7 @@ function ImportedModels() {
         {/* MODELS / no need for suspense here as it is provided higher in the tree */}
         <Duck />
         <FlightHelmet />
+        <Fox />
 
         <Lights />
       </Canvas>
