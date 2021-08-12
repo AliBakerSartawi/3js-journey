@@ -4,7 +4,7 @@ import { Physics, useBox, usePlane, useSphere } from '@react-three/cannon';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 import { useControls } from 'leva';
-import hit from '../sounds/hit.mp3'
+import hit from '../sounds/hit.mp3';
 
 /**
  * THREE.js rendering is on GPU
@@ -13,19 +13,22 @@ import hit from '../sounds/hit.mp3'
 
 /**
  * Hit Sound
+ * go further => add a few similar sounds and play one of them randomly on each collision
+ *            => add 10-30ms delay to prevent unwanted repetitiveness if event is fired multiple times at once
  */
-const hitSound = new Audio(hit)
+const hitSound = new Audio(hit);
 function playHitSound(collision) {
   // impact strength => to remove unnecessary repetition
-  const impact = collision.contact.impactVelocity
-  const impactVolume = impact > 10 ? 1 : impact / 10
-  
-  if (impact > 1) { // or 1.5
+  const impact = collision.contact.impactVelocity;
+  const impactVolume = impact > 10 ? 1 : impact / 10;
+
+  if (impact > 1) {
+    // or 1.5
     // reset sound if there is a new collision before the previous sound ended
     // if not reset, the current collision sound will be delayed until the previous ends
-    hitSound.volume = impactVolume / 2 // or Math.random()
-    hitSound.currentTime = 0
-    hitSound.play()
+    hitSound.volume = impactVolume / 2; // or Math.random()
+    hitSound.currentTime = 0;
+    hitSound.play();
   }
 }
 
@@ -39,7 +42,7 @@ function Plane({ position, rotation, color }) {
     type: 'Static', // if mass is 0, type defaults automatically to static
     rotation,
     position,
-    args: [25, 25],
+    args: [25, 25]
     // onCollide: e => {
     //   playHitSound(e)
     // }
@@ -102,7 +105,7 @@ function Box({ geometry, color, x, y, z }) {
       (Math.random() * Math.PI) / 2,
       (Math.random() * Math.PI) / 2
     ],
-    args: [random, random, random],
+    args: [random, random, random]
 
     // placing a sound on boxes collision will result in a funny radio static effect, don't do it
     // onCollide: (e) => {
@@ -171,7 +174,7 @@ function Sphere(props) {
     args: [1],
     position: [0, 3, 0],
     onCollide: (e) => {
-      playHitSound(e)
+      playHitSound(e);
     }
   }));
 
