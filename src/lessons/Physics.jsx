@@ -7,6 +7,19 @@ import { useControls } from 'leva';
 import hit from '../sounds/hit.mp3';
 
 /**
+ * Official Examples 
+ * https://schteppe.github.io/cannon.js/ => ctrl+U to view code in page source
+ * 
+ * Workers:
+ * https://schteppe.github.io/cannon.js/examples/worker.html => worker example to run on other threads => improve performance
+ * Note: react-three/cannon runs in a web worker out of the box
+ * Also: react-three/cannon supports instancing out of the box too 😎
+ * 
+ * Ammo.js is an awesome physics library with more options and better performance than cannon-es, but harder to use
+ * Physijs (not Physi.js) works in a similar abstracted way like react-three/cannon hooks, and uses Ammo.js physics engine
+ */
+
+/**
  * THREE.js rendering is on GPU
  * But, physics still run on CPU
  */
