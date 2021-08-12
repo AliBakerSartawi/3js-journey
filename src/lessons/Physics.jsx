@@ -3,24 +3,26 @@ import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { Physics, useBox, usePlane, useSphere } from '@react-three/cannon';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
-import DatGui, {
-  DatFolder,
-  DatColor,
-  DatNumber,
-  DatSelect,
-  DatBoolean
-} from 'react-dat-gui';
-import 'react-dat-gui/dist/index.css';
+import { useControls } from 'leva';
+// import DatGui, {
+//   DatFolder,
+//   DatColor,
+//   DatNumber,
+//   DatSelect,
+//   DatBoolean
+// } from 'react-dat-gui';
+// import 'react-dat-gui/dist/index.css';
 
 /**
  * Plane
  */
-function Plane(props) {
+function Plane({ position, rotation, color}) {
+  const { receiveShadow } = useControls({ receiveShadow: true });
   const [plane] = usePlane(() => ({
     mass: 0,
     type: 'Static', // if mass is 0, type defaults automatically to static
-    rotation: [-Math.PI / 2, 0, 0],
-    position: [0, 0, 0],
+    rotation,
+    position,
     args: [25, 25]
     // // no need for material here, just add it defaultContactMaterial to Physics and that's enough for most projects
     // material: 'concrete',
@@ -32,12 +34,46 @@ function Plane(props) {
   return (
     <mesh
       ref={plane}
-      receiveShadow
-      // rotation-x={-Math.PI / 2}
+      receiveShadow={receiveShadow}
+      
     >
       <planeBufferGeometry args={[25, 25]} />
-      <meshStandardMaterial color={'grey'} />
+      <meshStandardMaterial color={color} />
     </mesh>
+  );
+}
+
+function PlaneAndWalls() {
+  return (
+    <>
+    {/* PLANE */}
+    <Plane
+      rotation={[-Math.PI / 2, 0, 0]}
+      position={[0, 0, 0]}
+      color={'grey'}
+    />
+    {/* WALLS */}
+    <Plane
+      rotation={[0, 0, 0]}
+      position={[0, 12.5, -12.5]}
+      color={'grey'}
+    />
+    <Plane
+      rotation={[Math.PI, 0, 0]}
+      position={[0, 12.5, 12.5]}
+      color={'grey'}
+    />
+    <Plane
+      rotation={[0, -Math.PI / 2, 0]}
+      position={[12.5, 12.5, 0]}
+      color={'grey'}
+    />
+    <Plane
+      rotation={[0, Math.PI / 2, 0]}
+      position={[-12.5, 12.5, 0]}
+      color={'grey'}
+    />
+    </>
   );
 }
 
@@ -55,15 +91,14 @@ function Box({ color, x, y, z }) {
     ],
     args: [0.5, 0.5, 0.5]
   }));
+
   useFrame(() => {
     // mimicking wind
-    api.applyForce([0, 0, 1], [0, 0, 0])
-  })
+    api.applyForce([0, 0, 1], [0, 0, 0]);
+  });
+
   return (
-    <mesh
-      ref={box}
-      castShadow
-    >
+    <mesh ref={box} castShadow>
       <boxBufferGeometry args={[0.5, 0.5, 0.5]} />
       <meshStandardMaterial color={color} />
     </mesh>
@@ -77,16 +112,21 @@ function Sphere(props) {
   const [sphere, api] = useSphere(() => ({
     mass: 1,
     args: [1],
-    position: [0, 0.75, 0],
+    position: [0, 3, 0]
   }));
-  console.log(sphere)
+
+  useFrame(() => {
+    api.applyForce([0, 0, -1], [0, 0, 0]);
+  });
+
   useEffect(() => {
     // // force local to the sphere
     // api.applyLocalForce([0, 500, 0], [0,0,0])
     // OR, even better => using applyForce to the position of the sphere
-    const {x, y, z} = sphere.current.position
-    api.applyForce([0, 500, 0], [x, y, z])
-  }, [api, sphere])
+    const { x, y, z } = sphere.current.position;
+    api.applyForce([0, -500, 0], [x, y, z]);
+  }, [api, sphere]);
+
   return (
     <mesh castShadow receiveShadow ref={sphere}>
       <sphereBufferGeometry args={[1]} />
@@ -102,6 +142,11 @@ function Template() {
   // state
   const [opts, setOpts] = useState({
     datGuiWidth: 350
+  });
+
+  const { boxes, gravity } = useControls({
+    boxes: { value: 50, min: 50, max: 100, step: 1 },
+    gravity: { value: -9.82, min: -9.82, max: 0, step: 0.1 }
   });
 
   return (
@@ -120,18 +165,19 @@ function Template() {
 
         <Physics
           // Earth's default gravity constant
-          gravity={[0, -9.82, 0]}
+          gravity={[0, gravity, 0]}
           defaultContactMaterial={{
             // friction: 1, // rub
             // restitution === bounce
             // default=0.3, (try 1 && 0.01)
             // if > 1, bounce will be higher than gravity (higher than original position if object is falling)
-            restitution: 0.3
+            restitution: 0.7
           }}
         >
-          <Plane />
+          {/* plane and walls */}
+          <PlaneAndWalls />
           {/* Raining Boxes */}
-          {new Array(50).fill(1).map((box, i) => {
+          {new Array(boxes).fill(1).map((box, i) => {
             const colors = ['lime', 'orange', 'royalblue', 'crimson'];
             const colorIndex = i % 4;
             const x = Math.random() < 0.5 ? 1 : -1;
@@ -151,7 +197,7 @@ function Template() {
 
         <Lights />
       </Canvas>
-      <DebugPanel opts={opts} setOpts={setOpts} />
+      {/* <DebugPanel opts={opts} setOpts={setOpts} /> */}
     </div>
   );
 }
@@ -171,22 +217,22 @@ function Lights() {
   );
 }
 
-function DebugPanel({ opts, setOpts }) {
-  return (
-    <DatGui
-      data={opts}
-      onUpdate={setOpts}
-      style={{ width: `${opts.datGuiWidth}px` }}
-    >
-      <DatFolder closed={false} title="Panel">
-        <DatNumber
-          label="Panel Width"
-          path="datGuiWidth"
-          min={300}
-          max={500}
-          step={1}
-        />
-      </DatFolder>
-    </DatGui>
-  );
-}
+// function DebugPanel({ opts, setOpts }) {
+//   return (
+//     <DatGui
+//       data={opts}
+//       onUpdate={setOpts}
+//       style={{ width: `${opts.datGuiWidth}px` }}
+//     >
+//       <DatFolder closed={false} title="Panel">
+//         <DatNumber
+//           label="Panel Width"
+//           path="datGuiWidth"
+//           min={300}
+//           max={500}
+//           step={1}
+//         />
+//       </DatFolder>
+//     </DatGui>
+//   );
+// }
