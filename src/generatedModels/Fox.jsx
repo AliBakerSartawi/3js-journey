@@ -9,8 +9,13 @@ export default function Model(props) {
   const group = useRef()
   const { nodes, materials, animations } = useGLTF('fox/Fox.gltf')
   const { actions } = useAnimations(animations, group)
+  console.log({actions, animations});
+
+  function animateFox() {
+    actions.Walk.play()
+  }
   return (
-    <group ref={group} {...props} dispose={null}>
+    <group ref={group} {...props} dispose={null} onClick={animateFox}>
       <group scale={[0.025, 0.025, 0.025]}>
         <primitive object={nodes._rootJoint} />
         <skinnedMesh castShadow geometry={nodes.fox.geometry} material={materials.fox_material} skeleton={nodes.fox.skeleton} />
