@@ -11,8 +11,20 @@ export default function Model(props) {
   const { actions } = useAnimations(animations, group)
   console.log({actions, animations});
 
+  /**
+   * useful link for animation actions (AnimationAction) ⬇️
+   * https://drei.pmnd.rs/?path=/story/abstractions-useanimations--use-animations-st
+   */
   function animateFox() {
-    actions.Walk.play()
+    /**
+     * Actions: Walk, Run, Survey
+     */
+    // actions.Survey.play()
+    actions.Survey.play().fadeIn(1)
+    setTimeout(() => {
+      // actions.Survey.reset()
+      actions.Survey.fadeOut(1) // works
+    }, 5000);
   }
   return (
     <group ref={group} {...props} dispose={null} onClick={animateFox}>
