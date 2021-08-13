@@ -1,6 +1,6 @@
 import './App.scss';
-import { Suspense } from 'react';
-import { Html, Loader, useProgress } from '@react-three/drei';
+import { Suspense, useEffect, useRef, useState } from 'react';
+import gsap from 'gsap';
 // import Lights from './lessons/Lights';
 // import BasicScene from './lessons/BasicScene';
 // import DebugUI from './lessons/DebugUI';
@@ -17,11 +17,25 @@ import { Html, Loader, useProgress } from '@react-three/drei';
 // import Physics from './lessons/Physics';
 // import ImportedModels from './lessons/ImportedModels';
 import RealisticRendering from './lessons/RealisticRendering';
+import CustomLoader from './components/CustomLoader';
 
 function App() {
+  const app = useRef();
+  const [loaded, setLoaded] = useState(false);
+  useEffect(() => {
+    if (loaded) {
+      // app.current.style.opacity = 1;
+      // app.current.style.transition = 'transition: opacity 500ms ease';
+      gsap.to(app.current, {
+        duration: 1,
+        opacity: 1,
+        delay: 0.5
+      })
+    }
+  }, [loaded]);
   return (
-    <Suspense fallback={<CustomLoader />}>
-      <div className="app">
+    <Suspense fallback={<CustomLoader setLoaded={setLoaded} />}>
+      <div ref={app} className="app">
         {/* TEMPLATE */}
         {/* <Template /> */}
 
@@ -50,32 +64,3 @@ function App() {
 }
 
 export default App;
-
-function CustomLoader() {
-  const containerStyles = {
-    backgroundColor: 'crimson',
-    fontSize: '20px',
-  }
-  const innerStyles = {
-    // display: 'flex',
-    // justifyContent: 'center'
-  }
-  const barStyles = {
-    // display: 'none',
-    width: '75vh'
-  }
-  const dataStyles = {
-    fontFamily: 'Fira Code',
-    textAlign: 'center'
-  }
-  return (
-    <Loader
-      containerStyles={containerStyles}
-      innerStyles={innerStyles}
-      barStyles={barStyles} 
-      dataStyles={dataStyles}
-      dataInterpolation={(p) => `Still thinking ${p.toFixed(0)}%`} // ={(p) => `Loading ${p.toFixed(2)}%`} // Text
-      // initialState={active => console.log(active)}
-    />
-  );
-}
