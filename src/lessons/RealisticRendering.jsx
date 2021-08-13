@@ -10,52 +10,8 @@ import FoxModel from '../generatedModels/Fox';
 import BurgerModel from '../generatedModels/Burger';
 
 /**
- * GLTF Models ⬇️
- * https://github.com/KhronosGroup/glTF-Sample-Models/tree/master/2.0
- *
- * GLTF Types ⬇️
- * GLTF
- * GLTF-Binary
- * GLTF-Draco
- * GLTF-Embedded
- *
- * Note: OS might hide GLTF file extensions, use code editor to verify
- *
- * Note: the below structure note might only apply to vanilla THREE.js
- *
- * GLTF Structure ⬇️
- * Duck.gltf => JSON containing cameras, lights, materials & object transformation
- * Duck0.bin => binary that usually contains geometries (vertices positions, UV coordinates, normal, colors, etc...)
- * DuckCM.png => textures
- *
- * GLTF-Binary Structure ⬇️
- * One file only in binary / usually lighter / hard to alter its data
- *
- * GLTF-Draco Structure ⬇️
- * Draco is a compression algorithm developed by Google (open source)
- * Like GLTF, but buffer data is compressed using the Draco Algorithm
- * Much lighter
- * Site => https://google.github.io/draco/
- * GitHub => https://github.com/google/draco
- * Using Web Assembly, the Draco decoder can run in worker, increasing performance significantly
- * ❔ When to use => if models are more than a handful of megabytes
- *    for example: loading might be reduced from 2 seconds to half a second,
- *    but in that half a second, the computer might freeze, because decoding is expensive
- *
- * GLTF-Embedded Structure ⬇️
- * One file only in JSON / heaviest type with structure and buffer in JSON
- *
- * 😲 Easy way to test models is in https://threejs.org/editor/
- * Just drag and drop the GLTF-Binary or Embedded file (from explorer, not vscode)
- */
-
-/**
- * Blender Links ⬇️
- * Blender Youtube Channel: https://www.youtube.com/channel/UCSMOQeBJ2RAnuFungnQOxLg
- * Blender Guru: https://www.youtube.com/user/AndrewPPrice
- * Grant Abbitt: https://www.youtube.com/user/mediagabbitt
- * CGFastTrack: https://www.youtube.com/channel/UCsvgY1GWmJwvk3o6UeXVxAg
- * CGCookie: https://www.youtube.com/user/blendercookie
+ * gl.physicallyCorrectLights = true ⬇️
+ * This helps in getting consistent results between softwares (imported models in case they had light in their object)
  */
 
 /**
@@ -145,7 +101,11 @@ function RealisticRendering() {
           near: 0.1,
           far: 2000
         }}
-        onCreated={gl => console.log(gl)}
+        onCreated={(canvas) => {
+          console.log(canvas);
+          // gl === renderer in vanilla THREE
+          canvas.gl.physicallyCorrectLights = true;
+        }}
       >
         <axesHelper args={[10]} />
         <OrbitControls />
@@ -193,10 +153,9 @@ function Lights() {
   } = useControls({
     directionalLight: folder({
       directionalLightColor: '#ffffff',
-      directionalLightIntensity: {value: 1, min: 0, max: 10, step: 0.01},
+      directionalLightIntensity: { value: 3, min: 0, max: 10, step: 0.01 },
       directionalLightPosition: [0.25, 3, -2.25],
-      directionalLightCastShadow: true,
-
+      directionalLightCastShadow: true
     })
   });
   return (
