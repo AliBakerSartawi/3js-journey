@@ -11,18 +11,25 @@ export default function Model(props) {
   return (
     <group ref={group} {...props} dispose={null}>
       <group scale={[0.25, 0.25, 0.25]}>
-        <mesh geometry={nodes.Cube.geometry} material={nodes.Cube.material} />
         <mesh
+          castShadow
+          geometry={nodes.Cube.geometry}
+          material={nodes.Cube.material}
+        />
+        <mesh
+          castShadow
           geometry={nodes.Cube001.geometry}
           material={materials.meatMaterial}
           position={[0, 1.83, 0]}
         />
         <mesh
+          castShadow
           geometry={nodes.Plane.geometry}
           material={materials.cheeseMaterial}
           position={[0, 3.92, 0]}
         />
         <mesh
+          castShadow
           geometry={nodes.Cube002.geometry}
           material={nodes.Cube002.material}
           position={[0, 5.9, 0]}

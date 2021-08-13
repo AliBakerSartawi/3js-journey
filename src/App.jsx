@@ -15,7 +15,8 @@ import { Loader } from '@react-three/drei';
 // import Template from './lessons/Template';
 // import RayCaster from './lessons/RayCaster';
 // import Physics from './lessons/Physics';
-import ImportedModels from './lessons/ImportedModels';
+// import ImportedModels from './lessons/ImportedModels';
+import RealisticRendering from './lessons/RealisticRendering';
 
 function App() {
   return (
@@ -40,7 +41,9 @@ function App() {
         {/* <RayCaster /> */}
         {/* ➗ Physics with Leva GUI and 🔉 collision sounds */}
         {/* <Physics /> */}
-        <ImportedModels />
+        {/* 🖌️ Models & custom burger exported from Blender */}
+        {/* <ImportedModels /> */}
+        <RealisticRendering />
       </Suspense>
     </div>
   );
