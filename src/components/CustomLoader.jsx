@@ -32,7 +32,7 @@ export default function CustomLoader({ setLoaded }) {
         return `Still wondering if ${p} * ${p} = ${p * p} 🤯`;
       }}
       initialState={(active) => {
-        console.log(active);
+        // console.log(active);
         // if (!active) {
         //   // without setTimeout, I get cannot update component (`App`) while rendering component (`Loader`)
         //   setTimeout(() => {

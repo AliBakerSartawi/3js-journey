@@ -145,6 +145,7 @@ function RealisticRendering() {
           near: 0.1,
           far: 2000
         }}
+        onCreated={gl => console.log(gl)}
       >
         <axesHelper args={[10]} />
         <OrbitControls />
