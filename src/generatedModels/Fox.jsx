@@ -9,7 +9,6 @@ export default function Model(props) {
   const group = useRef()
   const { nodes, materials, animations } = useGLTF('fox/Fox.gltf')
   const { actions } = useAnimations(animations, group)
-  console.log({actions, animations});
 
   /**
    * useful link for animation actions (AnimationAction) ⬇️

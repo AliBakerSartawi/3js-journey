@@ -21,7 +21,7 @@ import RealisticRendering from './lessons/RealisticRendering';
 function App() {
   return (
     <div className="app">
-      <Suspense fallback={<Loader />}>
+      <Suspense fallback={<CustomLoader />}>
         {/* TEMPLATE */}
         {/* <Template /> */}
 
@@ -50,3 +50,19 @@ function App() {
 }
 
 export default App;
+
+function CustomLoader() {
+  const containerStyles = {
+    backgroundColor: 'crimson',
+  }
+  return (
+    <Loader
+      containerStyles={containerStyles} // ={...container} // Flex layout styles
+      // innerStyles // ={...inner} // Inner container styles
+      // barStyles // ={...bar} // Loading-bar styles
+      // dataStyles // ={...data} // Text styles
+      // dataInterpolation // ={(p) => `Loading ${p.toFixed(2)}%`} // Text
+      initialState={active => console.log(active)} // ={(active) => active} // Initial black out state
+    />
+  );
+}
