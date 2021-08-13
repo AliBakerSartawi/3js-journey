@@ -20,6 +20,8 @@ import FoxModel from '../generatedModels/Fox';
  *
  * Note: OS might hide GLTF file extensions, use code editor to verify
  *
+ * Note: the below structure note might only apply to vanilla THREE.js
+ * 
  * GLTF Structure ⬇️
  * Duck.gltf => JSON containing cameras, lights, materials & object transformation
  * Duck0.bin => binary that usually contains geometries (vertices positions, UV coordinates, normal, colors, etc...)
@@ -41,6 +43,9 @@ import FoxModel from '../generatedModels/Fox';
  *
  * GLTF-Embedded Structure ⬇️
  * One file only in JSON / heaviest type with structure and buffer in JSON
+ * 
+ * 😲 Easy way to test models is in https://threejs.org/editor/
+ * Just drag and drop the GLTF-Binary or Embedded file (from explorer, not vscode)
  */
 
 /**
