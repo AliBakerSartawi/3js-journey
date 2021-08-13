@@ -3,7 +3,7 @@ import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { Physics, useBox, usePlane, useSphere } from '@react-three/cannon';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
-import { useControls, Leva } from 'leva';
+import { useControls, Leva, folder } from 'leva';
 import DuckModel from '../generatedModels/Duck';
 import FlightHelmetModel from '../generatedModels/FlightHelmet';
 import FoxModel from '../generatedModels/Fox';
@@ -63,8 +63,12 @@ import BurgerModel from '../generatedModels/Burger';
  */
 function Duck() {
   const { Duck_Scale: scale, Duck_Position: position } = useControls({
-    Duck_Scale: [1, 1, 1],
-    Duck_Position: [0, 0, 0]
+    Duck: folder({
+      Duck_Scale: [1, 1, 1],
+      Duck_Position: [0, 0, 0]
+    }, {
+      collapsed: true
+    })
   });
   return <DuckModel scale={scale} position={position} />;
 }
@@ -75,8 +79,12 @@ function Duck() {
 function FlightHelmet() {
   const { FlightHelmet_Scale: scale, FlightHelmet_Position: position } =
     useControls({
-      FlightHelmet_Scale: [2.5, 2.5, 2.5],
-      FlightHelmet_Position: [0, 0, 2]
+      FlightHelmet: folder({
+        FlightHelmet_Scale: [2.5, 2.5, 2.5],
+        FlightHelmet_Position: [0, 0, 2]
+      }, {
+        collapsed: true
+      })
     });
   return <FlightHelmetModel scale={scale} position={position} />;
 }
@@ -86,8 +94,12 @@ function FlightHelmet() {
  */
 function Fox() {
   const { Fox_Scale: scale, Fox_Position: position } = useControls({
-    Fox_Scale: [1, 1, 1],
-    Fox_Position: [0, 0, -3]
+    Fox: folder({
+      Fox_Scale: [1, 1, 1],
+      Fox_Position: [0, 0, -3]
+    }, {
+      collapsed: true
+    })
   });
   return <FoxModel scale={scale} position={position} />;
 }
@@ -97,8 +109,12 @@ function Fox() {
  */
 function Burger() {
   const { Burger_Scale: scale, Burger_Position: position } = useControls({
-    Burger_Scale: [1, 1, 1],
-    Burger_Position: [3, 0, 0]
+    Burger: folder({
+      Burger_Scale: [1, 1, 1],
+      Burger_Position: [3, 0, 0]
+    }, {
+      collapsed: true
+    })
   });
   return <BurgerModel scale={scale} position={position} />;
 }
@@ -163,11 +179,23 @@ function Lights() {
     Hemisphere_Sky_Light_Color: hemisphereSkyColor,
     Hemisphere_Ground_Light_Color: hemisphereGroundColor
   } = useControls({
-    Point_Light_Intensity: { value: 1, min: 0, max: 10, step: 0.01 },
-    Point_Light_Color: '#e1e1e1',
-    Hemisphere_Light_Intensity: { value: 1, min: 0, max: 10, step: 0.01 },
-    Hemisphere_Sky_Light_Color: '#e1e1e1',
-    Hemisphere_Ground_Light_Color: '#e1e1e1'
+    Lights: folder({
+      Point_Light: folder({
+        Point_Light_Intensity: { value: 1, min: 0, max: 10, step: 0.01 },
+        Point_Light_Color: '#e1e1e1',
+      }, {
+        collapsed: true
+      }),
+      Hemisphere_Light: folder({
+        Hemisphere_Light_Intensity: { value: 1, min: 0, max: 10, step: 0.01 },
+        Hemisphere_Sky_Light_Color: '#e1e1e1',
+        Hemisphere_Ground_Light_Color: '#e1e1e1'
+      }, {
+        collapsed: true
+      })
+    }, {
+      collapsed: true
+    })
   });
   return (
     <>

@@ -3,7 +3,7 @@ import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { Physics, useBox, usePlane, useSphere } from '@react-three/cannon';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
-import { useControls } from 'leva';
+import { folder, Leva, useControls } from 'leva';
 
 /**
  * Plane
@@ -130,6 +130,7 @@ function Template() {
 
         <Lights />
       </Canvas>
+      <Leva oneLineLabels />
     </div>
   );
 }
@@ -144,11 +145,23 @@ function Lights() {
     Hemisphere_Sky_Light_Color: hemisphereSkyColor,
     Hemisphere_Ground_Light_Color: hemisphereGroundColor
   } = useControls({
-    Point_Light_Intensity: { value: 1, min: 0, max: 10, step: 0.01 },
-    Point_Light_Color: '#e1e1e1',
-    Hemisphere_Light_Intensity: { value: 1, min: 0, max: 10, step: 0.01 },
-    Hemisphere_Sky_Light_Color: '#e1e1e1',
-    Hemisphere_Ground_Light_Color: '#e1e1e1'
+    Lights: folder({
+      Point_Light: folder({
+        Point_Light_Intensity: { value: 1, min: 0, max: 10, step: 0.01 },
+        Point_Light_Color: '#e1e1e1',
+      }, {
+        collapsed: true
+      }),
+      Hemisphere_Light: folder({
+        Hemisphere_Light_Intensity: { value: 1, min: 0, max: 10, step: 0.01 },
+        Hemisphere_Sky_Light_Color: '#e1e1e1',
+        Hemisphere_Ground_Light_Color: '#e1e1e1'
+      }, {
+        collapsed: true
+      })
+    }, {
+      collapsed: true
+    })
   });
   return (
     <>
