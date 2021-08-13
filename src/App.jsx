@@ -1,6 +1,6 @@
 import './App.scss';
 import { Suspense } from 'react';
-import { Loader } from '@react-three/drei';
+import { Html, Loader, useProgress } from '@react-three/drei';
 // import Lights from './lessons/Lights';
 // import BasicScene from './lessons/BasicScene';
 // import DebugUI from './lessons/DebugUI';
@@ -20,8 +20,8 @@ import RealisticRendering from './lessons/RealisticRendering';
 
 function App() {
   return (
-    <div className="app">
-      <Suspense fallback={<CustomLoader />}>
+    <Suspense fallback={<CustomLoader />}>
+      <div className="app">
         {/* TEMPLATE */}
         {/* <Template /> */}
 
@@ -44,8 +44,8 @@ function App() {
         {/* 🖌️ Models & custom burger exported from Blender */}
         {/* <ImportedModels /> */}
         <RealisticRendering />
-      </Suspense>
-    </div>
+      </div>
+    </Suspense>
   );
 }
 
@@ -54,15 +54,28 @@ export default App;
 function CustomLoader() {
   const containerStyles = {
     backgroundColor: 'crimson',
+    fontSize: '20px',
+  }
+  const innerStyles = {
+    // display: 'flex',
+    // justifyContent: 'center'
+  }
+  const barStyles = {
+    // display: 'none',
+    width: '75vh'
+  }
+  const dataStyles = {
+    fontFamily: 'Fira Code',
+    textAlign: 'center'
   }
   return (
     <Loader
-      containerStyles={containerStyles} // ={...container} // Flex layout styles
-      // innerStyles // ={...inner} // Inner container styles
-      // barStyles // ={...bar} // Loading-bar styles
-      // dataStyles // ={...data} // Text styles
-      // dataInterpolation // ={(p) => `Loading ${p.toFixed(2)}%`} // Text
-      initialState={active => console.log(active)} // ={(active) => active} // Initial black out state
+      containerStyles={containerStyles}
+      innerStyles={innerStyles}
+      barStyles={barStyles} 
+      dataStyles={dataStyles}
+      dataInterpolation={(p) => `Still thinking ${p.toFixed(0)}%`} // ={(p) => `Loading ${p.toFixed(2)}%`} // Text
+      // initialState={active => console.log(active)}
     />
   );
 }
