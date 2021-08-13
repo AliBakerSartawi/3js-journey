@@ -53,6 +53,6 @@
     - check **Normals**
     - check **UVs** if there are textures
     - **Materials** &rarr; **Export**
-    - check **Compression**
+    - check **Compression** (much smaller file size)
   - Configure **Animations** if there is any
 - Happy modeling!

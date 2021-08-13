@@ -50,6 +50,15 @@ import BurgerModel from '../generatedModels/Burger';
  */
 
 /**
+ * Blender Links ⬇️
+ * Blender Youtube Channel: https://www.youtube.com/channel/UCSMOQeBJ2RAnuFungnQOxLg
+ * Blender Guru: https://www.youtube.com/user/AndrewPPrice
+ * Grant Abbitt: https://www.youtube.com/user/mediagabbitt
+ * CGFastTrack: https://www.youtube.com/channel/UCsvgY1GWmJwvk3o6UeXVxAg
+ * CGCookie: https://www.youtube.com/user/blendercookie
+ */
+
+/**
  * Duck Component
  */
 function Duck() {
