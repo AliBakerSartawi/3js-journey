@@ -137,12 +137,27 @@ function Template() {
 export default Template;
 
 function Lights() {
+  const {
+    Point_Light_Intensity: pointLightIntensity,
+    Point_Light_Color: pointLightColor,
+    Hemisphere_Light_Intensity: hemisphereIntensity,
+    Hemisphere_Sky_Light_Color: hemisphereSkyColor,
+    Hemisphere_Ground_Light_Color: hemisphereGroundColor
+  } = useControls({
+    Point_Light_Intensity: { value: 1, min: 0, max: 10, step: 0.01 },
+    Point_Light_Color: '#e1e1e1',
+    Hemisphere_Light_Intensity: { value: 1, min: 0, max: 10, step: 0.01 },
+    Hemisphere_Sky_Light_Color: '#e1e1e1',
+    Hemisphere_Ground_Light_Color: '#e1e1e1'
+  });
   return (
     <>
-      <hemisphereLight args={[0xe1e1e1, 0xe1e1e1, 1]} />
+      <hemisphereLight
+        args={[hemisphereSkyColor, hemisphereGroundColor, hemisphereIntensity]}
+      />
       <pointLight
         castShadow
-        args={[0xe1e1e1, 1, 20, 1]}
+        args={[pointLightColor, pointLightIntensity, 20, 1]}
         position={[-5, 5, 5]}
       />
     </>
