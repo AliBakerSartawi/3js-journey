@@ -7,6 +7,7 @@ import { useControls, Leva } from 'leva';
 import DuckModel from '../generatedModels/Duck';
 import FlightHelmetModel from '../generatedModels/FlightHelmet';
 import FoxModel from '../generatedModels/Fox';
+import BurgerModel from '../generatedModels/Burger';
 
 /**
  * GLTF Models ⬇️
@@ -83,6 +84,17 @@ function Fox() {
 }
 
 /**
+ * Burger Component from Blender
+ */
+function Burger() {
+  const { Burger_Scale: scale, Burger_Position: position } = useControls({
+    Burger_Scale: [1, 1, 1],
+    Burger_Position: [3, 0, 0]
+  });
+  return <BurgerModel scale={scale} position={position} />;
+}
+
+/**
  * Main Component
  */
 function ImportedModels() {
@@ -107,10 +119,11 @@ function ImportedModels() {
         <Duck />
         <FlightHelmet />
         <Fox />
+        <Burger />
 
         <Lights />
       </Canvas>
-      <Leva />
+      <Leva oneLineLabels />
     </div>
   );
 }
