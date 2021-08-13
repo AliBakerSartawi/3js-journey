@@ -1,6 +1,7 @@
 import './App.scss';
-import { Suspense, useEffect, useRef, useState } from 'react';
-import gsap from 'gsap';
+import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
+// import gsap from 'gsap';
+import CustomLoader from './components/CustomLoader';
 // import Lights from './lessons/Lights';
 // import BasicScene from './lessons/BasicScene';
 // import DebugUI from './lessons/DebugUI';
@@ -17,25 +18,32 @@ import gsap from 'gsap';
 // import Physics from './lessons/Physics';
 // import ImportedModels from './lessons/ImportedModels';
 import RealisticRendering from './lessons/RealisticRendering';
-import CustomLoader from './components/CustomLoader';
 
 function App() {
-  const app = useRef();
-  const [loaded, setLoaded] = useState(false);
-  useEffect(() => {
-    if (loaded) {
-      // app.current.style.opacity = 1;
-      // app.current.style.transition = 'transition: opacity 500ms ease';
-      gsap.to(app.current, {
-        duration: 1,
-        opacity: 1,
-        delay: 0.5
-      })
-    }
-  }, [loaded]);
+  // const app = useRef();
+  // const [loaded, setLoaded] = useState(false);
+  // // const [ready, setReady] = useState(false);
+  // useEffect(() => {
+  //   if (loaded) {
+  //     gsap.to(app.current, {
+  //       duration: 0.5,
+  //       opacity: 1,
+  //       delay: 0.5
+  //     });
+  //   }
+  // }, [loaded]);
   return (
-    <Suspense fallback={<CustomLoader setLoaded={setLoaded} />}>
-      <div ref={app} className="app">
+    <div
+      // ref={app}
+      className="app"
+    >
+      <Suspense
+        fallback={
+          <CustomLoader
+          // setLoaded={setLoaded}
+          />
+        }
+      >
         {/* TEMPLATE */}
         {/* <Template /> */}
 
@@ -58,8 +66,8 @@ function App() {
         {/* 🖌️ Models & custom burger exported from Blender */}
         {/* <ImportedModels /> */}
         <RealisticRendering />
-      </div>
-    </Suspense>
+      </Suspense>
+    </div>
   );
 }
 
