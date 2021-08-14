@@ -1,6 +1,6 @@
 import './App.scss';
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
-// import gsap from 'gsap';
+import gsap from 'gsap';
 import CustomLoader from './components/CustomLoader';
 // import Lights from './lessons/Lights';
 // import BasicScene from './lessons/BasicScene';
@@ -12,7 +12,7 @@ import CustomLoader from './components/CustomLoader';
 // import BakingShadows from './lessons/BakingShadows';
 // import HauntedHouse from './lessons/HauntedHouse';
 // import Particles from './lessons/Particles';
-// import GalaxyGenerator from './lessons/GalaxyGenerator';
+import GalaxyGenerator from './lessons/GalaxyGenerator';
 // import Template from './lessons/Template';
 // import RayCaster from './lessons/RayCaster';
 // import Physics from './lessons/Physics';
@@ -20,30 +20,32 @@ import CustomLoader from './components/CustomLoader';
 import RealisticRendering from './lessons/RealisticRendering';
 
 function App() {
-  // const app = useRef();
-  // const [loaded, setLoaded] = useState(false);
-  // // const [ready, setReady] = useState(false);
+  const app = useRef();
+  const [loaded, setLoaded] = useState(false);
+  // const [ready, setReady] = useState(false);
+
   // useEffect(() => {
-  //   if (loaded) {
-  //     gsap.to(app.current, {
-  //       duration: 0.5,
-  //       opacity: 1,
-  //       delay: 0.5
-  //     });
-  //   }
+  //     if (loaded) {
+  //       gsap.to(app.current, {
+  //         duration: 0.5,
+  //         opacity: 1,
+  //         delay: 0.5
+  //       });
+  //     }
   // }, [loaded]);
+
+  useEffect(() => {
+    app.current &&
+      gsap.to(app.current, {
+        duration: 1,
+        opacity: 1,
+        delay: 0.5
+      });
+  }, [app]);
+
   return (
-    <div
-      // ref={app}
-      className="app"
-    >
-      <Suspense
-        fallback={
-          <CustomLoader
-          // setLoaded={setLoaded}
-          />
-        }
-      >
+    <Suspense fallback={<CustomLoader setLoaded={setLoaded} />}>
+      <div ref={app} className="app">
         {/* TEMPLATE */}
         {/* <Template /> */}
 
@@ -66,8 +68,8 @@ function App() {
         {/* 🖌️ Models & custom burger exported from Blender */}
         {/* <ImportedModels /> */}
         <RealisticRendering />
-      </Suspense>
-    </div>
+      </div>
+    </Suspense>
   );
 }
 
