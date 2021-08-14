@@ -79,10 +79,12 @@
   - Or provide them in template literals inside `jsx`
 
 - ### GLSL Syntax Highlighting and Linting
+
   - Highlighting: download extension **Shader languages support for VS Code**
   - Linting: download extension **GLSL Linter** and not 🔴 _GLSL Lint_
   - Run `brew install glslang`
   - Provide the validator path in settings, as well as file extensions 👇
+
     ```json
     "glsl-linter.validatorPath": "/home/linuxbrew/.linuxbrew/bin/glslangValidator",
     "glsl-linter.fileExtensions": {
@@ -93,3 +95,4 @@
     ".gs.glsl": "geom"
     },
     ```
+
