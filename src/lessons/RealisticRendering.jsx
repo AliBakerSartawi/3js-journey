@@ -237,6 +237,13 @@ function Lights() {
         intensity={directionalLightIntensity}
         castShadow={directionalLightCastShadow}
         shadow-mapSize={[1024, 1024]}
+        
+        // tweak normalBias to remove shadow acne on the burger
+        // start testing from 0.01 and go up
+        // increasing the value too much will create wrong shadows
+        // usually, 0.05 is more than enough
+        shadow-normalBias={0.02} 
+        // if surface is flat (not rounded), try using bias instead of normalBias
       />
     </>
   );
