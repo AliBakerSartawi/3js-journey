@@ -141,7 +141,7 @@ function RealisticRendering() {
         shadows
         camera={{
           fov: 45,
-          position: [15, 10, 15],
+          position: [5, 2, 5],
           near: 0.1,
           far: 2000
         }}
