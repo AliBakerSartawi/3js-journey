@@ -20,6 +20,8 @@
  * modelMatrix and viewMatrix can be combined as below:
  * uniform vec4 modelViewMatrix
  * but comes with less control over the process
+ *
+ * these matrices will be handled automatically with ShaderMaterial (not raw)
  */
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
@@ -37,7 +39,7 @@ void main() {
 
   vec4 modelPosition = modelMatrix * vec4(position, 1.0);
   // to make a flag flow animation, we play with the z axis
-  modelPosition.z += sin(modelPosition.x * 2.0);
+  modelPosition.z += sin(modelPosition.x * 10.0) * 0.1;
 
   vec4 viewPosition = viewMatrix * modelPosition;
   vec4 projectedPosition = projectionMatrix * viewPosition;

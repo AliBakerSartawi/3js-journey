@@ -130,14 +130,16 @@ import fragmentShader from '!!raw-loader!./shaders/plane/fragment.fs.glsl'
 function Plane() {
   return (
     <mesh>
-      <planeBufferGeometry args={[10, 10, 100, 100]} />
-      <meshBasicMaterial />
+      <planeBufferGeometry args={[1, 1, 32, 32]}>
+        <bufferAttribute attacj />
+      </planeBufferGeometry>
       <rawShaderMaterial
         args={{
           vertexShader: vertexShader,
           fragmentShader: fragmentShader,
-          wireframe: true,
-          side: THREE.DoubleSide
+          // wireframe: true,
+          side: THREE.DoubleSide,
+          transparent: true,
         }}
       />
     </mesh>
@@ -154,7 +156,7 @@ function Shaders() {
         shadows
         camera={{
           fov: 45,
-          position: [15, 10, 15],
+          position: [1, 0.5, 1],
           near: 0.1,
           far: 2000
         }}
