@@ -73,7 +73,7 @@ function FlightHelmet({ environmentMapTexture }) {
         Scale: [10, 10, 10],
         Position: [0, -4, 0],
         Rotation_Y: { value: 0, min: 0, max: Math.PI * 2, step: 0.1 },
-        EnvMap_Intensity: { value: 1, min: 0, max: 10, step: 0.1 }
+        EnvMap_Intensity: { value: 3.5, min: 0, max: 10, step: 0.1 }
       },
       {
         // collapsed: true
@@ -135,6 +135,9 @@ function RealisticRendering() {
   const [environmentMapTexture] = useLoader(THREE.CubeTextureLoader, [
     [px, nx, py, ny, pz, nz]
   ]);
+  // makes lighting and colors much more realistic
+  environmentMapTexture.encoding = THREE.sRGBEncoding; 
+  // Note: do not apply sRGBEncoding on textures such as normals or roughness etc...
   return (
     <div style={{ height: '100vh', backgroundColor: 'black' }}>
       <Canvas
@@ -146,8 +149,9 @@ function RealisticRendering() {
           far: 2000
         }}
         onCreated={(canvas) => {
-          console.log(canvas);
+          console.log(canvas.gl);
           // gl === renderer in vanilla THREE
+          // gl.outputEncoding is THREE.sRGBEncoding by default in @react-three/fiber
           canvas.gl.physicallyCorrectLights = true;
           canvas.scene.background = environmentMapTexture;
         }}
