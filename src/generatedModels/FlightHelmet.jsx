@@ -23,42 +23,48 @@ export default function Model(props) {
   return (
     <group ref={group} {...props} dispose={null}>
       <mesh
-        castShadow
+        castShadow={props.shadows}
+        receiveShadow={props.shadows}
         geometry={nodes.Hose_low.geometry}
         material={materials.HoseMat}
         // material-envMap={props.envMap}
         // material-envMapIntensity={props.envMapIntensity}
       />
       <mesh
-        castShadow
+        castShadow={props.shadows}
+        receiveShadow={props.shadows}
         geometry={nodes.RubberWood_low.geometry}
         material={materials.RubberWoodMat}
         // material-envMap={props.envMap}
         // material-envMapIntensity={props.envMapIntensity}
       />
       <mesh
-        castShadow
+        castShadow={props.shadows}
+        receiveShadow={props.shadows}
         geometry={nodes.GlassPlastic_low.geometry}
         material={materials.GlassPlasticMat}
         // material-envMap={props.envMap}
         // material-envMapIntensity={props.envMapIntensity}
       />
       <mesh
-        castShadow
+        castShadow={props.shadows}
+        receiveShadow={props.shadows}
         geometry={nodes.MetalParts_low.geometry}
         material={materials.MetalPartsMat}
         // material-envMap={props.envMap}
         // material-envMapIntensity={props.envMapIntensity}
       />
       <mesh
-        castShadow
+        castShadow={props.shadows}
+        receiveShadow={props.shadows}
         geometry={nodes.LeatherParts_low.geometry}
         material={materials.LeatherPartsMat}
         // material-envMap={props.envMap}
         // material-envMapIntensity={props.envMapIntensity}
       />
       <mesh
-        castShadow
+        castShadow={props.shadows}
+        receiveShadow={props.shadows}
         geometry={nodes.Lenses_low.geometry}
         material={materials.LensesMat}
         // material-envMap={props.envMap}

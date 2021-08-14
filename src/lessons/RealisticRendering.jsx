@@ -1,4 +1,4 @@
-import React, { useRef, useState, useMemo, Suspense } from 'react';
+import React, { useRef, useState, useMemo, Suspense, useEffect } from 'react';
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { Physics, useBox, usePlane, useSphere } from '@react-three/cannon';
 import { OrbitControls } from '@react-three/drei';
@@ -66,14 +66,16 @@ function FlightHelmet({ environmentMapTexture }) {
     Scale: scale,
     Position: position,
     Rotation_Y: rotationY,
-    EnvMap_Intensity: envMapIntensity
+    EnvMap_Intensity: envMapIntensity,
+    Shadows: shadows
   } = useControls({
     FlightHelmet: folder(
       {
         Scale: [10, 10, 10],
         Position: [0, -4, 0],
         Rotation_Y: { value: 0, min: 0, max: Math.PI * 2, step: 0.1 },
-        EnvMap_Intensity: { value: 3.5, min: 0, max: 10, step: 0.1 }
+        EnvMap_Intensity: { value: 3.5, min: 0, max: 10, step: 0.1 },
+        Shadows: true,
       },
       {
         // collapsed: true
@@ -87,6 +89,7 @@ function FlightHelmet({ environmentMapTexture }) {
       rotation={[0, rotationY, 0]}
       envMap={environmentMapTexture}
       envMapIntensity={envMapIntensity}
+      shadows={shadows}
     />
   );
 }
@@ -132,12 +135,19 @@ function Fox() {
  * Main Component
  */
 function RealisticRendering() {
+  // const { ACESFilmicToneMapping } = useControls({
+  //   Canvas: folder({
+  //     ACESFilmicToneMapping: true
+  //   })
+  // })
+
   const [environmentMapTexture] = useLoader(THREE.CubeTextureLoader, [
     [px, nx, py, ny, pz, nz]
   ]);
   // makes lighting and colors much more realistic
   environmentMapTexture.encoding = THREE.sRGBEncoding; 
   // Note: do not apply sRGBEncoding on textures such as normals or roughness etc...
+
   return (
     <div style={{ height: '100vh', backgroundColor: 'black' }}>
       <Canvas
@@ -149,12 +159,14 @@ function RealisticRendering() {
           far: 2000
         }}
         onCreated={(canvas) => {
-          console.log(canvas.gl);
+          // console.log(canvas.gl);
           // gl === renderer in vanilla THREE
           // gl.outputEncoding is THREE.sRGBEncoding by default in @react-three/fiber
           canvas.gl.physicallyCorrectLights = true;
           canvas.scene.background = environmentMapTexture;
         }}
+        // if flat === true, renderer will use THREE.NoToneMapping instead of THREE.ACESFilmicToneMapping
+        // flat={true} // false by default
       >
         {/* <axesHelper args={[10]} /> */}
         <OrbitControls />
@@ -208,7 +220,7 @@ function Lights() {
         directionalLightCastShadow: true
       },
       {
-        collapsed: true
+        // collapsed: true
       }
     )
   });
