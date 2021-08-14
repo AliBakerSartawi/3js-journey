@@ -7,7 +7,7 @@ import { useControls, Leva, folder } from 'leva';
 import DuckModel from '../generatedModels/Duck';
 import FlightHelmetModel from '../generatedModels/FlightHelmet';
 import FoxModel from '../generatedModels/Fox';
-// import BurgerModel from '../generatedModels/Burger';
+import BurgerModel from '../generatedModels/Burger';
 
 // env imports
 import px from '../textures/environmentMaps/3/px.jpg';
@@ -62,20 +62,14 @@ function Duck() {
  * FlightHelmet Component
  */
 function FlightHelmet({ environmentMapTexture }) {
-  const {
-    Scale: scale,
-    Position: position,
-    Rotation_Y: rotationY,
-    EnvMap_Intensity: envMapIntensity,
-    Shadows: shadows
-  } = useControls({
+  const { scale, position, rotationY, envMapIntensity, shadows } = useControls({
     FlightHelmet: folder(
       {
-        Scale: [10, 10, 10],
-        Position: [0, -4, 0],
-        Rotation_Y: { value: 0, min: 0, max: Math.PI * 2, step: 0.1 },
-        EnvMap_Intensity: { value: 3.5, min: 0, max: 10, step: 0.1 },
-        Shadows: true,
+        scale: [10, 10, 10],
+        position: [0, -4, 0],
+        rotationY: { value: 0, min: 0, max: Math.PI * 2, step: 0.1 },
+        envMapIntensity: { value: 3.5, min: 0, max: 10, step: 0.1 },
+        shadows: true
       },
       {
         // collapsed: true
@@ -115,21 +109,32 @@ function Fox() {
 /**
  * Burger Component from Blender
  */
-// function Burger() {
-//   const { Burger_Scale: scale, Burger_Position: position, Burger_Rotation: rotation } = useControls({
-//     Burger: folder(
-//       {
-//         Burger_Scale: [1, 1, 1],
-//         Burger_Position: [3, 0, 0],
-//         Burger_Rotation: [0, 0, 0],
-//       },
-//       {
-//         collapsed: true
-//       }
-//     )
-//   });
-//   return <BurgerModel scale={scale} position={position} rotation={rotation} />;
-// }
+function Burger({ environmentMapTexture }) {
+  const { scale, rotation, position, envMapIntensity, shadows } = useControls({
+    Burger: folder(
+      {
+        scale: [1, 1, 1],
+        position: [0, -4, 5],
+        rotation: [0, 0, 0],
+        envMapIntensity: { value: 3.5, min: 0, max: 10, step: 0.1 },
+        shadows: true
+      },
+      {
+        collapsed: true
+      }
+    )
+  });
+  return (
+    <BurgerModel
+      scale={scale}
+      position={position}
+      rotation={rotation}
+      envMap={environmentMapTexture}
+      envMapIntensity={envMapIntensity}
+      shadows={shadows}
+    />
+  );
+}
 
 /**
  * Main Component
@@ -145,7 +150,7 @@ function RealisticRendering() {
     [px, nx, py, ny, pz, nz]
   ]);
   // makes lighting and colors much more realistic
-  environmentMapTexture.encoding = THREE.sRGBEncoding; 
+  environmentMapTexture.encoding = THREE.sRGBEncoding;
   // Note: do not apply sRGBEncoding on textures such as normals or roughness etc...
 
   return (
@@ -154,7 +159,7 @@ function RealisticRendering() {
         shadows
         camera={{
           fov: 45,
-          position: [5, 2, 5],
+          position: [10, 2, 10],
           near: 0.1,
           far: 2000
         }}
@@ -178,7 +183,7 @@ function RealisticRendering() {
         {/* <Duck /> */}
         <FlightHelmet environmentMapTexture={environmentMapTexture} />
         {/* <Fox /> */}
-        {/* <Burger /> */}
+        <Burger environmentMapTexture={environmentMapTexture} />
 
         <Lights />
       </Canvas>
@@ -231,6 +236,7 @@ function Lights() {
         position={directionalLightPosition}
         intensity={directionalLightIntensity}
         castShadow={directionalLightCastShadow}
+        shadow-mapSize={[1024, 1024]}
       />
     </>
   );
