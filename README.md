@@ -35,9 +35,6 @@
 - Or even simply `duck/Duck.gltf`
 - And happy hacking!
 
-- ## Draco
-  - Converting the **Draco** compressed version of the `gltf` can be rewarding, as it has a much smaller size in the `public` directory
-
 ---
 
 ## Exporting GLTF From Blender
@@ -73,7 +70,7 @@
   import glsl from 'babel-plugin-glsl/macro';
   ```
 
-- Important to note that the above packages didn't work with me, solution 👇
+- Important to note that the above packages didn't work with me (not needed anyway), solution 👇
 
   - Simply write **GLSL** in separate dedicated files
   - Or provide them in template literals inside `jsx`
@@ -96,3 +93,15 @@
     },
     ```
 
+- ### Imports
+
+  - React's default Webpack imports **glsl** files as static
+  - To import as strings, install **raw-loader** package
+  - Alter the path with `!!raw-loader!`
+
+    ```jsx
+    /* eslint-disable import/no-webpack-loader-syntax */
+    import vertexShader from '!!raw-loader!./shaders/plane/vertex.vs.glsl';
+    ```
+
+- Happy shading!!
