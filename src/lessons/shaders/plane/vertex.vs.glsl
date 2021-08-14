@@ -15,6 +15,11 @@
  *                   => (position, rotation, field of view, near, far)
  *
  * projectionMatrix  => transform the coordinates into the clip space coordinates
+ *
+ * These three matrices are provided by THREE
+ * modelMatrix and viewMatrix can be combined as below:
+ * uniform vec4 modelViewMatrix
+ * but comes with less control over the process
  */
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
@@ -30,6 +35,18 @@ attribute vec3 position;
 // main is called automatically, and is void
 void main() {
 
+  vec4 modelPosition = modelMatrix * vec4(position, 1.0);
+  // to make a flag flow animation, we play with the z axis
+  modelPosition.z += sin(modelPosition.x * 2.0);
+
+  vec4 viewPosition = viewMatrix * modelPosition;
+  vec4 projectedPosition = projectionMatrix * viewPosition;
+
+  gl_Position = projectedPosition;
+}
+
+// this function won't be called
+void mainBasic() {
   /* 
    * gl_Position 
    * this variable already exists, we only reassign it
@@ -37,6 +54,11 @@ void main() {
    * returns a vec4
    * x, y, z are responsible for 3D position
    * w is responsibe for persepective (homogeneous coordinates)
+   *
+   * the formula below must be in this order
+   * otherwise, funny results can happen
+   *
+   * it appears to be going from left to right, but it's actually the opposide 
    */
   gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
 }

@@ -130,13 +130,13 @@ import fragmentShader from '!!raw-loader!./shaders/plane/fragment.fs.glsl'
 function Plane() {
   return (
     <mesh>
-      <planeBufferGeometry args={[10, 10, 10, 10]} />
+      <planeBufferGeometry args={[10, 10, 100, 100]} />
       <meshBasicMaterial />
       <rawShaderMaterial
         args={{
           vertexShader: vertexShader,
           fragmentShader: fragmentShader,
-          // wireframe: true,
+          wireframe: true,
           side: THREE.DoubleSide
         }}
       />
