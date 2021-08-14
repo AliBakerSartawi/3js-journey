@@ -8,8 +8,26 @@ import { folder, Leva, useControls } from 'leva';
 // console.log(glsl)
 
 // shader imports
-import vertexShader from './shaders/plane/vertex.glsl'
+import vertexShader from './shaders/plane/vertex.vs.glsl'
 console.log(vertexShader)
+
+/**
+ * Problem importing GLSL files:
+ * 
+ * the problem is that it is imported as a static file (like images)
+ * but we need it as a string, webpack must be configured, which isn't an easy task in a react app
+ * 
+ * the following must be added to /bundler/webpack.common.js, in the rules array
+ * 
+ * {
+ *    test: /\.(vs.glsl|fs.glsl|or any other extensions)$/,
+ *    exclude: /node_modules/,
+ *    use: {
+ *        'raw-loader'
+ *    }
+ * }
+ * 
+ */
 
 
 /**
