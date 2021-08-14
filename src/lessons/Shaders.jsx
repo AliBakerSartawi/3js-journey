@@ -7,6 +7,10 @@ import { folder, Leva, useControls } from 'leva';
 // import glsl from 'babel-plugin-glsl'
 // console.log(glsl)
 
+// shader imports
+import vertexShader from './shaders/plane/vertex.glsl'
+console.log(vertexShader)
+
 
 /**
  * Shaders
@@ -49,7 +53,13 @@ const planeShaders = {
       gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
     }
   `,
-  fragmentShader: ``
+  fragmentShader: `
+    precision mediump float;
+
+    void main() {
+      gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+    }
+  `
 }
 
 /**
