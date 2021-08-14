@@ -8,8 +8,8 @@ import { folder, Leva, useControls } from 'leva';
 // console.log(glsl)
 
 // shader imports
-import vertexShader from './shaders/plane/vertex.vs.glsl'
-console.log(vertexShader)
+// import vertexShader from './shaders/plane/vertex.vs.glsl'
+// console.log(vertexShader)
 
 /**
  * Problem importing GLSL files:
@@ -28,6 +28,9 @@ console.log(vertexShader)
  * }
  * 
  */
+
+// alternative shader imports (importing an object from a js file with glsl as strings)
+import { planeShaders } from './shaders/plane/shaders';
 
 
 /**
@@ -60,27 +63,6 @@ console.log(vertexShader)
  * 
  *      => glsl linting => https://www.youtube.com/watch?v=NQ-g6v7GtoI
  */
-
-const planeShaders = {
-  vertexShader: `
-    uniform mat4 projectionMatrix;
-    uniform mat4 viewMatrix;
-    uniform mat4 modelMatrix;
-
-    attribute vec3 position;
-
-    void main() {
-      gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
-    }
-  `,
-  fragmentShader: `
-    precision mediump float;
-
-    void main() {
-      gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
-    }
-  `
-}
 
 /**
  * Plane Component
