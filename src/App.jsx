@@ -12,12 +12,13 @@ import CustomLoader from './components/CustomLoader';
 // import BakingShadows from './lessons/BakingShadows';
 // import HauntedHouse from './lessons/HauntedHouse';
 // import Particles from './lessons/Particles';
-import GalaxyGenerator from './lessons/GalaxyGenerator';
+// import GalaxyGenerator from './lessons/GalaxyGenerator';
 // import Template from './lessons/Template';
 // import RayCaster from './lessons/RayCaster';
 // import Physics from './lessons/Physics';
 // import ImportedModels from './lessons/ImportedModels';
-import RealisticRendering from './lessons/RealisticRendering';
+// import RealisticRendering from './lessons/RealisticRendering';
+import Shaders from './lessons/Shaders';
 
 function App() {
   const app = useRef();
@@ -67,7 +68,8 @@ function App() {
         {/* <Physics /> */}
         {/* 🖌️ Models & custom burger exported from Blender */}
         {/* <ImportedModels /> */}
-        <RealisticRendering />
+        {/* <RealisticRendering /> */}
+        <Shaders />
       </div>
     </Suspense>
   );
