@@ -9,7 +9,6 @@ import { folder, Leva, useControls } from 'leva';
 /* eslint-disable import/no-webpack-loader-syntax */
 import vertexShader from '!!raw-loader!./shaders/plane/vertex.vs.glsl'
 import fragmentShader from '!!raw-loader!./shaders/plane/fragment.fs.glsl'
-console.log(fragmentShader)
 
 /**
  * Problem importing GLSL files:
@@ -34,13 +33,64 @@ console.log(fragmentShader)
 /**
  * GLSL Rules:
  * 
- * close to C language
- * you can't log anything
- * semicolons are a must
- * variables are typed
- *    - 🟢 float fooBar = 0.1212;
- *    - 🟢 float fooBar = 1.0; => must always have decimals
- *    - 🔴 float fooBar = 1;
+ * - close to C language
+ * - you can't log anything
+ * - semicolons are a must
+ * - variables are typed
+ * 
+ * - Rules:
+ *    - 🟢 float foo = 0.1212;
+ *    - 🟢 float bar = 1.0; => must always have decimals
+ *    - 🟢 float duh = foo * bar; // must always have decimals
+ *    - 🔴 float salamander = 1;
+ *    - 🟢 int cheese = 1;
+ *    - 🟢 int mango = - 12;
+ *    - 🟢 int yuck = cheese / mango; // but if you get a float, you're in trouble
+ *    - 🔴 int salsa = 1.0;
+ *    - 🔴 float mix = bar * cheese; // cannot mix int with float
+ *    - 🟢 float convert = bar * float(cheese); // but can convert on the fly
+ *    - 🟢 bool convinceMe = true;
+ *    - 🟢 bool notConvinced = false;
+ * 
+ *    - vec2 (to store 2 coordinates(x, y))
+ *    - 🟢 vec2 sup = vec2(1.0, 2.0);
+ *    - 🔴 vec2 emptyInside = vec2(); // will cause an error, unlike THREE
+ *    - 🟢 vec2 mono = vec2(1.0); // will use value for x & y
+ *    - 🟢 vec2 mutable = vec2(1.0); mutable.x = 2.0; mutable.y = 3.0; 
+ *    - 🟢 mutable *= 2.0; // will affect both x & y 
+ * 
+ *    - vec3 (to store 3 coordinates(x, y, z))
+ *    - 🟢 vec3 hey = vec3(1.0);
+ *    - 🟢 vec3 yo = vec3(1.0, 3.6, 4.5);
+ *    - 🟢 yo.z = 9.9;
+ *    - 🟢 vec3 fromVec2 = vec3(sup, 4.5);
+ *    - or the opposite (called swizzle)
+ *    - 🟢 vec2 fromVec3 = hey.xy; // even xz or yx, but not xg or by
+ * 
+ *    - instead of (x, y, z), you can use (r, g, b) aliases
+ *    - or even use them interchangeably on the same variable
+ *    - 🟢 yo.x = 0.7;
+ *    - 🟢 yo.g = 0.9;
+ *    - 🟢 yo.b = 0.3;
+ * 
+ *    - vec4 (to store 4 coordinates(x, y, z, w)) || (r, g, b, a)
+ *    - 🟢 vec4 comeOn = vec4(1.0, 2.0, 3.0, 4.0);
+ *    - 🟢 vec4 really = vec4(comeOn.zw, vec2(5.0, 6.0));
+ *    - 🟢 float backAgain = really.a;
+ * 
+ *    - functions are typed as well
+ *    - float sum(float a, float b) { return a + b; };
+ * 
+ *    - classic built-in functions
+ *      - sin, cos, max, min, pow, exp, mod, clamp
+ * 
+ *    - practical built-in functions
+ *      - cross, dot, mix, step, smoothstep, length, distance, reflect, refract, normalize
+ * 
+ * - Documentation: (not beginner-friendly)
+ *   - https://www.shaderific.com/glsl-functions 
+ *   - https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/indexflat.php 
+ *   - https://thebookofshaders.com/glossary/ 
  */ 
 
 /**
