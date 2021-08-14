@@ -4,12 +4,12 @@ import { Physics, useBox, usePlane, useSphere } from '@react-three/cannon';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 import { folder, Leva, useControls } from 'leva';
-// import glsl from 'babel-plugin-glsl'
-// console.log(glsl)
 
-// shader imports
-// import vertexShader from './shaders/plane/vertex.vs.glsl'
-// console.log(vertexShader)
+// shader imports using raw-loader package
+/* eslint-disable import/no-webpack-loader-syntax */
+import vertexShader from '!!raw-loader!./shaders/plane/vertex.vs.glsl'
+import fragmentShader from '!!raw-loader!./shaders/plane/fragment.fs.glsl'
+console.log(fragmentShader)
 
 /**
  * Problem importing GLSL files:
@@ -26,12 +26,22 @@ import { folder, Leva, useControls } from 'leva';
  *        'raw-loader'
  *    }
  * }
+ * 
+ * 🟢 Solution: use raw-loader package, insert !!raw-loader! before file path to override webpack configs           
  *
  */
 
-// alternative shader imports (importing an object from a js file with glsl as strings)
-// this shaders file has notes on GLSL language
-import { planeShaders } from './shaders/plane/shaders';
+/**
+ * GLSL Rules:
+ * 
+ * close to C language
+ * you can't log anything
+ * semicolons are a must
+ * variables are typed
+ *    - 🟢 float fooBar = 0.1212;
+ *    - 🟢 float fooBar = 1.0; => must always have decimals
+ *    - 🔴 float fooBar = 1;
+ */ 
 
 /**
  * Shaders
@@ -74,7 +84,8 @@ function Plane() {
       <meshBasicMaterial />
       <rawShaderMaterial
         args={{
-          ...planeShaders,
+          vertexShader: vertexShader,
+          fragmentShader: fragmentShader,
           // wireframe: true,
           side: THREE.DoubleSide
         }}
