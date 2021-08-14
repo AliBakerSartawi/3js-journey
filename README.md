@@ -48,7 +48,7 @@
   - Check **remember export settings**
   - **Include** &rarr; check **Limit to: selected objects**
   - **Transform** &rarr; check **+Y: up** (because in blender, +Z is up)
-  - **Geometry** &rarr; 
+  - **Geometry** &rarr;
     - check **Apply Modifiers**
     - check **Normals**
     - check **UVs** if there are textures
@@ -70,5 +70,26 @@
 - Then import
 
   ```jsx
-  import glsl from 'babel-plugin-glsl/macro'
+  import glsl from 'babel-plugin-glsl/macro';
   ```
+
+- Important to note that the above packages didn't work with me, solution 👇
+
+  - Simply write **GLSL** in separate dedicated files
+  - Or provide them in template literals inside `jsx`
+
+- ### GLSL Syntax Highlighting and Linting
+  - Highlighting: download extension **Shader languages support for VS Code**
+  - Linting: download extension **GLSL Linter** and not 🔴 _GLSL Lint_
+  - Run `brew install glslang`
+  - Provide the validator path in settings, as well as file extensions 👇
+    ```json
+    "glsl-linter.validatorPath": "/home/linuxbrew/.linuxbrew/bin/glslangValidator",
+    "glsl-linter.fileExtensions": {
+    ".fs.glsl": "frag",
+    ".vs.glsl": "vert",
+    ".tes.glsl": "tese",
+    ".tcs.glsl": "tesc",
+    ".gs.glsl": "geom"
+    },
+    ```

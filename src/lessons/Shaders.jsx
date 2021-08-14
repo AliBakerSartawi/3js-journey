@@ -39,6 +39,8 @@ console.log(vertexShader)
  *
  *      => ShaderMaterial will have some code added to the shader
  *      => RawShaderMaterial is... raw 🤓
+ * 
+ *      => glsl linting => https://www.youtube.com/watch?v=NQ-g6v7GtoI
  */
 
 const planeShaders = {
