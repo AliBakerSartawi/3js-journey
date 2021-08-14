@@ -56,3 +56,19 @@
     - check **Compression** (much smaller file size)
   - Configure **Animations** if there is any
 - Happy modeling!
+
+---
+
+## Shaders
+
+- First, package up
+
+  ```
+  $ npm i glslify babel-plugin-glsl
+  ```
+
+- Then import
+
+  ```jsx
+  import glsl from 'babel-plugin-glsl/macro'
+  ```

@@ -4,109 +4,54 @@ import { Physics, useBox, usePlane, useSphere } from '@react-three/cannon';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 import { folder, Leva, useControls } from 'leva';
+import glsl from 'babel-plugin-glsl/macro'
 
 /**
- * Plane
+ * Shaders
+ * Written in GLSL
+ *
+ * GLSL => stands for openGL (Graphics Library) Shading Language
+ *      => positions each vertex of a geometry
+ *      => colorizes each visible pixel (fragment) of that geometry
+ *      => fragments are to the renderer like pixels are to a screen
+ *      => data (vertices, meshes, lights, camera, etc.) are sent to the GPU, which process them according to shader instructions
+ *
+ *      => Types:
+ *         => Vertex Shader   => the same vertex shader code will position all vertices (runs for each vertex)
+ *                            => data that differ from vertex to vertex (like vertex position & vertexColor) are called: 🟠 attributes
+ *                            => data that are similar to all vertices (like mesh position & camera) are called: 🔵 uniforms
+ *         => Fragment Shader => once vertices are placed, GPU knows the visible fragments and proceeds to the fragment shader
+ *                            => fragment shaders only have uniforms, no attributes, but...
+ *                            => data can be sent from the vertex shader, they're called: 🟣 varyings
+ *                            => 🟣 varyings values are interpolated between the vertices
+ *                               => for example: if each vertex has a color, the fragment will have a percentage of that color
+ *                                  depending on how close it is to that vertex
+ *
+ *      => Why Custom Shaders => very performant
+ *                            => custom post-processing (effects)
+ *                            => can do what built in materials can't
+ *
+ *      => ShaderMaterial will have some code added to the shader
+ *      => RawShaderMaterial is... raw 🤓
  */
-function Plane(props) {
-  const [plane] = usePlane(() => ({
-    mass: 0,
-    type: 'Static',
-    rotation: [-Math.PI / 2, 0, 0],
-    position: [0, 0, 0],
-    args: [25, 25],
-    ...props
-  }));
-  return (
-    <mesh
-      ref={plane}
-      receiveShadow
-      // rotation-x={-Math.PI / 2}
-    >
-      <planeBufferGeometry args={[25, 25]} />
-      <meshStandardMaterial color={'grey'} />
-    </mesh>
-  );
-}
 
 /**
- * Box
+ * Plane Component
  */
-function Box({ color, x, y, z }) {
-  const [box] = useBox(() => ({
-    mass: 1,
-    position: [x, y, z],
-    rotation: [
-      (Math.random() * Math.PI) / 2,
-      (Math.random() * Math.PI) / 2,
-      (Math.random() * Math.PI) / 2
-    ],
-    args: [0.5, 0.5, 0.5]
-  }));
+function Plane() {
   return (
-    <mesh
-      ref={box}
-      castShadow
-      // position={[0, 5, 0]}
-    >
-      <boxBufferGeometry args={[0.5, 0.5, 0.5]} />
-      <meshStandardMaterial color={color} />
+    <mesh>
+      <planeBufferGeometry args={[10, 10]} />
+      <meshBasicMaterial />
+      <rawShaderMaterial />
     </mesh>
-  );
-}
-
-function Boxes({boxes}) {
-  const rainingBoxes = useMemo(() => {
-    return (
-      <>
-        {new Array(boxes).fill(1).map((box, i) => {
-          const colors = ['lime', 'orange', 'royalblue', 'crimson'];
-          const colorIndex = i % 4;
-          const x = Math.random() < 0.5 ? 1 : -1;
-          const z = Math.random() < 0.5 ? 1 : -1;
-          return (
-            <Box
-              key={Math.random() * i}
-              x={x}
-              y={i + 3}
-              z={z}
-              color={colors[colorIndex]}
-            />
-          );
-        })}
-      </>
-    );
-  }, [boxes]);
-  return rainingBoxes;
-}
-
-/**
- * Sphere
- */
-function Sphere(props) {
-  const [sphere] = useSphere(() => ({
-    mass: 1,
-    args: [1],
-    position: [0, 0.75, 0]
-  }));
-  return (
-    <mesh castShadow ref={sphere}>
-      <sphereBufferGeometry args={[1]} />
-      <meshStandardMaterial color={'lightgrey'} />
-    </mesh>
-  );
+  )
 }
 
 /**
  * Main Component
  */
 function Shaders() {
-  // controls
-  const { gravity, boxes } = useControls({
-    gravity: { value: -9.82, min: -9.82, max: 0, step: 0.1 },
-    boxes: { value: 50, min: 1, max: 100, step: 1 },
-  });
-
   return (
     <div style={{ height: '100vh', backgroundColor: 'black' }}>
       <Canvas
@@ -121,12 +66,7 @@ function Shaders() {
         <axesHelper args={[10]} />
         <OrbitControls />
 
-        <Physics gravity={[0, gravity, 0]}>
-          <Plane />
-          {/* Raining Boxes */}
-          <Boxes boxes={boxes} />
-          <Sphere />
-        </Physics>
+        <Plane />
 
         <Lights />
       </Canvas>
@@ -145,23 +85,37 @@ function Lights() {
     Hemisphere_Sky_Light_Color: hemisphereSkyColor,
     Hemisphere_Ground_Light_Color: hemisphereGroundColor
   } = useControls({
-    Lights: folder({
-      Point_Light: folder({
-        Point_Light_Intensity: { value: 1, min: 0, max: 10, step: 0.01 },
-        Point_Light_Color: '#e1e1e1',
-      }, {
+    Lights: folder(
+      {
+        Point_Light: folder(
+          {
+            Point_Light_Intensity: { value: 1, min: 0, max: 10, step: 0.01 },
+            Point_Light_Color: '#e1e1e1'
+          },
+          {
+            collapsed: true
+          }
+        ),
+        Hemisphere_Light: folder(
+          {
+            Hemisphere_Light_Intensity: {
+              value: 1,
+              min: 0,
+              max: 10,
+              step: 0.01
+            },
+            Hemisphere_Sky_Light_Color: '#e1e1e1',
+            Hemisphere_Ground_Light_Color: '#e1e1e1'
+          },
+          {
+            collapsed: true
+          }
+        )
+      },
+      {
         collapsed: true
-      }),
-      Hemisphere_Light: folder({
-        Hemisphere_Light_Intensity: { value: 1, min: 0, max: 10, step: 0.01 },
-        Hemisphere_Sky_Light_Color: '#e1e1e1',
-        Hemisphere_Ground_Light_Color: '#e1e1e1'
-      }, {
-        collapsed: true
-      })
-    }, {
-      collapsed: true
-    })
+      }
+    )
   });
   return (
     <>
