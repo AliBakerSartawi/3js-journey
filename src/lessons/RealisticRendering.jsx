@@ -7,12 +7,38 @@ import { useControls, Leva, folder } from 'leva';
 import DuckModel from '../generatedModels/Duck';
 import FlightHelmetModel from '../generatedModels/FlightHelmet';
 import FoxModel from '../generatedModels/Fox';
-import BurgerModel from '../generatedModels/Burger';
+// import BurgerModel from '../generatedModels/Burger';
+
+// env imports
+import px from '../textures/environmentMaps/3/px.jpg';
+import nx from '../textures/environmentMaps/3/nx.jpg';
+import py from '../textures/environmentMaps/3/py.jpg';
+import ny from '../textures/environmentMaps/3/ny.jpg';
+import pz from '../textures/environmentMaps/3/pz.jpg';
+import nz from '../textures/environmentMaps/3/nz.jpg';
 
 /**
  * gl.physicallyCorrectLights = true ⬇️
  * This helps in getting consistent results between softwares (imported models in case they had light in their object)
  */
+
+/**
+ * Vanilla THREE imported models material update (to apply envMap)
+ *
+ * @param {object} scene // Object inside the imported model
+ * @param {object} envMap // The loaded envMap using CubeTextureLoader
+ */
+const updateAllMaterials = (scene, envMap) => {
+  scene.traverse((child) => {
+    if (
+      child instanceof THREE.Mesh &&
+      child.material instanceof THREE.MeshStandardMaterial
+    ) {
+      child.material.envMap = envMap;
+      child.material.envMapIntensity = 5;
+    }
+  });
+};
 
 /**
  * Duck Component
@@ -22,7 +48,7 @@ function Duck() {
     Duck: folder(
       {
         Duck_Scale: [1, 1, 1],
-        Duck_Position: [0, 0, 0]
+        Duck_Position: [0, 0, 3]
       },
       {
         collapsed: true
@@ -35,20 +61,34 @@ function Duck() {
 /**
  * FlightHelmet Component
  */
-function FlightHelmet() {
-  const { FlightHelmet_Scale: scale, FlightHelmet_Position: position } =
-    useControls({
-      FlightHelmet: folder(
-        {
-          FlightHelmet_Scale: [2.5, 2.5, 2.5],
-          FlightHelmet_Position: [0, 0, 2]
-        },
-        {
-          collapsed: true
-        }
-      )
-    });
-  return <FlightHelmetModel scale={scale} position={position} />;
+function FlightHelmet({ environmentMapTexture }) {
+  const {
+    Scale: scale,
+    Position: position,
+    Rotation_Y: rotationY,
+    EnvMap_Intensity: envMapIntensity
+  } = useControls({
+    FlightHelmet: folder(
+      {
+        Scale: [10, 10, 10],
+        Position: [0, -4, 0],
+        Rotation_Y: { value: 0, min: 0, max: Math.PI * 2, step: 0.1 },
+        EnvMap_Intensity: { value: 1, min: 0, max: 10, step: 0.1 }
+      },
+      {
+        // collapsed: true
+      }
+    )
+  });
+  return (
+    <FlightHelmetModel
+      scale={scale}
+      position={position}
+      rotation={[0, rotationY, 0]}
+      envMap={environmentMapTexture}
+      envMapIntensity={envMapIntensity}
+    />
+  );
 }
 
 /**
@@ -72,25 +112,29 @@ function Fox() {
 /**
  * Burger Component from Blender
  */
-function Burger() {
-  const { Burger_Scale: scale, Burger_Position: position } = useControls({
-    Burger: folder(
-      {
-        Burger_Scale: [1, 1, 1],
-        Burger_Position: [3, 0, 0]
-      },
-      {
-        collapsed: true
-      }
-    )
-  });
-  return <BurgerModel scale={scale} position={position} />;
-}
+// function Burger() {
+//   const { Burger_Scale: scale, Burger_Position: position, Burger_Rotation: rotation } = useControls({
+//     Burger: folder(
+//       {
+//         Burger_Scale: [1, 1, 1],
+//         Burger_Position: [3, 0, 0],
+//         Burger_Rotation: [0, 0, 0],
+//       },
+//       {
+//         collapsed: true
+//       }
+//     )
+//   });
+//   return <BurgerModel scale={scale} position={position} rotation={rotation} />;
+// }
 
 /**
  * Main Component
  */
 function RealisticRendering() {
+  const [environmentMapTexture] = useLoader(THREE.CubeTextureLoader, [
+    [px, nx, py, ny, pz, nz]
+  ]);
   return (
     <div style={{ height: '100vh', backgroundColor: 'black' }}>
       <Canvas
@@ -105,19 +149,20 @@ function RealisticRendering() {
           console.log(canvas);
           // gl === renderer in vanilla THREE
           canvas.gl.physicallyCorrectLights = true;
+          canvas.scene.background = environmentMapTexture;
         }}
       >
-        <axesHelper args={[10]} />
+        {/* <axesHelper args={[10]} /> */}
         <OrbitControls />
 
         {/* OBJECTS */}
-        <Plane />
+        {/* <Plane /> */}
 
         {/* MODELS / no need for suspense here as it is provided higher in the tree */}
-        <Duck />
-        <FlightHelmet />
-        <Fox />
-        <Burger />
+        {/* <Duck /> */}
+        <FlightHelmet environmentMapTexture={environmentMapTexture} />
+        {/* <Fox /> */}
+        {/* <Burger /> */}
 
         <Lights />
       </Canvas>
@@ -151,12 +196,17 @@ function Lights() {
     directionalLightPosition,
     directionalLightCastShadow
   } = useControls({
-    directionalLight: folder({
-      directionalLightColor: '#ffffff',
-      directionalLightIntensity: { value: 3, min: 0, max: 10, step: 0.01 },
-      directionalLightPosition: [0.25, 3, -2.25],
-      directionalLightCastShadow: true
-    })
+    directionalLight: folder(
+      {
+        directionalLightColor: '#ffffff',
+        directionalLightIntensity: { value: 3, min: 0, max: 10, step: 0.01 },
+        directionalLightPosition: [0.25, 3, -2.25],
+        directionalLightCastShadow: true
+      },
+      {
+        collapsed: true
+      }
+    )
   });
   return (
     <>
