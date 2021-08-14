@@ -4,7 +4,9 @@ import { Physics, useBox, usePlane, useSphere } from '@react-three/cannon';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 import { folder, Leva, useControls } from 'leva';
-import glsl from 'babel-plugin-glsl/macro'
+// import glsl from 'babel-plugin-glsl'
+// console.log(glsl)
+
 
 /**
  * Shaders
@@ -35,6 +37,21 @@ import glsl from 'babel-plugin-glsl/macro'
  *      => RawShaderMaterial is... raw 🤓
  */
 
+const planeShaders = {
+  vertexShader: `
+    uniform mat4 projectionMatrix;
+    uniform mat4 viewMatrix;
+    uniform mat4 modelMatrix;
+
+    attribute vec3 position;
+
+    void main() {
+      gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
+    }
+  `,
+  fragmentShader: ``
+}
+
 /**
  * Plane Component
  */
@@ -43,7 +60,7 @@ function Plane() {
     <mesh>
       <planeBufferGeometry args={[10, 10]} />
       <meshBasicMaterial />
-      <rawShaderMaterial />
+      <rawShaderMaterial args={planeShaders} />
     </mesh>
   )
 }
