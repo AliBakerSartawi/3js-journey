@@ -1,3 +1,15 @@
+/**
+ * GLSL Rules:
+ * 
+ * close to C language
+ * you can't log anything
+ * semicolons are a must
+ * variables are typed
+ *    - 🟢 float fooBar = 0.1212;
+ *    - 🟢 float fooBar = 1.0; => must always have decimals
+ *    - 🔴 float fooBar = 1;
+ */ 
+
 export const planeShaders = {
   vertexShader: `
     uniform mat4 projectionMatrix;

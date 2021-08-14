@@ -13,12 +13,12 @@ import { folder, Leva, useControls } from 'leva';
 
 /**
  * Problem importing GLSL files:
- * 
+ *
  * the problem is that it is imported as a static file (like images)
  * but we need it as a string, webpack must be configured, which isn't an easy task in a react app
- * 
+ *
  * the following must be added to /bundler/webpack.common.js, in the rules array
- * 
+ *
  * {
  *    test: /\.(vs.glsl|fs.glsl|or any other extensions)$/,
  *    exclude: /node_modules/,
@@ -26,12 +26,12 @@ import { folder, Leva, useControls } from 'leva';
  *        'raw-loader'
  *    }
  * }
- * 
+ *
  */
 
 // alternative shader imports (importing an object from a js file with glsl as strings)
+// this shaders file has notes on GLSL language
 import { planeShaders } from './shaders/plane/shaders';
-
 
 /**
  * Shaders
@@ -60,7 +60,7 @@ import { planeShaders } from './shaders/plane/shaders';
  *
  *      => ShaderMaterial will have some code added to the shader
  *      => RawShaderMaterial is... raw 🤓
- * 
+ *
  *      => glsl linting => https://www.youtube.com/watch?v=NQ-g6v7GtoI
  */
 
@@ -70,11 +70,17 @@ import { planeShaders } from './shaders/plane/shaders';
 function Plane() {
   return (
     <mesh>
-      <planeBufferGeometry args={[10, 10]} />
+      <planeBufferGeometry args={[10, 10, 10, 10]} />
       <meshBasicMaterial />
-      <rawShaderMaterial args={planeShaders} />
+      <rawShaderMaterial
+        args={{
+          ...planeShaders,
+          // wireframe: true,
+          side: THREE.DoubleSide
+        }}
+      />
     </mesh>
-  )
+  );
 }
 
 /**
