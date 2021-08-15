@@ -1,4 +1,4 @@
-import React, { useRef, useState, useMemo } from 'react';
+import React, { useRef, useState, useMemo, useEffect } from 'react';
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { Physics, useBox, usePlane, useSphere } from '@react-three/cannon';
 import { OrbitControls } from '@react-three/drei';
@@ -7,8 +7,8 @@ import { folder, Leva, useControls } from 'leva';
 
 // shader imports using raw-loader package
 /* eslint-disable import/no-webpack-loader-syntax */
-import vertexShader from '!!raw-loader!./shaders/plane/vertex.vs.glsl'
-import fragmentShader from '!!raw-loader!./shaders/plane/fragment.fs.glsl'
+import vertexShader from '!!raw-loader!./shaders/plane/vertex.vs.glsl';
+import fragmentShader from '!!raw-loader!./shaders/plane/fragment.fs.glsl';
 
 /**
  * Problem importing GLSL files:
@@ -25,19 +25,19 @@ import fragmentShader from '!!raw-loader!./shaders/plane/fragment.fs.glsl'
  *        'raw-loader'
  *    }
  * }
- * 
- * 🟢 Solution: use raw-loader package, insert !!raw-loader! before file path to override webpack configs           
+ *
+ * 🟢 Solution: use raw-loader package, insert !!raw-loader! before file path to override webpack configs
  *
  */
 
 /**
  * GLSL Rules:
- * 
+ *
  * - close to C language
  * - you can't log anything
  * - semicolons are a must
  * - variables are typed
- * 
+ *
  * - Rules:
  *    - 🟢 float foo = 0.1212;
  *    - 🟢 float bar = 1.0; => must always have decimals
@@ -51,14 +51,14 @@ import fragmentShader from '!!raw-loader!./shaders/plane/fragment.fs.glsl'
  *    - 🟢 float convert = bar * float(cheese); // but can convert on the fly
  *    - 🟢 bool convinceMe = true;
  *    - 🟢 bool notConvinced = false;
- * 
+ *
  *    - vec2 (to store 2 coordinates(x, y))
  *    - 🟢 vec2 sup = vec2(1.0, 2.0);
  *    - 🔴 vec2 emptyInside = vec2(); // will cause an error, unlike THREE
  *    - 🟢 vec2 mono = vec2(1.0); // will use value for x & y
- *    - 🟢 vec2 mutable = vec2(1.0); mutable.x = 2.0; mutable.y = 3.0; 
- *    - 🟢 mutable *= 2.0; // will affect both x & y 
- * 
+ *    - 🟢 vec2 mutable = vec2(1.0); mutable.x = 2.0; mutable.y = 3.0;
+ *    - 🟢 mutable *= 2.0; // will affect both x & y
+ *
  *    - vec3 (to store 3 coordinates(x, y, z))
  *    - 🟢 vec3 hey = vec3(1.0);
  *    - 🟢 vec3 yo = vec3(1.0, 3.6, 4.5);
@@ -66,32 +66,32 @@ import fragmentShader from '!!raw-loader!./shaders/plane/fragment.fs.glsl'
  *    - 🟢 vec3 fromVec2 = vec3(sup, 4.5);
  *    - or the opposite (called swizzle)
  *    - 🟢 vec2 fromVec3 = hey.xy; // even xz or yx, but not xg or by
- * 
+ *
  *    - instead of (x, y, z), you can use (r, g, b) aliases
  *    - or even use them interchangeably on the same variable
  *    - 🟢 yo.x = 0.7;
  *    - 🟢 yo.g = 0.9;
  *    - 🟢 yo.b = 0.3;
- * 
+ *
  *    - vec4 (to store 4 coordinates(x, y, z, w)) || (r, g, b, a)
  *    - 🟢 vec4 comeOn = vec4(1.0, 2.0, 3.0, 4.0);
  *    - 🟢 vec4 really = vec4(comeOn.zw, vec2(5.0, 6.0));
  *    - 🟢 float backAgain = really.a;
- * 
+ *
  *    - functions are typed as well
  *    - float sum(float a, float b) { return a + b; };
- * 
+ *
  *    - classic built-in functions
  *      - sin, cos, max, min, pow, exp, mod, clamp
- * 
+ *
  *    - practical built-in functions
  *      - cross, dot, mix, step, smoothstep, length, distance, reflect, refract, normalize
- * 
+ *
  * - Documentation: (not beginner-friendly)
- *   - https://www.shaderific.com/glsl-functions 
- *   - https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/indexflat.php 
- *   - https://thebookofshaders.com/glossary/ 
- */ 
+ *   - https://www.shaderific.com/glsl-functions
+ *   - https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/indexflat.php
+ *   - https://thebookofshaders.com/glossary/
+ */
 
 /**
  * Shaders
@@ -124,23 +124,70 @@ import fragmentShader from '!!raw-loader!./shaders/plane/fragment.fs.glsl'
  *      => glsl linting => https://www.youtube.com/watch?v=NQ-g6v7GtoI
  */
 
+function BufferAttributes({ geoCount }) {
+  const buffer = useRef();
+  console.log(geoCount);
+
+  const [array, count, itemSize] = useMemo(() => {
+    if (geoCount) {
+      const count = geoCount;
+      const itemSize = 1;
+      const array = new Float32Array(count);
+
+      for (let i = 0; i < count; i++) {
+        array[i] = Math.random();
+      }
+      console.log(array, count, itemSize);
+      return [array, count, itemSize];
+    } else {
+      return [[], 0, 0];
+    }
+  }, [geoCount]);
+
+  useEffect(() => {
+    buffer.current && console.log(buffer.current);
+  }, [buffer]);
+
+  return (
+    <bufferAttribute
+      ref={buffer}
+      attachObject={['attributes', 'aRandom']}
+      count={count}
+      array={array}
+      itemSize={itemSize}
+    />
+  );
+}
+
 /**
  * Plane Component
  */
 function Plane() {
+  const plane = useRef();
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    plane.current &&
+      console.log(plane.current.geometry.attributes.position.count) &&
+      setCount(() => plane.current.geometry.attributes.position.count);
+  }, [plane]);
+
+  useEffect(() => {
+    console.log(count);
+  }, [count]);
+
   return (
-    <mesh>
+    <mesh ref={plane}>
       <planeBufferGeometry args={[1, 1, 32, 32]}>
-        <bufferAttribute />
+        <BufferAttributes geoCount={count} />
       </planeBufferGeometry>
       <rawShaderMaterial
-        args={{
-          vertexShader: vertexShader,
-          fragmentShader: fragmentShader,
-          // wireframe: true,
-          side: THREE.DoubleSide,
-          transparent: true,
-        }}
+        // putting the shaders in args prop as object causes error (argsNew.some is not a function)
+        vertexShader={vertexShader}
+        fragmentShader={fragmentShader}
+        // wireframe
+        side={THREE.DoubleSide}
+        transparent
       />
     </mesh>
   );
