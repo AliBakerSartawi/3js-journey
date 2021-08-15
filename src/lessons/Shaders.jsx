@@ -7,8 +7,10 @@ import { folder, Leva, useControls } from 'leva';
 
 // shader imports using raw-loader package
 /* eslint-disable import/no-webpack-loader-syntax */
-import vertexShader from '!!raw-loader!./shaders/plane/vertex.vs.glsl';
-import fragmentShader from '!!raw-loader!./shaders/plane/fragment.fs.glsl';
+// import vertexShader from '!!raw-loader!./shaders/plane/vertex.vs.glsl';
+// import fragmentShader from '!!raw-loader!./shaders/plane/fragment.fs.glsl';
+import vertexShader from './shaders/plane/vertex.vs.glsl';
+import fragmentShader from './shaders/plane/fragment.fs.glsl';
 
 // glsl import
 import glsl from 'babel-plugin-glsl/macro';
@@ -94,6 +96,12 @@ import glsl from 'babel-plugin-glsl/macro';
  *   - https://www.shaderific.com/glsl-functions
  *   - https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/indexflat.php
  *   - https://thebookofshaders.com/glossary/
+ * 
+ * - Inspirational Links:
+ *   - https://thebookofshaders.com/
+ *   - https://www.shadertoy.com/
+ *   - https://www.youtube.com/channel/UCcAlTqd9zID6aNX3TzwxJXg
+ *   - https://www.youtube.com/channel/UC8Wzk_R1GoPkPqLo-obU_kQ
  */
 
 /**
