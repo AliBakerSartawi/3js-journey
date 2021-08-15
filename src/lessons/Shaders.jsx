@@ -1,7 +1,7 @@
 import React, { useRef, useState, useMemo, useEffect } from 'react';
-import { Canvas, useFrame, useLoader } from '@react-three/fiber';
+import { Canvas, extend, useFrame, useLoader } from '@react-three/fiber';
 import { Physics, useBox, usePlane, useSphere } from '@react-three/cannon';
-import { OrbitControls } from '@react-three/drei';
+import { OrbitControls, shaderMaterial } from '@react-three/drei';
 import * as THREE from 'three';
 import { folder, Leva, useControls } from 'leva';
 
@@ -9,6 +9,9 @@ import { folder, Leva, useControls } from 'leva';
 /* eslint-disable import/no-webpack-loader-syntax */
 import vertexShader from '!!raw-loader!./shaders/plane/vertex.vs.glsl';
 import fragmentShader from '!!raw-loader!./shaders/plane/fragment.fs.glsl';
+
+// glsl import
+import glsl from 'babel-plugin-glsl/macro';
 
 /**
  * Problem importing GLSL files:
@@ -154,11 +157,52 @@ function BufferAttributes() {
   );
 }
 
+const vertexShaderString = vertexShader;
+const fragmentShaderString = fragmentShader;
+
+const PlaneShaderMaterial = shaderMaterial(
+  {
+    uTime: 0,
+    uFrequency: new THREE.Vector2(10, 5)
+  },
+  glsl`
+    uniform vec2 uFrequency;
+    // attribute vec3 position;
+    attribute float aRandom;
+
+    // main is called automatically, and is void
+    void main() {
+
+      vec4 modelPosition = modelMatrix * vec4(position, 1.0);
+
+      modelPosition.z += sin(modelPosition.x * uFrequency.x) * 0.1;
+      modelPosition.z += sin(modelPosition.y * uFrequency.y) * 0.1;
+
+      vec4 viewPosition = viewMatrix * modelPosition;
+      vec4 projectedPosition = projectionMatrix * viewPosition;
+
+      gl_Position = projectedPosition;
+
+      // this reassignment can be anywhere in this function, even at the very end
+      // vRandom = aRandom;
+    }
+  `,
+  glsl`
+    precision mediump float;
+    void main() {
+      gl_FragColor = vec4(0.5, 0.5, 1.0, 0.5);
+    }
+  `
+);
+
+extend({ PlaneShaderMaterial });
+
 /**
  * Plane Component
  */
 function Plane() {
   const plane = useRef();
+  const shaderMaterial = useRef();
 
   const { uFrequencyX, uFrequencyY, transparent } = useControls({
     ShaderFrequency: folder({
@@ -173,21 +217,12 @@ function Plane() {
     plane.current && console.log(plane.current.geometry.attributes);
   }, [plane]);
 
-  useEffect(() => {
-    if (plane.current) {
-      console.log(plane.current.material);
-      console.log(plane.current.material.uniformsNeedUpdate);
-      plane.current.material.uniformsNeedUpdate = true
-      console.log(plane.current.material.uniformsNeedUpdate);
-    }
-  }, [plane, uFrequencyX, uFrequencyY]);
-
   return (
     <mesh ref={plane}>
       <planeBufferGeometry args={[1, 1, 32, 32]}>
         <BufferAttributes />
       </planeBufferGeometry>
-      <rawShaderMaterial
+      {/* <rawShaderMaterial
         // putting the shaders in args prop as object causes error (argsNew.some is not a function)
         vertexShader={vertexShader}
         fragmentShader={fragmentShader}
@@ -198,6 +233,10 @@ function Plane() {
           uFrequency: { value: new THREE.Vector2(uFrequencyX, uFrequencyY) },
           uTime: { value: 0}
         }}
+      /> */}
+      <planeShaderMaterial
+        ref={shaderMaterial}
+        uFrequency={new THREE.Vector2(uFrequencyX, uFrequencyY)}
       />
     </mesh>
   );
@@ -207,7 +246,6 @@ function Plane() {
  * Main Component
  */
 function Shaders() {
-  
   const { background } = useControls({
     Background: folder({
       background: '#000000'

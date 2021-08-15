@@ -70,10 +70,7 @@
   import glsl from 'babel-plugin-glsl/macro';
   ```
 
-- Important to note that the above packages didn't work with me (not needed anyway), solution 👇
-
-  - Simply write **GLSL** in separate dedicated files
-  - Or provide them in template literals inside `jsx`
+- The above packages make it easier to update shaders from state
 
 - ### GLSL Syntax Highlighting and Linting
 
@@ -103,5 +100,8 @@
     /* eslint-disable import/no-webpack-loader-syntax */
     import vertexShader from '!!raw-loader!./shaders/plane/vertex.vs.glsl';
     ```
+
+  - But this won't work with **glsl** plugin imported from `babel-plugin-glsl/macro`
+  - Shaders must still be provided as strings between backticks
 
 - Happy shading!!
