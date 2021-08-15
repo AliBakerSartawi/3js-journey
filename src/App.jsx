@@ -2,6 +2,7 @@ import './App.scss';
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import CustomLoader from './components/CustomLoader';
+import ShaderPatterns from './lessons/ShaderPatterns';
 // import Lights from './lessons/Lights';
 // import BasicScene from './lessons/BasicScene';
 // import DebugUI from './lessons/DebugUI';
@@ -18,7 +19,7 @@ import CustomLoader from './components/CustomLoader';
 // import Physics from './lessons/Physics';
 // import ImportedModels from './lessons/ImportedModels';
 // import RealisticRendering from './lessons/RealisticRendering';
-import Shaders from './lessons/Shaders';
+// import Shaders from './lessons/Shaders';
 
 function App() {
   const app = useRef();
@@ -69,7 +70,9 @@ function App() {
         {/* 🖌️ Models & custom burger exported from Blender */}
         {/* <ImportedModels /> */}
         {/* <RealisticRendering /> */}
-        <Shaders />
+        {/* 🤯 SHADERS */}
+        {/* <Shaders /> */}
+        <ShaderPatterns />
       </div>
     </Suspense>
   );
