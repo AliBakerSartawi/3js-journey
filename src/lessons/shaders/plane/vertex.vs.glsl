@@ -27,6 +27,11 @@ uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
 
+// custom uniform retrieved from RawShaderMaterial
+// even though it was provided as int, it can be retrieved with float (examine this phenomena)
+// uniform float uFrequency;
+uniform vec2 uFrequency;
+
 /*
  * retreiving position value from geometry
  * the same position attribute provided in the float array
@@ -40,26 +45,25 @@ attribute vec3 position;
  */
 attribute float aRandom;
 
-/*
- * send the aRandom to the fragment shader as vRandom (v for varying)
- */
-varying float vRandom;
-
 // main is called automatically, and is void
 void main() {
 
-  // this reassignment can be anywhere in this function, even at the very end
-  vRandom = aRandom;
-
   vec4 modelPosition = modelMatrix * vec4(position, 1.0);
+
+  // using custom attribute
+  // modelPosition.z += aRandom * 0.1;
+  
   // to make a flag flow animation, we play with the z axis
-  // modelPosition.z += sin(modelPosition.x * 10.0) * 0.1;
-  modelPosition.z += aRandom * 0.1;
+  modelPosition.z += sin(modelPosition.x * uFrequency.x) * 0.1;
+  modelPosition.z += sin(modelPosition.y * uFrequency.y) * 0.1;
 
   vec4 viewPosition = viewMatrix * modelPosition;
   vec4 projectedPosition = projectionMatrix * viewPosition;
 
   gl_Position = projectedPosition;
+
+  // this reassignment can be anywhere in this function, even at the very end
+  // vRandom = aRandom;
 }
 
 // this function won't be called

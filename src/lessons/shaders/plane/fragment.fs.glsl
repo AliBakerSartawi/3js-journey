@@ -12,13 +12,14 @@ precision mediump float;
 
 /*
  * receive the varying from vertex shader 
+ * can be added to r, g, b inside the vec4
  */
-varying float vRandom;
+// varying float vRandom;
 
 void main() {
 
   /*
    * if alpha is below 1.0, transparent attribute must be true
    */
-  gl_FragColor = vec4(0.5, vRandom, 1.0, 0.5);
+  gl_FragColor = vec4(0.5, 0.5, 1.0, 0.5);
 }

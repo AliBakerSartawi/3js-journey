@@ -129,23 +129,18 @@ function BufferAttributes() {
 
   const [array, bufferCount, itemSize] = useMemo(() => {
     // if (count) {
-      const bufferCount = 1089;
-      const itemSize = 1;
-      const array = new Float32Array(bufferCount);
+    const bufferCount = 1089;
+    const itemSize = 1;
+    const array = new Float32Array(bufferCount);
 
-      for (let i = 0; i < bufferCount; i++) {
-        array[i] = Math.random();
-      }
-      console.log(array, bufferCount, itemSize);
-      return [array, bufferCount, itemSize];
+    for (let i = 0; i < bufferCount; i++) {
+      array[i] = Math.random();
+    }
+    return [array, bufferCount, itemSize];
     // } else {
     //   return [[], 0, 0];
     // }
   }, []);
-
-  useEffect(() => {
-    buffer.current && console.log(buffer.current);
-  }, [buffer]);
 
   return (
     <bufferAttribute
@@ -165,11 +160,27 @@ function BufferAttributes() {
 function Plane() {
   const plane = useRef();
 
+  const { uFrequencyX, uFrequencyY, transparent } = useControls({
+    ShaderFrequency: folder({
+      uFrequencyX: { value: 10, min: 0, max: 100, step: 0.1 },
+      uFrequencyY: { value: 5, min: 0, max: 100, step: 0.1 },
+      transparent: true
+    })
+  });
+
   useEffect(() => {
-    plane.current &&
-      console.log(plane.current.geometry.attributes)
     // plane.current.geometry.attributes.position.count => exact number of vertices
+    plane.current && console.log(plane.current.geometry.attributes);
   }, [plane]);
+
+  useEffect(() => {
+    if (plane.current) {
+      console.log(plane.current.material);
+      console.log(plane.current.material.uniformsNeedUpdate);
+      plane.current.material.uniformsNeedUpdate = true
+      console.log(plane.current.material.uniformsNeedUpdate);
+    }
+  }, [plane, uFrequencyX, uFrequencyY]);
 
   return (
     <mesh ref={plane}>
@@ -182,7 +193,11 @@ function Plane() {
         fragmentShader={fragmentShader}
         // wireframe
         side={THREE.DoubleSide}
-        transparent
+        transparent={transparent}
+        uniforms={{
+          uFrequency: { value: new THREE.Vector2(uFrequencyX, uFrequencyY) },
+          uTime: { value: 0}
+        }}
       />
     </mesh>
   );
@@ -192,8 +207,15 @@ function Plane() {
  * Main Component
  */
 function Shaders() {
+  
+  const { background } = useControls({
+    Background: folder({
+      background: '#000000'
+    })
+  });
+
   return (
-    <div style={{ height: '100vh', backgroundColor: 'black' }}>
+    <div style={{ height: '100vh', backgroundColor: background }}>
       <Canvas
         shadows
         camera={{
