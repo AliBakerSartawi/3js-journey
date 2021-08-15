@@ -124,25 +124,24 @@ import fragmentShader from '!!raw-loader!./shaders/plane/fragment.fs.glsl';
  *      => glsl linting => https://www.youtube.com/watch?v=NQ-g6v7GtoI
  */
 
-function BufferAttributes({ geoCount }) {
+function BufferAttributes() {
   const buffer = useRef();
-  console.log(geoCount);
 
-  const [array, count, itemSize] = useMemo(() => {
-    if (geoCount) {
-      const count = geoCount;
+  const [array, bufferCount, itemSize] = useMemo(() => {
+    // if (count) {
+      const bufferCount = 1089;
       const itemSize = 1;
-      const array = new Float32Array(count);
+      const array = new Float32Array(bufferCount);
 
-      for (let i = 0; i < count; i++) {
+      for (let i = 0; i < bufferCount; i++) {
         array[i] = Math.random();
       }
-      console.log(array, count, itemSize);
-      return [array, count, itemSize];
-    } else {
-      return [[], 0, 0];
-    }
-  }, [geoCount]);
+      console.log(array, bufferCount, itemSize);
+      return [array, bufferCount, itemSize];
+    // } else {
+    //   return [[], 0, 0];
+    // }
+  }, []);
 
   useEffect(() => {
     buffer.current && console.log(buffer.current);
@@ -152,7 +151,7 @@ function BufferAttributes({ geoCount }) {
     <bufferAttribute
       ref={buffer}
       attachObject={['attributes', 'aRandom']}
-      count={count}
+      count={bufferCount}
       array={array}
       itemSize={itemSize}
     />
@@ -164,22 +163,16 @@ function BufferAttributes({ geoCount }) {
  */
 function Plane() {
   const plane = useRef();
-  const [count, setCount] = useState(0);
 
   useEffect(() => {
     plane.current &&
-      console.log(plane.current.geometry.attributes.position.count) &&
-      setCount(() => plane.current.geometry.attributes.position.count);
+      console.log(plane.current.geometry.attributes)
   }, [plane]);
-
-  useEffect(() => {
-    console.log(count);
-  }, [count]);
 
   return (
     <mesh ref={plane}>
       <planeBufferGeometry args={[1, 1, 32, 32]}>
-        <BufferAttributes geoCount={count} />
+        <BufferAttributes />
       </planeBufferGeometry>
       <rawShaderMaterial
         // putting the shaders in args prop as object causes error (argsNew.some is not a function)
