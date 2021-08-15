@@ -157,13 +157,15 @@ function BufferAttributes() {
   );
 }
 
-const vertexShaderString = vertexShader;
-const fragmentShaderString = fragmentShader;
-
 const PlaneShaderMaterial = shaderMaterial(
   {
     uTime: 0,
-    uFrequency: new THREE.Vector2(10, 5)
+    uFrequency: new THREE.Vector2(10, 5),
+    // even if this is orange, the color will be taken from props
+    // or simply new THREE.Color(0,0,0)
+    uColor: new THREE.Color('orange'),
+    uAlpha: 0.5,
+    uTexture: new THREE.Texture()
   },
   glsl`
     uniform vec2 uFrequency;
@@ -191,8 +193,13 @@ const PlaneShaderMaterial = shaderMaterial(
   `,
   glsl`
     precision mediump float;
+
+    // uniforms can be retrieved automatically in fragShaders
+    uniform vec3 uColor;
+    uniform float uAlpha;
+
     void main() {
-      gl_FragColor = vec4(0.5, 0.5, 1.0, 0.5);
+      gl_FragColor = vec4(uColor, uAlpha);
     }
   `
 );
@@ -206,16 +213,23 @@ function Plane() {
   const plane = useRef();
   const shaderMaterial = useRef();
 
-  const { uFrequencyX, uFrequencyY, transparent, wireframe } = useControls({
-    ShaderFrequency: folder({
-      uFrequencyX: { value: 10, min: 0, max: 100, step: 0.1 },
-      uFrequencyY: { value: 5, min: 0, max: 100, step: 0.1 },
-      transparent: true,
-      wireframe: true,
-    })
-  });
+  const { uFrequencyX, uFrequencyY, transparent, wireframe, color, opacity } =
+    useControls({
+      ShaderFrequency: folder({
+        uFrequencyX: { value: 10, min: 0, max: 100, step: 0.1 },
+        uFrequencyY: { value: 5, min: 0, max: 100, step: 0.1 },
+        transparent: true,
+        wireframe: false,
+        color: '#ff0687',
+        opacity: { value: 0.5, min: 0, max: 1.0, step: 0.01 }
+      })
+    });
 
-  useFrame(({clock}) => shaderMaterial.current.uTime = clock.elapsedTime)
+  const [image] = useLoader(THREE.TextureLoader, [
+    'https://images.unsplash.com/photo-1626553683558-dd8dc97e40a4?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1868&q=80'
+  ]);
+
+  useFrame(({ clock }) => (shaderMaterial.current.uTime = clock.elapsedTime));
 
   useEffect(() => {
     // plane.current.geometry.attributes.position.count => exact number of vertices
@@ -227,25 +241,36 @@ function Plane() {
       <planeBufferGeometry args={[1, 1, 32, 32]}>
         <BufferAttributes />
       </planeBufferGeometry>
-      {/* <rawShaderMaterial
-        // putting the shaders in args prop as object causes error (argsNew.some is not a function)
-        vertexShader={vertexShader}
-        fragmentShader={fragmentShader}
-        // wireframe
-        side={THREE.DoubleSide}
-        transparent={transparent}
-        uniforms={{
-          uFrequency: { value: new THREE.Vector2(uFrequencyX, uFrequencyY) },
-          uTime: { value: 0}
-        }}
-      /> */}
       <planeShaderMaterial
         ref={shaderMaterial}
-        uFrequency={new THREE.Vector2(uFrequencyX, uFrequencyY)}
         wireframe={wireframe}
         transparent={transparent}
+        side={THREE.DoubleSide}
+        // uniforms
+        uFrequency={new THREE.Vector2(uFrequencyX, uFrequencyY)}
         // uTime is provided by altering the ref directly inside useFrame
+
+        // providing (color) in uniform might miss with color attribute
+        uColor={new THREE.Color(color)}
+        uAlpha={opacity}
+
+        // textures => resolution should be in power of two (mip-mapping)
+        uTexture={image}
       />
+
+      {/* this is the old method, not great for re-renders */}
+      {/* <rawShaderMaterial
+          // putting the shaders in args prop as object causes error (argsNew.some is not a function)
+          vertexShader={vertexShader}
+          fragmentShader={fragmentShader}
+          // wireframe
+          side={THREE.DoubleSide}
+          transparent={transparent}
+          uniforms={{
+            uFrequency: { value: new THREE.Vector2(uFrequencyX, uFrequencyY) },
+            uTime: { value: 0}
+          }}
+        /> */}
     </mesh>
   );
 }
