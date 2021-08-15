@@ -10,6 +10,11 @@
  */
 precision mediump float;
 
+/*
+ * receive the varying from vertex shader 
+ */
+varying float vRandom;
+
 void main() {
 
   /*

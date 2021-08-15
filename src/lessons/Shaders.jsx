@@ -150,6 +150,7 @@ function BufferAttributes() {
   return (
     <bufferAttribute
       ref={buffer}
+      // Bruno Simon naming convention => aRandom, a for attribute
       attachObject={['attributes', 'aRandom']}
       count={bufferCount}
       array={array}
@@ -167,6 +168,7 @@ function Plane() {
   useEffect(() => {
     plane.current &&
       console.log(plane.current.geometry.attributes)
+    // plane.current.geometry.attributes.position.count => exact number of vertices
   }, [plane]);
 
   return (

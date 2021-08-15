@@ -34,12 +34,27 @@ uniform mat4 projectionMatrix;
  */
 attribute vec3 position;
 
+/*
+ * retreive the custom attribute
+ * type is float, because it's a number for each vertex (itemSize === 1)
+ */
+attribute float aRandom;
+
+/*
+ * send the aRandom to the fragment shader as vRandom (v for varying)
+ */
+varying float vRandom;
+
 // main is called automatically, and is void
 void main() {
 
+  // this reassignment can be anywhere in this function, even at the very end
+  vRandom = aRandom;
+
   vec4 modelPosition = modelMatrix * vec4(position, 1.0);
   // to make a flag flow animation, we play with the z axis
-  modelPosition.z += sin(modelPosition.x * 10.0) * 0.1;
+  // modelPosition.z += sin(modelPosition.x * 10.0) * 0.1;
+  modelPosition.z += aRandom * 0.1;
 
   vec4 viewPosition = viewMatrix * modelPosition;
   vec4 projectedPosition = projectionMatrix * viewPosition;
