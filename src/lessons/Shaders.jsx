@@ -204,11 +204,12 @@ function Plane() {
   const plane = useRef();
   const shaderMaterial = useRef();
 
-  const { uFrequencyX, uFrequencyY, transparent } = useControls({
+  const { uFrequencyX, uFrequencyY, transparent, wireframe } = useControls({
     ShaderFrequency: folder({
       uFrequencyX: { value: 10, min: 0, max: 100, step: 0.1 },
       uFrequencyY: { value: 5, min: 0, max: 100, step: 0.1 },
-      transparent: true
+      transparent: true,
+      wireframe: true,
     })
   });
 
@@ -218,7 +219,7 @@ function Plane() {
   }, [plane]);
 
   return (
-    <mesh ref={plane}>
+    <mesh ref={plane} transparent={transparent}>
       <planeBufferGeometry args={[1, 1, 32, 32]}>
         <BufferAttributes />
       </planeBufferGeometry>
@@ -237,6 +238,8 @@ function Plane() {
       <planeShaderMaterial
         ref={shaderMaterial}
         uFrequency={new THREE.Vector2(uFrequencyX, uFrequencyY)}
+        wireframe={wireframe}
+        transparent={transparent}
       />
     </mesh>
   );
