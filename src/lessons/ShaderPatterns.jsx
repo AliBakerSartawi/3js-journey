@@ -7,15 +7,15 @@ import { folder, Leva, useControls } from 'leva';
 
 // shader imports using raw-loader package
 /* eslint-disable import/no-webpack-loader-syntax */
-// import vertexShader from '!!raw-loader!./shaders/plane/vertex.vs.glsl';
-// import fragmentShader from '!!raw-loader!./shaders/plane/fragment.fs.glsl';
+import vertexShader from '!!raw-loader!./shaders/shaderPatterns/vertex.vs.glsl';
+import fragmentShader from '!!raw-loader!./shaders/shaderPatterns/fragment.fs.glsl';
 
 // glslify seems to import them normally without raw-loader, but I get a strange missing semicolon error
-// import vertexShader from './shaders/plane/vertex.vs.glsl';
-// import fragmentShader from './shaders/plane/fragment.fs.glsl';
+// import vertexShader from './shaders/shaderPatterns/vertex.vs.glsl';
+// import fragmentShader from './shaders/shaderPatterns/fragment.fs.glsl';
 
 // glsl import
-import glsl from 'babel-plugin-glsl/macro';
+// import glsl from 'babel-plugin-glsl/macro';
 
 /**
  * Problem importing GLSL files:
@@ -98,7 +98,7 @@ import glsl from 'babel-plugin-glsl/macro';
  *   - https://www.shaderific.com/glsl-functions
  *   - https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/indexflat.php
  *   - https://thebookofshaders.com/glossary/
- * 
+ *
  * - Inspirational Links:
  *   - https://thebookofshaders.com/
  *   - https://www.shadertoy.com/
@@ -177,100 +177,10 @@ const PlaneShaderMaterial = shaderMaterial(
     uAlpha: 0.5,
     uTexture: new THREE.Texture(),
     uNormals: false,
-    uNormals2: false,
+    uNormals2: false
   },
-  glsl`
-    // these are automatically retrieved because it's ShaderMaterial not RawShaderMaterial
-    // uniform mat4 modelMatrix;
-    // uniform mat4 viewMatrix;
-    // uniform mat4 projectionMatrix;
-    // also these attributes as well
-    // attribute vec3 position;
-    // attribute vec2 uv;
-    
-    uniform vec2 uFrequency;
-    uniform float uTime;
-
-    // attribute float aRandom;
-
-    // to send the uv to frag
-    // vUv || vUV => v for varying
-    varying vec2 vUV;
-    varying float vElevation;
-
-
-    // main is called automatically, and is void
-    void main() {
-
-      vec4 modelPosition = modelMatrix * vec4(position, 1.0);
-
-      // elevation => closer to camera
-      float elevation = sin(modelPosition.x * uFrequency.x + uTime) * 0.1;
-      elevation += sin(modelPosition.y * uFrequency.y + uTime) * 0.1;
-      modelPosition.z = elevation;
-
-      // minus or plus uTime
-      // modelPosition.z += sin(modelPosition.x * uFrequency.x + uTime) * 0.1;
-      // modelPosition.z += sin(modelPosition.y * uFrequency.y - uTime) * 0.1;
-
-      vec4 viewPosition = viewMatrix * modelPosition;
-      vec4 projectedPosition = projectionMatrix * viewPosition;
-
-      gl_Position = projectedPosition;
-
-      // this reassignment can be anywhere in this function, even at the very end
-      // vRandom = aRandom;
-      vUV = uv;
-      vElevation = elevation;
-    }
-  `,
-  glsl`
-    // we can even get rid of (precision mediump float) in ShaderMaterial but not in RawShaderMaterial
-    precision mediump float;
-
-    // uniforms can be retrieved automatically in fragShaders
-    uniform vec3 uColor;
-    uniform float uAlpha;
-    // sampler2D is a very specific type for textures
-    uniform sampler2D uTexture;
-    uniform bool uNormals;
-    uniform bool uNormals2;
-
-    // uv || vUV is the coordinates where the color takes place
-    varying vec2 vUV;
-    varying float vElevation;
-
-    void main() {
-      // for texture2D, we need the texture, and the position
-      vec4 textureColor = texture2D(uTexture, vUV);
-
-      // mimic shadows (make closer brighter)
-      textureColor.rgb += vElevation;
-      // textureColor.rgb += vElevation * 2.0 + 0.5;
-
-      // add color tint
-      textureColor.rgb += uColor;
-
-      // textureColor.rgb || .xyz => returns a vec3
-      // gl_FragColor = vec4(textureColor.rgb, uAlpha);
-
-      // gl_FragColor = vec4(uColor, uAlpha);
-      
-      // nice normals color effect
-      // gl_FragColor = vec4(1.0, vUV, uAlpha);
-      // gl_FragColor = vec4(vUV, 1.0, uAlpha);
-
-      if (uNormals && uNormals2) {
-        gl_FragColor = vec4(vUV.x, 1.0, vUV.y, uAlpha);
-      } else if (uNormals) {
-        gl_FragColor = vec4(vUV, 1.0, uAlpha);
-      } else if (uNormals2) {
-        gl_FragColor = vec4(1.0, vUV, uAlpha);
-      } else {
-        gl_FragColor = vec4(textureColor.rgb, uAlpha);
-      }
-    }
-  `
+  `${vertexShader}`,
+  `${fragmentShader}`
 );
 
 extend({ PlaneShaderMaterial });
@@ -290,7 +200,7 @@ function Plane() {
     color,
     opacity,
     normals,
-    normals2,
+    normals2
   } = useControls({
     ShaderFrequency: folder({
       uFrequencyX: { value: 10, min: 0, max: 100, step: 0.1 },
@@ -300,7 +210,7 @@ function Plane() {
       normals2: false,
       wireframe: false,
       transparent: true,
-      opacity: { value: 0.5, min: 0, max: 1.0, step: 0.01 },
+      opacity: { value: 0.5, min: 0, max: 1.0, step: 0.01 }
     })
   });
 

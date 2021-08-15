@@ -70,7 +70,20 @@
   import glsl from 'babel-plugin-glsl/macro';
   ```
 
-- The above packages make it easier to update shaders from state
+- Both packages make it possible to import effects into **GLSL** code
+- Still, code must be written directly between backticks, not imported (with raw-loader) from another file
+
+  ```jsx
+  const PlaneShaderMaterial = shaderMaterial({
+    {
+      // uniforms
+    },
+    // vertex shader
+    glsl`// glsl code here`,
+    // fragment shader
+    glsl`// glsl code here`
+  })
+  ```
 
 - ### GLSL Syntax Highlighting and Linting
 
@@ -102,6 +115,17 @@
     ```
 
   - But this won't work with **glsl** plugin imported from `babel-plugin-glsl/macro`
-  - Shaders must still be provided as strings between backticks
+  - Shaders must still be provided as strings between backticks, or remove **glsl** function
+
+    ```jsx
+    const PlaneShaderMaterial = shaderMaterial({
+      {
+        // uniforms
+      },
+      // imported with raw-loader
+      `${vertexShader}`,
+      `${fragmentShader}`
+    })
+    ```
 
 - Happy shading!!
