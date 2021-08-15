@@ -43,13 +43,7 @@ function BufferAttributes() {
 
 const PlaneShaderMaterial = shaderMaterial(
   {
-    uTime: 0,
-    uFrequency: new THREE.Vector2(10, 5),
-    uColor: new THREE.Color(0, 0, 0),
-    uAlpha: 0.5,
-    uTexture: new THREE.Texture(),
-    uNormals: false,
-    uNormals2: false
+    uAlpha: 0,
   },
   `${vertexShader}`,
   `${fragmentShader}`
@@ -65,30 +59,16 @@ function Plane() {
   const shaderMaterial = useRef();
 
   const {
-    uFrequencyX,
-    uFrequencyY,
     transparent,
     wireframe,
-    color,
     opacity,
-    normals,
-    normals2
   } = useControls({
     ShaderFrequency: folder({
-      uFrequencyX: { value: 10, min: 0, max: 100, step: 0.1 },
-      uFrequencyY: { value: 5, min: 0, max: 100, step: 0.1 },
-      color: '#4a0026',
-      normals: false,
-      normals2: false,
       wireframe: false,
       transparent: true,
       opacity: { value: 0.5, min: 0, max: 1.0, step: 0.01 }
     })
   });
-
-  const [image] = useLoader(THREE.TextureLoader, [
-    'https://images.unsplash.com/photo-1626553683558-dd8dc97e40a4?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1868&q=80'
-  ]);
 
   useFrame(({ clock }) => (shaderMaterial.current.uTime = clock.elapsedTime));
 
@@ -103,13 +83,8 @@ function Plane() {
         transparent={transparent}
         side={THREE.DoubleSide}
         // uniforms 👇
-        uFrequency={new THREE.Vector2(uFrequencyX, uFrequencyY)}
         // uTime is provided by altering the ref directly inside useFrame
-        uColor={new THREE.Color(color)}
         uAlpha={opacity}
-        uTexture={image}
-        uNormals={normals}
-        uNormals2={normals2}
       />
     </mesh>
   );
