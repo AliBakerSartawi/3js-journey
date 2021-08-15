@@ -165,7 +165,9 @@ const PlaneShaderMaterial = shaderMaterial(
     // or simply new THREE.Color(0,0,0)
     uColor: new THREE.Color('orange'),
     uAlpha: 0.5,
-    uTexture: new THREE.Texture()
+    uTexture: new THREE.Texture(),
+    uNormals: false,
+    uNormals2: false,
   },
   glsl`
     // these are automatically retrieved because it's ShaderMaterial not RawShaderMaterial
@@ -221,6 +223,8 @@ const PlaneShaderMaterial = shaderMaterial(
     uniform float uAlpha;
     // sampler2D is a very specific type for textures
     uniform sampler2D uTexture;
+    uniform bool uNormals;
+    uniform bool uNormals2;
 
     // uv || vUV is the coordinates where the color takes place
     varying vec2 vUV;
@@ -238,8 +242,23 @@ const PlaneShaderMaterial = shaderMaterial(
       textureColor.rgb += uColor;
 
       // textureColor.rgb || .xyz => returns a vec3
-      gl_FragColor = vec4(textureColor.rgb, uAlpha);
+      // gl_FragColor = vec4(textureColor.rgb, uAlpha);
+
       // gl_FragColor = vec4(uColor, uAlpha);
+      
+      // nice normals color effect
+      // gl_FragColor = vec4(1.0, vUV, uAlpha);
+      // gl_FragColor = vec4(vUV, 1.0, uAlpha);
+
+      if (uNormals && uNormals2) {
+        gl_FragColor = vec4(vUV.x, 1.0, vUV.y, uAlpha);
+      } else if (uNormals) {
+        gl_FragColor = vec4(vUV, 1.0, uAlpha);
+      } else if (uNormals2) {
+        gl_FragColor = vec4(1.0, vUV, uAlpha);
+      } else {
+        gl_FragColor = vec4(textureColor.rgb, uAlpha);
+      }
     }
   `
 );
@@ -253,17 +272,27 @@ function Plane() {
   const plane = useRef();
   const shaderMaterial = useRef();
 
-  const { uFrequencyX, uFrequencyY, transparent, wireframe, color, opacity } =
-    useControls({
-      ShaderFrequency: folder({
-        uFrequencyX: { value: 10, min: 0, max: 100, step: 0.1 },
-        uFrequencyY: { value: 5, min: 0, max: 100, step: 0.1 },
-        transparent: true,
-        wireframe: false,
-        color: '#4a0026',
-        opacity: { value: 0.5, min: 0, max: 1.0, step: 0.01 }
-      })
-    });
+  const {
+    uFrequencyX,
+    uFrequencyY,
+    transparent,
+    wireframe,
+    color,
+    opacity,
+    normals,
+    normals2,
+  } = useControls({
+    ShaderFrequency: folder({
+      uFrequencyX: { value: 10, min: 0, max: 100, step: 0.1 },
+      uFrequencyY: { value: 5, min: 0, max: 100, step: 0.1 },
+      color: '#4a0026',
+      normals: false,
+      normals2: false,
+      wireframe: false,
+      transparent: true,
+      opacity: { value: 0.5, min: 0, max: 1.0, step: 0.01 },
+    })
+  });
 
   const [image] = useLoader(THREE.TextureLoader, [
     'https://images.unsplash.com/photo-1626553683558-dd8dc97e40a4?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1868&q=80'
@@ -295,6 +324,8 @@ function Plane() {
         uAlpha={opacity}
         // textures => resolution should be in power of two (mip-mapping)
         uTexture={image}
+        uNormals={normals}
+        uNormals2={normals2}
       />
 
       {/* this is the old method, not great for re-renders */}
