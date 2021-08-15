@@ -167,7 +167,8 @@ const PlaneShaderMaterial = shaderMaterial(
   },
   glsl`
     uniform vec2 uFrequency;
-    // attribute vec3 position;
+    uniform float uTime;
+
     attribute float aRandom;
 
     // main is called automatically, and is void
@@ -175,8 +176,9 @@ const PlaneShaderMaterial = shaderMaterial(
 
       vec4 modelPosition = modelMatrix * vec4(position, 1.0);
 
-      modelPosition.z += sin(modelPosition.x * uFrequency.x) * 0.1;
-      modelPosition.z += sin(modelPosition.y * uFrequency.y) * 0.1;
+      // minus or plus uTime
+      modelPosition.z += sin(modelPosition.x * uFrequency.x + uTime) * 0.1;
+      modelPosition.z += sin(modelPosition.y * uFrequency.y - uTime) * 0.1;
 
       vec4 viewPosition = viewMatrix * modelPosition;
       vec4 projectedPosition = projectionMatrix * viewPosition;
@@ -213,13 +215,15 @@ function Plane() {
     })
   });
 
+  useFrame(({clock}) => shaderMaterial.current.uTime = clock.elapsedTime)
+
   useEffect(() => {
     // plane.current.geometry.attributes.position.count => exact number of vertices
-    plane.current && console.log(plane.current.geometry.attributes);
+    // plane.current && console.log(plane.current.geometry.attributes);
   }, [plane]);
 
   return (
-    <mesh ref={plane} transparent={transparent}>
+    <mesh ref={plane} transparent={transparent} scale-y={2 / 3}>
       <planeBufferGeometry args={[1, 1, 32, 32]}>
         <BufferAttributes />
       </planeBufferGeometry>
@@ -240,6 +244,7 @@ function Plane() {
         uFrequency={new THREE.Vector2(uFrequencyX, uFrequencyY)}
         wireframe={wireframe}
         transparent={transparent}
+        // uTime is provided by altering the ref directly inside useFrame
       />
     </mesh>
   );
