@@ -3,6 +3,7 @@ import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import CustomLoader from './components/CustomLoader';
 import ShaderPatterns from './lessons/ShaderPatterns';
+import axios from 'axios';
 // import Lights from './lessons/Lights';
 // import BasicScene from './lessons/BasicScene';
 // import DebugUI from './lessons/DebugUI';
