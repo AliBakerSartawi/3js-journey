@@ -131,7 +131,7 @@ function Plane() {
   return (
     <mesh>
       <planeBufferGeometry args={[1, 1, 32, 32]}>
-        <bufferAttribute attacj />
+        <bufferAttribute />
       </planeBufferGeometry>
       <rawShaderMaterial
         args={{
