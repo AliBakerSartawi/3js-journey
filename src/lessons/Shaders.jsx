@@ -9,8 +9,10 @@ import { folder, Leva, useControls } from 'leva';
 /* eslint-disable import/no-webpack-loader-syntax */
 // import vertexShader from '!!raw-loader!./shaders/plane/vertex.vs.glsl';
 // import fragmentShader from '!!raw-loader!./shaders/plane/fragment.fs.glsl';
-import vertexShader from './shaders/plane/vertex.vs.glsl';
-import fragmentShader from './shaders/plane/fragment.fs.glsl';
+
+// glslify seems to import them normally without raw-loader, but I get a strange missing semicolon error
+// import vertexShader from './shaders/plane/vertex.vs.glsl';
+// import fragmentShader from './shaders/plane/fragment.fs.glsl';
 
 // glsl import
 import glsl from 'babel-plugin-glsl/macro';

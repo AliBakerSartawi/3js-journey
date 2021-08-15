@@ -23,9 +23,9 @@
  *
  * these matrices will be handled automatically with ShaderMaterial (not raw)
  */
-uniform mat4 modelMatrix;
-uniform mat4 viewMatrix;
-uniform mat4 projectionMatrix;
+// uniform mat4 modelMatrix;
+// uniform mat4 viewMatrix;
+// uniform mat4 projectionMatrix;
 
 // custom uniform retrieved from RawShaderMaterial
 // even though it was provided as int, it can be retrieved with float (examine this phenomena)
