@@ -168,19 +168,38 @@ const PlaneShaderMaterial = shaderMaterial(
     uTexture: new THREE.Texture()
   },
   glsl`
+    // these are automatically retrieved because it's ShaderMaterial not RawShaderMaterial
+    // uniform mat4 modelMatrix;
+    // uniform mat4 viewMatrix;
+    // uniform mat4 projectionMatrix;
+    // also these attributes as well
+    // attribute vec3 position;
+    // attribute vec2 uv;
+    
     uniform vec2 uFrequency;
     uniform float uTime;
 
-    attribute float aRandom;
+    // attribute float aRandom;
+
+    // to send the uv to frag
+    // vUv || vUV => v for varying
+    varying vec2 vUV;
+    varying float vElevation;
+
 
     // main is called automatically, and is void
     void main() {
 
       vec4 modelPosition = modelMatrix * vec4(position, 1.0);
 
+      // elevation => closer to camera
+      float elevation = sin(modelPosition.x * uFrequency.x + uTime) * 0.1;
+      elevation += sin(modelPosition.y * uFrequency.y + uTime) * 0.1;
+      modelPosition.z = elevation;
+
       // minus or plus uTime
-      modelPosition.z += sin(modelPosition.x * uFrequency.x + uTime) * 0.1;
-      modelPosition.z += sin(modelPosition.y * uFrequency.y - uTime) * 0.1;
+      // modelPosition.z += sin(modelPosition.x * uFrequency.x + uTime) * 0.1;
+      // modelPosition.z += sin(modelPosition.y * uFrequency.y - uTime) * 0.1;
 
       vec4 viewPosition = viewMatrix * modelPosition;
       vec4 projectedPosition = projectionMatrix * viewPosition;
@@ -189,6 +208,8 @@ const PlaneShaderMaterial = shaderMaterial(
 
       // this reassignment can be anywhere in this function, even at the very end
       // vRandom = aRandom;
+      vUV = uv;
+      vElevation = elevation;
     }
   `,
   glsl`
@@ -197,9 +218,27 @@ const PlaneShaderMaterial = shaderMaterial(
     // uniforms can be retrieved automatically in fragShaders
     uniform vec3 uColor;
     uniform float uAlpha;
+    // sampler2D is a very specific type for textures
+    uniform sampler2D uTexture;
+
+    // uv || vUV is the coordinates where the color takes place
+    varying vec2 vUV;
+    varying float vElevation;
 
     void main() {
-      gl_FragColor = vec4(uColor, uAlpha);
+      // for texture2D, we need the texture, and the position
+      vec4 textureColor = texture2D(uTexture, vUV);
+
+      // mimic shadows (make closer brighter)
+      textureColor.rgb += vElevation;
+      // textureColor.rgb += vElevation * 2.0 + 0.5;
+
+      // add color tint
+      textureColor.rgb += uColor;
+
+      // textureColor.rgb || .xyz => returns a vec3
+      gl_FragColor = vec4(textureColor.rgb, uAlpha);
+      // gl_FragColor = vec4(uColor, uAlpha);
     }
   `
 );
@@ -220,7 +259,7 @@ function Plane() {
         uFrequencyY: { value: 5, min: 0, max: 100, step: 0.1 },
         transparent: true,
         wireframe: false,
-        color: '#ff0687',
+        color: '#4a0026',
         opacity: { value: 0.5, min: 0, max: 1.0, step: 0.01 }
       })
     });
@@ -253,7 +292,6 @@ function Plane() {
         // providing (color) in uniform might miss with color attribute
         uColor={new THREE.Color(color)}
         uAlpha={opacity}
-
         // textures => resolution should be in power of two (mip-mapping)
         uTexture={image}
       />
