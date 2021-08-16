@@ -6,6 +6,7 @@ uniform vec2 uBigWavesFrequency;
 uniform float uBigWavesSpeed;
 
 varying vec2 vUV;
+varying float vElevation;
 
 void main() {
 
@@ -24,5 +25,7 @@ void main() {
 
   gl_Position = projectionPosition;
 
+  // Varyings
   vUV = uv;
+  vElevation = elevation;
 }

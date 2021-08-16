@@ -4,8 +4,11 @@ precision mediump float;
 #define PI 3.1415926535897932384626433832795
 
 uniform float uAlpha;
+uniform vec3 uDepthColor;
+uniform vec3 uSurfaceColor;
 
 varying vec2 vUV;
+varying float vElevation;
 
 float random(vec2 st) {
   return fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 43758.5453132);
@@ -65,7 +68,6 @@ float cnoise(vec2 P){
 }
 
 void main() {
-
-  // Black and White version
-  gl_FragColor = vec4(0.5, 0.8, 1.0, uAlpha);
+  vec3 color = mix(uDepthColor, uSurfaceColor, vElevation);
+  gl_FragColor = vec4(color, uAlpha);
 }

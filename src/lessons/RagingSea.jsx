@@ -20,10 +20,14 @@ const WaterShaderMaterial = shaderMaterial(
   {
     uAlpha: 0,
     uTime: 0,
+    // WAVES
     uBigWavesElevation: 0.2,
-    // automatigically turned to vec2(4, 1.5) 
+    // automatigically turned to vec2(4, 1.5)
     uBigWavesFrequency: [4, 1.5],
     uBigWavesSpeed: 0,
+    // COLORS
+    uDepthColor: new THREE.Color(0, 0, 0),
+    uSurfaceColor: new THREE.Color(0, 0, 0)
   },
   `${vertexShader}`,
   `${fragmentShader}`
@@ -45,7 +49,9 @@ function Plane() {
     opacity,
     uBigWavesElevation,
     uBigWavesFrequency,
-    uBigWavesSpeed
+    uBigWavesSpeed,
+    uDepthColor,
+    uSurfaceColor
   } = useControls({
     ShaderFrequency: folder({
       wireframe: false,
@@ -60,6 +66,8 @@ function Plane() {
         step: 0.01
       },
       uBigWavesSpeed: { value: 0.75, min: 0, max: 4, step: 0.01 },
+      uDepthColor: '#0000ff',
+      uSurfaceColor: '#8888ff'
     })
   });
 
@@ -74,13 +82,17 @@ function Plane() {
         transparent={transparent}
         side={doubleSide ? THREE.DoubleSide : null}
         // uniforms 👇
-        // uTime is provided by altering the ref directly inside useFrame
         uAlpha={opacity}
         // sending uTime like this will cause an error, just provide it in uniforms, as it is already a property on the ref
         // uTime={shaderMaterial.current.uTime}
+
+        // WAVES
         uBigWavesElevation={uBigWavesElevation}
         uBigWavesFrequency={uBigWavesFrequency}
         uBigWavesSpeed={uBigWavesSpeed}
+        // COLORS
+        uDepthColor={uDepthColor}
+        uSurfaceColor={uSurfaceColor}
       />
     </mesh>
   );
