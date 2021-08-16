@@ -145,7 +145,7 @@ function Plane() {
 function RagingSea() {
   const { background } = useControls({
     Background: folder({
-      background: '#000000'
+      background: '#6ea6d4'
     })
   });
 
@@ -160,7 +160,7 @@ function RagingSea() {
           far: 2000
         }}
       >
-        <axesHelper args={[10]} />
+        {/* <axesHelper args={[10]} /> */}
         <OrbitControls />
 
         <Plane />
