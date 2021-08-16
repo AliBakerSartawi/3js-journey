@@ -329,6 +329,12 @@ void main() {
   // pattern #50 (perlin noise mary-jane-high pattern sharp)
   strength = step(0.9, sin(cnoise(vUV * 10.0) * 20.0)); // 😲 WWOOOOWWWW
 
+  // CLAMPING STRENGTH
+  // if strength goes beyond one, will cause much brighter colors at intersections (extrapolated)
+  // leave as is if the effect is desired, or clamp to get rid of it
+  // test with #11, #14 and #15
+  strength = clamp(strength, 0.0, 1.0);
+
   // MIXING COLORS
   vec3 blackColor = vec3(0.0);
   vec3 uvColor = vec3(vUV, 0.5);
