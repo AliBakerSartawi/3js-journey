@@ -16,34 +16,10 @@ import fragmentShader from '!!raw-loader!./shaders/ragingSea/water/fragment.fs.g
 // glsl import
 // import glsl from 'babel-plugin-glsl/macro';
 
-function BufferAttributes() {
-  const buffer = useRef();
-
-  const [array, bufferCount, itemSize] = useMemo(() => {
-    const bufferCount = 1089;
-    const itemSize = 1;
-    const array = new Float32Array(bufferCount);
-
-    for (let i = 0; i < bufferCount; i++) {
-      array[i] = Math.random();
-    }
-    return [array, bufferCount, itemSize];
-  }, []);
-
-  return (
-    <bufferAttribute
-      ref={buffer}
-      attachObject={['attributes', 'aRandom']}
-      count={bufferCount}
-      array={array}
-      itemSize={itemSize}
-    />
-  );
-}
-
 const WaterShaderMaterial = shaderMaterial(
   {
-    uAlpha: 0
+    uAlpha: 0,
+    uBigWavesElevation: 0.2
   },
   `${vertexShader}`,
   `${fragmentShader}`
@@ -58,29 +34,31 @@ function Plane() {
   const plane = useRef();
   const shaderMaterial = useRef();
 
-  const { transparent, wireframe, opacity } = useControls({
-    ShaderFrequency: folder({
-      wireframe: false,
-      transparent: true,
-      opacity: { value: 0.75, min: 0, max: 1.0, step: 0.01 }
-    })
-  });
+  const { doubleSide, wireframe, transparent, opacity, uBigWavesElevation } =
+    useControls({
+      ShaderFrequency: folder({
+        wireframe: false,
+        doubleSide: true,
+        transparent: true,
+        opacity: { value: 0.75, min: 0, max: 1.0, step: 0.01 },
+        uBigWavesElevation: { value: 0.2, min: 0, max: 1.0, step: 0.001 }
+      })
+    });
 
   useFrame(({ clock }) => (shaderMaterial.current.uTime = clock.elapsedTime));
 
   return (
     <mesh ref={plane} transparent={transparent} rotation={[-Math.PI / 2, 0, 0]}>
-      <planeBufferGeometry args={[2, 2, 128, 128]}>
-        <BufferAttributes />
-      </planeBufferGeometry>
+      <planeBufferGeometry args={[2, 2, 128, 128]} />
       <waterShaderMaterial
         ref={shaderMaterial}
         wireframe={wireframe}
         transparent={transparent}
-        // side={THREE.DoubleSide}
+        side={doubleSide ? THREE.DoubleSide : null}
         // uniforms 👇
         // uTime is provided by altering the ref directly inside useFrame
         uAlpha={opacity}
+        uBigWavesElevation={uBigWavesElevation}
       />
     </mesh>
   );
