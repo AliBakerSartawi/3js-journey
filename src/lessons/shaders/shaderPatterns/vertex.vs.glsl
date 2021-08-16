@@ -1,3 +1,5 @@
+varying vec2 vUV;
+
 void main() {
 
   // ignore modelMatrix error, as it is automatically imported in ShaderMaterial
@@ -6,4 +8,6 @@ void main() {
   vec4 projectedPosition = projectionMatrix * viewPosition;
 
   gl_Position = projectedPosition;
+
+  vUV = uv;
 }

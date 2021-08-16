@@ -73,7 +73,7 @@ function Plane() {
   useFrame(({ clock }) => (shaderMaterial.current.uTime = clock.elapsedTime));
 
   return (
-    <mesh ref={plane} transparent={transparent} scale-y={2 / 3}>
+    <mesh ref={plane} transparent={transparent}>
       <planeBufferGeometry args={[1, 1, 32, 32]}>
         <BufferAttributes />
       </planeBufferGeometry>
