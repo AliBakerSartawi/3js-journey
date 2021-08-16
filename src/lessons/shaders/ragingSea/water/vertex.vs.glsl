@@ -95,8 +95,11 @@ void main() {
     sin(modelPosition.z * uBigWavesFrequency.y + (uTime * uBigWavesSpeed)) * 
     uBigWavesElevation;
 
-  // modelPosition.xz === modelPosition.x, modelPosition.z
-  elevation -= abs(cnoise(vec3(modelPosition.xz * 3.0, uTime * 0.2)) * 0.15);
+  for (float i = 1.0; i <= 4.0; i++) {
+    // modelPosition.xz === modelPosition.x, modelPosition.z
+    elevation -= 
+      abs(cnoise(vec3(modelPosition.xz * 3.0 * i, uTime * 0.2)) * 0.15 / i);
+  }
 
   modelPosition.y += elevation;
 

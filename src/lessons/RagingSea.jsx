@@ -1,7 +1,7 @@
 import React, { useRef, useState, useMemo, useEffect } from 'react';
 import { Canvas, extend, useFrame, useLoader } from '@react-three/fiber';
 import { Physics, useBox, usePlane, useSphere } from '@react-three/cannon';
-import { OrbitControls, shaderMaterial } from '@react-three/drei';
+import { OrbitControls, shaderMaterial, Stats } from '@react-three/drei';
 import * as THREE from 'three';
 import { folder, Leva, useControls } from 'leva';
 
@@ -61,7 +61,7 @@ function Plane() {
       wireframe: false,
       doubleSide: true,
       transparent: true,
-      opacity: { value: 0.75, min: 0, max: 1.0, step: 0.01 },
+      opacity: { value: 1, min: 0, max: 1.0, step: 0.01 },
       uBigWavesElevation: { value: 0.2, min: 0, max: 1.0, step: 0.001 },
       uBigWavesFrequency: {
         value: [4, 1.5],
@@ -72,8 +72,8 @@ function Plane() {
       uBigWavesSpeed: { value: 0.75, min: 0, max: 4, step: 0.01 },
       uDepthColor: '#186691',
       uSurfaceColor: '#9bd8ff',
-      uColorOffset: { value: 0.08, min: 0, max: 1, step: 0.001 },
-      uColorMultiplier: { value: 5, min: 0, max: 10, step: 0.01 }
+      uColorOffset: { value: 0.20, min: 0, max: 1, step: 0.001 },
+      uColorMultiplier: { value: 3.5, min: 0, max: 10, step: 0.01 }
     })
   });
 
@@ -81,7 +81,7 @@ function Plane() {
 
   return (
     <mesh ref={plane} transparent={transparent} rotation={[-Math.PI / 2, 0, 0]}>
-      <planeBufferGeometry args={[2, 2, 128, 128]} />
+      <planeBufferGeometry args={[2, 2, 512, 512]} />
       <waterShaderMaterial
         ref={shaderMaterial}
         wireframe={wireframe}
@@ -133,8 +133,9 @@ function RagingSea() {
         <Plane />
 
         <Lights />
+        <Stats />
       </Canvas>
-      <Leva />
+      <Leva oneLineLabels />
     </div>
   );
 }
