@@ -155,7 +155,7 @@ function RagingSea() {
         shadows
         camera={{
           fov: 45,
-          position: [2, 1, 2],
+          position: [3, 0.5, 1],
           near: 0.1,
           far: 2000
         }}
