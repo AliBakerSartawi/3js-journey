@@ -56,13 +56,35 @@ void main() {
   // strength = mod(vUV.y * 10.0, 1.0);
   // strength = step(0.8, strength);
 
-  // // pattern #9 (sharp black to white - horizontal 10waves intervals more black)
+  // // pattern #10 (sharp black to white - horizontal 10waves intervals more black)
   // strength = mod(vUV.x * 10.0, 1.0);
   // strength = step(0.8, strength);
 
-  // pattern #9 (waffle, black squares, white borders - ten intervals)
-  strength = step(0.8, mod(vUV.x * 10.0, 1.0));
-  strength += step(0.8, mod(vUV.y * 10.0, 1.0));
+  // // pattern #11 (waffle, black squares, white borders - ten intervals)
+  // strength = step(0.8, mod(vUV.x * 10.0, 1.0));
+  // strength += step(0.8, mod(vUV.y * 10.0, 1.0));
+
+  // // pattern #12 (square white polka dots)
+  // strength = step(0.8, mod(vUV.x * 10.0, 1.0));
+  // strength *= step(0.8, mod(vUV.y * 10.0, 1.0));
+
+  // // pattern #13 (short vertical white lines)
+  // strength = step(0.3, mod(vUV.x * 10.0, 1.0));
+  // strength *= step(0.8, mod(vUV.y * 10.0, 1.0));
+
+  // // pattern #14 (small top-right white corners)
+  // float barX = step(0.3, mod(vUV.x * 10.0, 1.0));
+  // barX *= step(0.8, mod(vUV.y * 10.0, 1.0));
+  // float barY = step(0.3, mod(vUV.y * 10.0, 1.0));
+  // barY *= step(0.8, mod(vUV.x * 10.0, 1.0));
+  // strength = barX + barY;
+
+  // pattern #15 (small white plus signs)
+  float barX = step(0.3, mod(vUV.x * 10.0, 1.0));
+  barX *= step(0.8, mod(vUV.y * 10.0 + 0.25, 1.0));
+  float barY = step(0.8, mod(vUV.x * 10.0 + 0.25, 1.0));
+  barY *= step(0.3, mod(vUV.y * 10.0, 1.0));
+  strength = barX + barY;
 
   gl_FragColor = vec4(vec3(strength), uAlpha);
 }
