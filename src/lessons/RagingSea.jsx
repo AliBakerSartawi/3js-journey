@@ -27,7 +27,9 @@ const WaterShaderMaterial = shaderMaterial(
     uBigWavesSpeed: 0,
     // COLORS
     uDepthColor: new THREE.Color(0, 0, 0),
-    uSurfaceColor: new THREE.Color(0, 0, 0)
+    uSurfaceColor: new THREE.Color(0, 0, 0),
+    uColorOffset: 0,
+    uColorMultiplier: 0
   },
   `${vertexShader}`,
   `${fragmentShader}`
@@ -51,7 +53,9 @@ function Plane() {
     uBigWavesFrequency,
     uBigWavesSpeed,
     uDepthColor,
-    uSurfaceColor
+    uSurfaceColor,
+    uColorOffset,
+    uColorMultiplier
   } = useControls({
     ShaderFrequency: folder({
       wireframe: false,
@@ -66,8 +70,10 @@ function Plane() {
         step: 0.01
       },
       uBigWavesSpeed: { value: 0.75, min: 0, max: 4, step: 0.01 },
-      uDepthColor: '#0000ff',
-      uSurfaceColor: '#8888ff'
+      uDepthColor: '#186691',
+      uSurfaceColor: '#9bd8ff',
+      uColorOffset: { value: 0.08, min: 0, max: 1, step: 0.001 },
+      uColorMultiplier: { value: 5, min: 0, max: 10, step: 0.01 }
     })
   });
 
@@ -93,6 +99,8 @@ function Plane() {
         // COLORS
         uDepthColor={uDepthColor}
         uSurfaceColor={uSurfaceColor}
+        uColorOffset={uColorOffset}
+        uColorMultiplier={uColorMultiplier}
       />
     </mesh>
   );
@@ -114,7 +122,7 @@ function RagingSea() {
         shadows
         camera={{
           fov: 45,
-          position: [2, 2, 2],
+          position: [2, 1, 2],
           near: 0.1,
           far: 2000
         }}
