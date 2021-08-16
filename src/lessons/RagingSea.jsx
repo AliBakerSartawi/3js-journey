@@ -7,11 +7,11 @@ import { folder, Leva, useControls } from 'leva';
 
 // shader imports using raw-loader package
 /* eslint-disable import/no-webpack-loader-syntax */
-import vertexShader from '!!raw-loader!./shaders/ragingSea/vertex.vs.glsl';
-import fragmentShader from '!!raw-loader!./shaders/ragingSea/fragment.fs.glsl';
+import vertexShader from '!!raw-loader!./shaders/ragingSea/water/vertex.vs.glsl';
+import fragmentShader from '!!raw-loader!./shaders/ragingSea/water/fragment.fs.glsl';
 
-// import vertexShader from './shaders/ragingSea/vertex.vs.glsl';
-// import fragmentShader from './shaders/ragingSea/fragment.fs.glsl';
+// import vertexShader from './shaders/ragingSea/water/vertex.vs.glsl';
+// import fragmentShader from './shaders/ragingSea/water/fragment.fs.glsl';
 
 // glsl import
 // import glsl from 'babel-plugin-glsl/macro';
@@ -41,15 +41,15 @@ function BufferAttributes() {
   );
 }
 
-const PlaneShaderMaterial = shaderMaterial(
+const WaterShaderMaterial = shaderMaterial(
   {
-    uAlpha: 0,
+    uAlpha: 0
   },
   `${vertexShader}`,
   `${fragmentShader}`
 );
 
-extend({ PlaneShaderMaterial });
+extend({ WaterShaderMaterial });
 
 /**
  * Plane Component
@@ -58,30 +58,26 @@ function Plane() {
   const plane = useRef();
   const shaderMaterial = useRef();
 
-  const {
-    transparent,
-    wireframe,
-    opacity,
-  } = useControls({
+  const { transparent, wireframe, opacity } = useControls({
     ShaderFrequency: folder({
       wireframe: false,
       transparent: true,
-      opacity: { value: 0.5, min: 0, max: 1.0, step: 0.01 }
+      opacity: { value: 0.75, min: 0, max: 1.0, step: 0.01 }
     })
   });
 
   useFrame(({ clock }) => (shaderMaterial.current.uTime = clock.elapsedTime));
 
   return (
-    <mesh ref={plane} transparent={transparent}>
-      <planeBufferGeometry args={[1, 1, 32, 32]}>
+    <mesh ref={plane} transparent={transparent} rotation={[-Math.PI / 2, 0, 0]}>
+      <planeBufferGeometry args={[2, 2, 128, 128]}>
         <BufferAttributes />
       </planeBufferGeometry>
-      <planeShaderMaterial
+      <waterShaderMaterial
         ref={shaderMaterial}
         wireframe={wireframe}
         transparent={transparent}
-        side={THREE.DoubleSide}
+        // side={THREE.DoubleSide}
         // uniforms 👇
         // uTime is provided by altering the ref directly inside useFrame
         uAlpha={opacity}
@@ -106,7 +102,7 @@ function RagingSea() {
         shadows
         camera={{
           fov: 45,
-          position: [1, 0.5, 1],
+          position: [2, 2, 2],
           near: 0.1,
           far: 2000
         }}

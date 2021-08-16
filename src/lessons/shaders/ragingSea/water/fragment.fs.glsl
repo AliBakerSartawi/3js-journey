@@ -67,5 +67,5 @@ float cnoise(vec2 P){
 void main() {
 
   // Black and White version
-  gl_FragColor = vec4(1.0, 1.0, 1.0, uAlpha);
+  gl_FragColor = vec4(0.5, 0.8, 1.0, uAlpha);
 }
