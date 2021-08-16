@@ -19,7 +19,11 @@ import fragmentShader from '!!raw-loader!./shaders/ragingSea/water/fragment.fs.g
 const WaterShaderMaterial = shaderMaterial(
   {
     uAlpha: 0,
-    uBigWavesElevation: 0.2
+    uTime: 0,
+    uBigWavesElevation: 0.2,
+    // automatigically turned to vec2(4, 1.5) 
+    uBigWavesFrequency: [4, 1.5],
+    uBigWavesSpeed: 0,
   },
   `${vertexShader}`,
   `${fragmentShader}`
@@ -34,16 +38,30 @@ function Plane() {
   const plane = useRef();
   const shaderMaterial = useRef();
 
-  const { doubleSide, wireframe, transparent, opacity, uBigWavesElevation } =
-    useControls({
-      ShaderFrequency: folder({
-        wireframe: false,
-        doubleSide: true,
-        transparent: true,
-        opacity: { value: 0.75, min: 0, max: 1.0, step: 0.01 },
-        uBigWavesElevation: { value: 0.2, min: 0, max: 1.0, step: 0.001 }
-      })
-    });
+  const {
+    doubleSide,
+    wireframe,
+    transparent,
+    opacity,
+    uBigWavesElevation,
+    uBigWavesFrequency,
+    uBigWavesSpeed
+  } = useControls({
+    ShaderFrequency: folder({
+      wireframe: false,
+      doubleSide: true,
+      transparent: true,
+      opacity: { value: 0.75, min: 0, max: 1.0, step: 0.01 },
+      uBigWavesElevation: { value: 0.2, min: 0, max: 1.0, step: 0.001 },
+      uBigWavesFrequency: {
+        value: [4, 1.5],
+        min: [0, 0],
+        max: [10, 10],
+        step: 0.01
+      },
+      uBigWavesSpeed: { value: 0.75, min: 0, max: 4, step: 0.01 },
+    })
+  });
 
   useFrame(({ clock }) => (shaderMaterial.current.uTime = clock.elapsedTime));
 
@@ -58,7 +76,11 @@ function Plane() {
         // uniforms 👇
         // uTime is provided by altering the ref directly inside useFrame
         uAlpha={opacity}
+        // sending uTime like this will cause an error, just provide it in uniforms, as it is already a property on the ref
+        // uTime={shaderMaterial.current.uTime}
         uBigWavesElevation={uBigWavesElevation}
+        uBigWavesFrequency={uBigWavesFrequency}
+        uBigWavesSpeed={uBigWavesSpeed}
       />
     </mesh>
   );
