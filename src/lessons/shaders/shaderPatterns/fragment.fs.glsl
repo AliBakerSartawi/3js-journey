@@ -122,13 +122,42 @@ void main() {
   // // we need to mimic a random function (method)
   // strength = random(vUV.xy); // or simply => random(vUV)
   
-  // pattern #24 (pixelated black noise on white screen - minecraft style)
-  // mixed with pattern #22
-  vec2 gridUV = vec2(
-    (floor(vUV.x * 10.0) / 10.0), 
-    (floor(vUV.y * 10.0) / 10.0)
-  );
-  strength = random(gridUV);
+  // // pattern #24 (pixelated black noise on white screen - minecraft style)
+  // // mixed with pattern #22
+  // vec2 gridUV = vec2(
+  //   (floor(vUV.x * 10.0) / 10.0), 
+  //   (floor(vUV.y * 10.0) / 10.0)
+  // );
+  // strength = random(gridUV);
+  
+  // // pattern #25 (pixelated black noise on white screen - minecraft style - with offset on Y)
+  // vec2 gridUV = vec2(
+  //   (floor(vUV.x * 10.0) / 10.0), 
+  //   (floor((vUV.y + vUV.x * 0.5) * 10.0) / 10.0)
+  // );
+  // strength = random(gridUV);
+  
+  // // pattern #26 (gradient black to white - bottom-left to top-right easeIn)
+  // // length is distance from 0.0 (bottom-left)
+  // strength = length(vUV);
+  
+  // // pattern #27 (gradient black circle in the middle to white)
+  // strength = length(vUV - 0.5);
+  // // or
+  // // distance creates some kind of point of origin effect
+  // strength = distance(vUV, vec2(0.5, 0.5));
+  
+  // // pattern #28 (opposite to #27)
+  // strength = 1.0 - distance(vUV, vec2(0.5, 0.5));
+  
+  // // pattern #29 (like previous but eclipsed sun)
+  // // point light effect / faraway star
+  // strength = 0.015 / distance(vUV, vec2(0.5, 0.5)) - 0.1;
+  
+  // pattern #30 (like previous but stretched on x)
+  // point light effect / faraway star
+  strength = 0.015 / distance(vUV, vec2(0.5, 0.5)) - 0.1;
+
 
   gl_FragColor = vec4(vec3(strength), uAlpha);
 }
