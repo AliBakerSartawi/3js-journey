@@ -25,6 +25,10 @@ const WaterShaderMaterial = shaderMaterial(
     // automatigically turned to vec2(4, 1.5)
     uBigWavesFrequency: [4, 1.5],
     uBigWavesSpeed: 0,
+    uSmallWavesElevation: 0,
+    uSmallWavesFrequency: 0,
+    uSmallWavesSpeed: 0,
+    uSmallWavesIterations: 0,
     // COLORS
     uDepthColor: new THREE.Color(0, 0, 0),
     uSurfaceColor: new THREE.Color(0, 0, 0),
@@ -49,31 +53,48 @@ function Plane() {
     wireframe,
     transparent,
     opacity,
-    uBigWavesElevation,
-    uBigWavesFrequency,
-    uBigWavesSpeed,
+    // color
     uDepthColor,
     uSurfaceColor,
     uColorOffset,
-    uColorMultiplier
+    uColorMultiplier,
+    // waves
+    uBigWavesElevation,
+    uBigWavesFrequency,
+    uBigWavesSpeed,
+    uSmallWavesElevation,
+    uSmallWavesFrequency,
+    uSmallWavesSpeed,
+    uSmallWavesIterations
   } = useControls({
     ShaderFrequency: folder({
       wireframe: false,
       doubleSide: true,
       transparent: true,
       opacity: { value: 1, min: 0, max: 1.0, step: 0.01 },
-      uBigWavesElevation: { value: 0.2, min: 0, max: 1.0, step: 0.001 },
-      uBigWavesFrequency: {
-        value: [4, 1.5],
-        min: [0, 0],
-        max: [10, 10],
-        step: 0.01
-      },
-      uBigWavesSpeed: { value: 0.75, min: 0, max: 4, step: 0.01 },
-      uDepthColor: '#186691',
-      uSurfaceColor: '#9bd8ff',
-      uColorOffset: { value: 0.20, min: 0, max: 1, step: 0.001 },
-      uColorMultiplier: { value: 3.5, min: 0, max: 10, step: 0.01 }
+      colors: folder({
+        uDepthColor: '#186691',
+        uSurfaceColor: '#9bd8ff',
+        uColorOffset: { value: 0.2, min: 0, max: 1, step: 0.001 },
+        uColorMultiplier: { value: 3.5, min: 0, max: 10, step: 0.01 },
+
+      }),
+      bigWaves: folder({
+        uBigWavesElevation: { value: 0.2, min: 0, max: 1.0, step: 0.001 },
+        uBigWavesSpeed: { value: 0.75, min: 0, max: 4, step: 0.01 },
+        uBigWavesFrequency: {
+          value: [4, 1.5],
+          min: [0, 0],
+          max: [10, 10],
+          step: 0.01
+        },
+      }),
+      smallWaves: folder({
+        uSmallWavesElevation: { value: 0.15, min: 0, max: 0.5, step: 0.0001 },
+        uSmallWavesFrequency: { value: 3, min: 0, max: 10, step: 0.001 },
+        uSmallWavesSpeed: { value: 0.2, min: 0, max: 1, step: 0.001 },
+        uSmallWavesIterations: { value: 4, min: 0, max: 10, step: 1 }
+      }),
     })
   });
 
@@ -92,15 +113,19 @@ function Plane() {
         // sending uTime like this will cause an error, just provide it in uniforms, as it is already a property on the ref
         // uTime={shaderMaterial.current.uTime}
 
-        // WAVES
-        uBigWavesElevation={uBigWavesElevation}
-        uBigWavesFrequency={uBigWavesFrequency}
-        uBigWavesSpeed={uBigWavesSpeed}
         // COLORS
         uDepthColor={uDepthColor}
         uSurfaceColor={uSurfaceColor}
         uColorOffset={uColorOffset}
         uColorMultiplier={uColorMultiplier}
+        // WAVES
+        uBigWavesElevation={uBigWavesElevation}
+        uBigWavesFrequency={uBigWavesFrequency}
+        uBigWavesSpeed={uBigWavesSpeed}
+        uSmallWavesElevation={uSmallWavesElevation}
+        uSmallWavesFrequency={uSmallWavesFrequency}
+        uSmallWavesSpeed={uSmallWavesSpeed}
+        uSmallWavesIterations={uSmallWavesIterations}
       />
     </mesh>
   );
