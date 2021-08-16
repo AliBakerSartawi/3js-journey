@@ -53,6 +53,7 @@ function Plane() {
     wireframe,
     transparent,
     opacity,
+    planeSize,
     // color
     uDepthColor,
     uSurfaceColor,
@@ -71,30 +72,30 @@ function Plane() {
       wireframe: false,
       doubleSide: true,
       transparent: true,
-      opacity: { value: 1, min: 0, max: 1.0, step: 0.01 },
+      opacity: { value: 0.95, min: 0, max: 1.0, step: 0.01 },
+      planeSize: { value: 3, min: 1, max: 10, step: 0.1 },
       colors: folder({
         uDepthColor: '#186691',
         uSurfaceColor: '#9bd8ff',
         uColorOffset: { value: 0.2, min: 0, max: 1, step: 0.001 },
-        uColorMultiplier: { value: 3.5, min: 0, max: 10, step: 0.01 },
-
+        uColorMultiplier: { value: 3.5, min: 0, max: 10, step: 0.01 }
       }),
       bigWaves: folder({
-        uBigWavesElevation: { value: 0.2, min: 0, max: 1.0, step: 0.001 },
-        uBigWavesSpeed: { value: 0.75, min: 0, max: 4, step: 0.01 },
+        uBigWavesElevation: { value: 0.1, min: 0, max: 1.0, step: 0.001 },
+        uBigWavesSpeed: { value: 0.55, min: 0, max: 4, step: 0.01 },
         uBigWavesFrequency: {
-          value: [4, 1.5],
+          value: [3, 1.5],
           min: [0, 0],
           max: [10, 10],
           step: 0.01
-        },
+        }
       }),
       smallWaves: folder({
         uSmallWavesElevation: { value: 0.15, min: 0, max: 0.5, step: 0.0001 },
         uSmallWavesFrequency: { value: 3, min: 0, max: 10, step: 0.001 },
         uSmallWavesSpeed: { value: 0.2, min: 0, max: 1, step: 0.001 },
         uSmallWavesIterations: { value: 4, min: 0, max: 10, step: 1 }
-      }),
+      })
     })
   });
 
@@ -102,7 +103,14 @@ function Plane() {
 
   return (
     <mesh ref={plane} transparent={transparent} rotation={[-Math.PI / 2, 0, 0]}>
-      <planeBufferGeometry args={[2, 2, 512, 512]} />
+      <planeBufferGeometry
+        args={[
+          2 * planeSize,
+          2 * planeSize,
+          (512 * planeSize) / 4,
+          (512 * planeSize) / 4
+        ]}
+      />
       <waterShaderMaterial
         ref={shaderMaterial}
         wireframe={wireframe}
