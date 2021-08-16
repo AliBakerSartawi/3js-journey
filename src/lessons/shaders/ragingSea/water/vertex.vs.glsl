@@ -103,9 +103,14 @@ void main() {
   for (float i = 1.0; i <= uSmallWavesIterations; i++) {
     // modelPosition.xz === modelPosition.x, modelPosition.z
     elevation -= 
-      abs(cnoise(vec3(
-        modelPosition.xz * uSmallWavesFrequency * i, 
-        uTime * uSmallWavesSpeed)) * uSmallWavesElevation / i);
+      abs(
+        cnoise(
+          vec3(
+            modelPosition.xz * uSmallWavesFrequency * i, 
+            uTime * uSmallWavesSpeed
+          )
+        ) * uSmallWavesElevation / i
+      );
   }
 
   modelPosition.y += elevation;
