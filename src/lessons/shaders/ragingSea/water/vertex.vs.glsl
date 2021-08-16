@@ -1,9 +1,10 @@
-uniform float uBigWavesElevation;
 uniform float uTime;
 
 // uBigWavesFrequency.y is the z axis, it's a vec2 so we have to call it y
+uniform float uBigWavesElevation;
 uniform vec2 uBigWavesFrequency;
 uniform float uBigWavesSpeed;
+
 uniform float uSmallWavesElevation;
 uniform float uSmallWavesFrequency;
 uniform float uSmallWavesSpeed;
