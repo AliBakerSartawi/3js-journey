@@ -11,6 +11,7 @@ import fragmentShader from '!!raw-loader!./shaders/galaxy/fragment.fs.glsl';
 
 const GalaxyShaderMaterial = shaderMaterial(
   {
+    uTime: 0,
     uSize: 0,
     uSizeAttenuation: true
   },
@@ -21,7 +22,8 @@ const GalaxyShaderMaterial = shaderMaterial(
 extend({ GalaxyShaderMaterial });
 
 function Galaxy() {
-  const particles = useRef();
+  const particlesMesh = useRef();
+  const particlesShader = useRef();
 
   const {
     size,
@@ -41,7 +43,7 @@ function Galaxy() {
       size: { value: 30, min: 0, max: 50.0, step: 0.001 },
       sizeAttenuation: true,
       depthWrite: false,
-      blending: true,
+      blending: true
     }),
     particlesGeo: folder({
       count: { value: 100000, min: 0, max: 200000, step: 1 },
@@ -67,9 +69,19 @@ function Galaxy() {
     outsideColor
   });
 
+  useFrame(
+    ({ clock: { elapsedTime } }) =>
+      (particlesShader.current.uTime = elapsedTime)
+  );
+
   return (
-    <points ref={particles} geometry={particlesGeometry} geometry-size={0.02}>
+    <points
+      ref={particlesMesh}
+      geometry={particlesGeometry}
+      geometry-size={0.02}
+    >
       <galaxyShaderMaterial
+        ref={particlesShader}
         depthWrite={depthWrite}
         vertexColors={true} // will add color attribute to geo
         blending={blending ? THREE.AdditiveBlending : THREE.NormalBlending}
@@ -79,8 +91,9 @@ function Galaxy() {
         // ... because particles can look smaller if screen has higher pixel ratio
         uSize={size}
         uSizeAttenuation={sizeAttenuation}
+        // uTime => assigned in useFrame callback
       />
-      <AnimateParticles particles={particles} />
+      <AnimateParticles particles={particlesMesh} />
     </points>
   );
 }
@@ -137,7 +150,7 @@ function customParticleGeometry({
   // attributes
   const positions = new Float32Array(count * 3);
   const colors = new Float32Array(count * 3);
-  const scales = new Float32Array(count * 1)
+  const scales = new Float32Array(count * 1);
 
   const colorInside = new THREE.Color(insideColor);
   const colorOutside = new THREE.Color(outsideColor);
@@ -174,15 +187,18 @@ function customParticleGeometry({
     const randomX =
       Math.pow(Math.random(), pow) *
       (Math.random() < 0.5 ? -1 : 1) *
-      Math.pow(randomness, pow) * randomRadius;
+      Math.pow(randomness, pow) *
+      randomRadius;
     const randomY =
       Math.pow(Math.random(), pow) *
       (Math.random() < 0.5 ? -1 : 1) *
-      Math.pow(randomness, pow) * randomRadius;
+      Math.pow(randomness, pow) *
+      randomRadius;
     const randomZ =
       Math.pow(Math.random(), pow) *
       (Math.random() < 0.5 ? -1 : 1) *
-      Math.pow(randomness, pow) * randomRadius;
+      Math.pow(randomness, pow) *
+      randomRadius;
 
     // positions x, y, z
     positions[i3 + 0] = Math.cos(angle + spinAngle) * randomRadius + randomX;
@@ -199,7 +215,7 @@ function customParticleGeometry({
     colors[i3 + 2] = mixedColor.b;
 
     // random scale
-    scales[i] = Math.random()
+    scales[i] = Math.random();
   }
 
   // setting attributes
@@ -208,6 +224,9 @@ function customParticleGeometry({
     new THREE.BufferAttribute(positions, 3)
   );
   particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-  particlesGeometry.setAttribute('aRandomScale', new THREE.BufferAttribute(scales, 1));
+  particlesGeometry.setAttribute(
+    'aRandomScale',
+    new THREE.BufferAttribute(scales, 1)
+  );
   return particlesGeometry;
 }
