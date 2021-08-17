@@ -73,7 +73,7 @@ function ModifiedMaterials() {
         gl={{ physicallyCorrectLights: true }}
         camera={{
           fov: 45,
-          position: [10, 2, 10],
+          position: [0, 2, 12],
           near: 0.1,
           far: 2000
         }}
@@ -91,7 +91,7 @@ function ModifiedMaterials() {
           // path={'/../textures/environmentMaps/3/'}
           // scene
         /> */}
-        <OrbitControls autoRotate />
+        <OrbitControls />
 
         {/* MODELS / no need for suspense here as it is provided higher in the tree */}
         <FlightHelmet environmentMapTexture={environmentMapTexture} />

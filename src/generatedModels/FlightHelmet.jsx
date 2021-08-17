@@ -37,7 +37,7 @@ export default function Model(props) {
         receiveShadow={props.shadows}
         geometry={nodes.Hose_low.geometry}
         material={materials.HoseMat}
-        customDepthMaterial={props.allowCustomShader ? depthMaterial : null}
+        customDepthMaterial={depthMaterial}
         // material-envMap={props.envMap}
         // material-envMapIntensity={props.envMapIntensity}
       />
@@ -46,7 +46,7 @@ export default function Model(props) {
         receiveShadow={props.shadows}
         geometry={nodes.RubberWood_low.geometry}
         material={materials.RubberWoodMat}
-        customDepthMaterial={props.allowCustomShader ? depthMaterial : null}
+        customDepthMaterial={depthMaterial}
         // material-envMap={props.envMap}
         // material-envMapIntensity={props.envMapIntensity}
       />
@@ -55,7 +55,7 @@ export default function Model(props) {
         receiveShadow={props.shadows}
         geometry={nodes.GlassPlastic_low.geometry}
         material={materials.GlassPlasticMat}
-        customDepthMaterial={props.allowCustomShader ? depthMaterial : null}
+        customDepthMaterial={depthMaterial}
         // material-envMap={props.envMap}
         // material-envMapIntensity={props.envMapIntensity}
       />
@@ -64,7 +64,7 @@ export default function Model(props) {
         receiveShadow={props.shadows}
         geometry={nodes.MetalParts_low.geometry}
         material={materials.MetalPartsMat}
-        customDepthMaterial={props.allowCustomShader ? depthMaterial : null}
+        customDepthMaterial={depthMaterial}
         // material-envMap={props.envMap}
         // material-envMapIntensity={props.envMapIntensity}
       />
@@ -73,7 +73,7 @@ export default function Model(props) {
         receiveShadow={props.shadows}
         geometry={nodes.LeatherParts_low.geometry}
         material={materials.LeatherPartsMat}
-        customDepthMaterial={props.allowCustomShader ? depthMaterial : null}
+        customDepthMaterial={depthMaterial}
         // material-envMap={props.envMap}
         // material-envMapIntensity={props.envMapIntensity}
       />
@@ -82,7 +82,7 @@ export default function Model(props) {
         receiveShadow={props.shadows}
         geometry={nodes.Lenses_low.geometry}
         material={materials.LensesMat}
-        customDepthMaterial={props.allowCustomShader ? depthMaterial : null}
+        customDepthMaterial={depthMaterial}
         // material-envMap={props.envMap}
         // material-envMapIntensity={props.envMapIntensity}
       />
@@ -124,21 +124,34 @@ function useCustomShader(isAnimated, materials, depthMaterial) {
             
           `
         );
+        // fix normals (for better shadows on the same object)
+        material.vertexShader = material.vertexShader.replace(
+          '#include <beginnormal_vertex>',
+          `
+            #include <beginnormal_vertex>
+
+            // float angle = (position.y + 4.0) * sin(uTime * 0.5) * 0.9;
+            float angle = sin(position.y + uTime) * 1.5;
+            mat2 rotateMatrix = get2dRotateMatrix(angle);
+
+            objectNormal.xz = objectNormal.xz * rotateMatrix;
+          `
+        )
         // begin_vertex is responsible for positioning the vertices
         // ... it copies (position) attribute into (transformed) vec3 variable
         material.vertexShader = material.vertexShader.replace(
           '#include <begin_vertex>',
           `
             #include <begin_vertex>
-            float angle = position.y + uTime * 2.0;
-            mat2 rotateMatrix = get2dRotateMatrix(angle);
 
             transformed.xz = transformed.xz * rotateMatrix;
           `
         );
+        
       };
     }
-    // update the custom shadows
+    // update the custom shadows (fix drop shadow)
+    // the below shader code is a just a bit different than the one for the standard material above, so do not combine both in one function 
     depthMaterial.onBeforeCompile = (material) => {
       // adding uniforms manually
       material.uniforms.uTime = customUniforms.current.uTime;
@@ -164,7 +177,10 @@ function useCustomShader(isAnimated, materials, depthMaterial) {
         '#include <begin_vertex>',
         `
           #include <begin_vertex>
-          float angle = position.y + uTime * 2.0;
+          
+          // float angle = (position.y + 4.0) * sin(uTime) * 0.9;
+          float angle = sin(position.y + uTime) * 1.5;
+
           mat2 rotateMatrix = get2dRotateMatrix(angle);
 
           transformed.xz = transformed.xz * rotateMatrix;
