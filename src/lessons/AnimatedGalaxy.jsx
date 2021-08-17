@@ -1,13 +1,25 @@
 import React, { useRef, useState } from 'react';
-import { Canvas, useFrame, useLoader } from '@react-three/fiber';
-import { OrbitControls, Stats } from '@react-three/drei';
+import { Canvas, useFrame, extend } from '@react-three/fiber';
+import { OrbitControls, Stats, shaderMaterial } from '@react-three/drei';
 import * as THREE from 'three';
 import { useControls, Leva, folder } from 'leva';
 
-/**
- * Main Component
- */
-function AnimatedGalaxy() {
+// shader imports
+/* eslint-disable import/no-webpack-loader-syntax */
+import vertexShader from '!!raw-loader!./shaders/galaxy/vertex.vs.glsl';
+import fragmentShader from '!!raw-loader!./shaders/galaxy/fragment.fs.glsl';
+
+const GalaxyShaderMaterial = shaderMaterial(
+  {
+
+  },
+  `${vertexShader}`,
+  `${fragmentShader}`
+)
+
+extend({ GalaxyShaderMaterial })
+
+function Galaxy() {
   const particles = useRef();
 
   const {
@@ -45,7 +57,8 @@ function AnimatedGalaxy() {
     })
   });
 
-  const particlesGeo = {
+  // for custom geometry particles
+  const particlesGeometry = customParticleGeometry({
     count,
     radius,
     branches,
@@ -54,11 +67,23 @@ function AnimatedGalaxy() {
     randomnessPower,
     insideColor,
     outsideColor
-  };
+  });
 
-  // for custom geometry particles
-  const particlesGeometry = customParticleGeometry(particlesGeo);
-
+  return (
+    <points ref={particles} geometry={particlesGeometry} geometry-size={0.02}>
+      <galaxyShaderMaterial
+        depthWrite={depthWrite}
+        vertexColors={vertexColors}
+        blending={blending ? THREE.AdditiveBlending : THREE.NormalBlending}
+      />
+      <AnimateParticles particles={particles} />
+    </points>
+  );
+}
+/**
+ * Main Component
+ */
+function AnimatedGalaxy() {
   return (
     <div style={{ height: '100vh', backgroundColor: 'rgb(0,0,0)' }}>
       <Canvas
@@ -72,21 +97,8 @@ function AnimatedGalaxy() {
         {/* <axesHelper args={[10]} /> */}
         <OrbitControls />
 
-        {/* CUSTOM GEOMETRY PARTICLE */}
-        <points
-          ref={particles}
-          geometry={particlesGeometry}
-          geometry-size={0.02}
-        >
-          <pointsMaterial
-            size={size}
-            sizeAttenuation={sizeAttenuation}
-            depthWrite={depthWrite}
-            vertexColors={vertexColors}
-            blending={blending ? THREE.AdditiveBlending : THREE.NormalBlending}
-          />
-          <AnimateParticles particles={particles} />
-        </points>
+        {/* Galaxy */}
+        <Galaxy />
       </Canvas>
       <Stats />
       <Leva />
