@@ -89,7 +89,7 @@ function AnimatedGalaxy() {
         </points>
       </Canvas>
       <Stats />
-      <Leva oneLineLabels />
+      <Leva />
     </div>
   );
 }
