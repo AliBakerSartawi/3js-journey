@@ -11,13 +11,13 @@ import fragmentShader from '!!raw-loader!./shaders/galaxy/fragment.fs.glsl';
 
 const GalaxyShaderMaterial = shaderMaterial(
   {
-
+    uSize: 0
   },
   `${vertexShader}`,
   `${fragmentShader}`
-)
+);
 
-extend({ GalaxyShaderMaterial })
+extend({ GalaxyShaderMaterial });
 
 function Galaxy() {
   const particles = useRef();
@@ -38,7 +38,7 @@ function Galaxy() {
     outsideColor
   } = useControls({
     particlesMat: folder({
-      size: { value: 0.01, min: 0, max: 0.1, step: 0.001 },
+      size: { value: 2.0, min: 0, max: 10.0, step: 0.001 },
       sizeAttenuation: true,
       depthWrite: false,
       blending: true,
@@ -75,6 +75,11 @@ function Galaxy() {
         depthWrite={depthWrite}
         vertexColors={vertexColors}
         blending={blending ? THREE.AdditiveBlending : THREE.NormalBlending}
+        // uniforms
+        // for better results across screen with a high pixel ratio
+        // uSize={size * renderer||gl.getPixelRatio()}
+        // ... because particles can look smaller if screen has higher pixel ratio
+        uSize={size}
       />
       <AnimateParticles particles={particles} />
     </points>
@@ -127,9 +132,14 @@ function customParticleGeometry({
   insideColor,
   outsideColor
 }) {
+  // geo
   const particlesGeometry = new THREE.BufferGeometry();
+
+  // attributes
   const positions = new Float32Array(count * 3);
   const colors = new Float32Array(count * 3);
+  const scales = new Float32Array(count * 1)
+
   const colorInside = new THREE.Color(insideColor);
   const colorOutside = new THREE.Color(outsideColor);
 
@@ -186,13 +196,17 @@ function customParticleGeometry({
     colors[i3 + 0] = mixedColor.r;
     colors[i3 + 1] = mixedColor.g;
     colors[i3 + 2] = mixedColor.b;
+
+    // random scale
+    scales[i] = Math.random()
   }
 
-  // setting position attribute
+  // setting attributes
   particlesGeometry.setAttribute(
     'position',
     new THREE.BufferAttribute(positions, 3)
   );
   particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+  particlesGeometry.setAttribute('aRandomScale', new THREE.BufferAttribute(scales, 1));
   return particlesGeometry;
 }

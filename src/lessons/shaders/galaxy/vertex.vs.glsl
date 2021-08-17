@@ -1,3 +1,9 @@
+uniform float uSize;
+
+attribute float aRandomScale;
+
+varying vec3 vColor;
+
 void main() {
   // position
   vec4 modelPosition = modelMatrix * vec4(position, 1.0);
@@ -5,6 +11,15 @@ void main() {
   vec4 projectionPosition = projectionMatrix * viewPosition;
   gl_Position = projectionPosition;
 
-  // size
-  gl_PointSize = 2.0;
+  /*
+   * Size
+   */
+  gl_PointSize = uSize * aRandomScale;
+  // // enable sizeAttenuation
+  // viewPosition can also be called modelViewPosition
+  gl_PointSize *= ( 1.0 / - viewPosition.z);
+  
+
+  // Varyings
+  vColor = color; // color is the default attribute from the custom geometry
 }
