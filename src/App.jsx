@@ -18,7 +18,8 @@ import CustomLoader from './components/CustomLoader';
 // import Template from './lessons/Template';
 // import RayCaster from './lessons/RayCaster';
 // import Physics from './lessons/Physics';
-import RagingSea from './lessons/RagingSea';
+// import RagingSea from './lessons/RagingSea';
+import AnimatedGalaxy from './lessons/AnimatedGalaxy';
 // import ImportedModels from './lessons/ImportedModels';
 // import RealisticRendering from './lessons/RealisticRendering';
 // import Shaders from './lessons/Shaders';
@@ -75,7 +76,8 @@ function App() {
         {/* 🤯 SHADERS */}
         {/* <Shaders /> */}
         {/* <ShaderPatterns /> */}
-        <RagingSea />
+        {/* <RagingSea /> */}
+        <AnimatedGalaxy />
       </div>
     </Suspense>
   );
