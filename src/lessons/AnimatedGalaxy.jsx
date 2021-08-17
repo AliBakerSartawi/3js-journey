@@ -11,7 +11,8 @@ import fragmentShader from '!!raw-loader!./shaders/galaxy/fragment.fs.glsl';
 
 const GalaxyShaderMaterial = shaderMaterial(
   {
-    uSize: 0
+    uSize: 0,
+    uSizeAttenuation: true
   },
   `${vertexShader}`,
   `${fragmentShader}`
@@ -27,7 +28,6 @@ function Galaxy() {
     sizeAttenuation,
     depthWrite,
     blending,
-    vertexColors,
     count,
     radius,
     branches,
@@ -38,19 +38,17 @@ function Galaxy() {
     outsideColor
   } = useControls({
     particlesMat: folder({
-      size: { value: 2.0, min: 0, max: 10.0, step: 0.001 },
+      size: { value: 30, min: 0, max: 50.0, step: 0.001 },
       sizeAttenuation: true,
       depthWrite: false,
       blending: true,
-      vertexColors: true
-      // color: 'white',
     }),
     particlesGeo: folder({
       count: { value: 100000, min: 0, max: 200000, step: 1 },
       radius: { value: 5, min: 1, max: 20, step: 0.01 },
       branches: { value: 3, min: 2, max: 20, step: 1 },
-      spin: { value: 1, min: -3, max: 3, step: 0.001 },
-      randomness: { value: 1, min: 0, max: 2, step: 0.001 },
+      spin: { value: 0.2, min: -3, max: 3, step: 0.0001 },
+      randomness: { value: 0.75, min: 0, max: 2, step: 0.001 },
       randomnessPower: { value: 3, min: 1, max: 10, step: 0.001 },
       insideColor: '#F13800',
       outsideColor: '#0033B4'
@@ -73,13 +71,14 @@ function Galaxy() {
     <points ref={particles} geometry={particlesGeometry} geometry-size={0.02}>
       <galaxyShaderMaterial
         depthWrite={depthWrite}
-        vertexColors={vertexColors}
+        vertexColors={true} // will add color attribute to geo
         blending={blending ? THREE.AdditiveBlending : THREE.NormalBlending}
         // uniforms
         // for better results across screen with a high pixel ratio
         // uSize={size * renderer||gl.getPixelRatio()}
         // ... because particles can look smaller if screen has higher pixel ratio
         uSize={size}
+        uSizeAttenuation={sizeAttenuation}
       />
       <AnimateParticles particles={particles} />
     </points>
@@ -160,7 +159,9 @@ function customParticleGeometry({
     const angle = anglePercentage * Math.PI * 2;
 
     // spin
-    const spinAngle = spin * randomRadius;
+    let spinAngle = spin * randomRadius;
+    // eliminate spin for this file
+    // spin = 0;
 
     // randomness
     // multiplied by randomRadius to decrease randomness in the center, and increase with distance from center
@@ -173,15 +174,15 @@ function customParticleGeometry({
     const randomX =
       Math.pow(Math.random(), pow) *
       (Math.random() < 0.5 ? -1 : 1) *
-      Math.pow(randomness, pow);
+      Math.pow(randomness, pow) * randomRadius;
     const randomY =
       Math.pow(Math.random(), pow) *
       (Math.random() < 0.5 ? -1 : 1) *
-      Math.pow(randomness, pow);
+      Math.pow(randomness, pow) * randomRadius;
     const randomZ =
       Math.pow(Math.random(), pow) *
       (Math.random() < 0.5 ? -1 : 1) *
-      Math.pow(randomness, pow);
+      Math.pow(randomness, pow) * randomRadius;
 
     // positions x, y, z
     positions[i3 + 0] = Math.cos(angle + spinAngle) * randomRadius + randomX;

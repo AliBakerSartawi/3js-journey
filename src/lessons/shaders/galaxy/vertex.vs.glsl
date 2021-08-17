@@ -1,4 +1,5 @@
 uniform float uSize;
+uniform bool uSizeAttenuation;
 
 attribute float aRandomScale;
 
@@ -17,7 +18,7 @@ void main() {
   gl_PointSize = uSize * aRandomScale;
   // // enable sizeAttenuation
   // viewPosition can also be called modelViewPosition
-  gl_PointSize *= ( 1.0 / - viewPosition.z);
+  if (uSizeAttenuation) gl_PointSize *= ( 1.0 / - viewPosition.z);
   
 
   // Varyings
