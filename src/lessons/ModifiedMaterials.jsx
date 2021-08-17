@@ -21,7 +21,14 @@ import nz from '../textures/environmentMaps/3/nz.jpg';
  * FlightHelmet Component
  */
 function FlightHelmet({ environmentMapTexture }) {
-  const { scale, position, rotationY, envMapIntensity, shadows, allowCustomShader } = useControls({
+  const {
+    scale,
+    position,
+    rotationY,
+    envMapIntensity,
+    shadows,
+    animationIntensity
+  } = useControls({
     FlightHelmet: folder(
       {
         scale: [10, 10, 10],
@@ -29,7 +36,7 @@ function FlightHelmet({ environmentMapTexture }) {
         rotationY: { value: 0, min: 0, max: Math.PI * 2, step: 0.1 },
         envMapIntensity: { value: 3.5, min: 0, max: 10, step: 0.1 },
         shadows: true,
-        allowCustomShader: true
+        animationIntensity: { value: 1.5, min: 0.1, max: 10, step: 0.01 }
       },
       {
         // collapsed: true
@@ -44,7 +51,8 @@ function FlightHelmet({ environmentMapTexture }) {
       envMap={environmentMapTexture}
       envMapIntensity={envMapIntensity}
       shadows={shadows}
-      allowCustomShader={allowCustomShader}
+      allowCustomShader={true}
+      animationIntensity={animationIntensity}
     />
   );
 }
