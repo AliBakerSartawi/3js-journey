@@ -3,6 +3,7 @@ uniform float uSize;
 uniform bool uSizeAttenuation;
 
 attribute float aRandomScale;
+attribute vec3 aRandomness;
 
 varying vec3 vColor;
 
@@ -22,9 +23,13 @@ void main() {
   modelPosition.z = sin(angle) * distanceToCenter;
   modelPosition.x = cos(angle) * distanceToCenter;
 
+  // randomness
+  modelPosition.xyz += aRandomness;
+
   vec4 viewPosition = viewMatrix * modelPosition;
   vec4 projectionPosition = projectionMatrix * viewPosition;
   gl_Position = projectionPosition;
+
 
   /*
    * Size

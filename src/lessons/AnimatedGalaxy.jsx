@@ -106,7 +106,7 @@ function AnimatedGalaxy() {
       <Canvas
         camera={{
           fov: 45,
-          position: [0, 7, 7],
+          position: [0, 3, 3],
           near: 0.1,
           far: 2000
         }}
@@ -145,12 +145,13 @@ function customParticleGeometry({
   outsideColor
 }) {
   // geo
-  const particlesGeometry = new THREE.BufferGeometry();
+  const geo = new THREE.BufferGeometry();
 
   // attributes
   const positions = new Float32Array(count * 3);
   const colors = new Float32Array(count * 3);
   const scales = new Float32Array(count * 1);
+  const randomnessArray = new Float32Array(count * 3);
 
   const colorInside = new THREE.Color(insideColor);
   const colorOutside = new THREE.Color(outsideColor);
@@ -200,10 +201,18 @@ function customParticleGeometry({
       Math.pow(randomness, pow) *
       randomRadius;
 
+    // randomnessArray
+    randomnessArray[i3 + 0] = randomX;
+    randomnessArray[i3 + 1] = randomY;
+    randomnessArray[i3 + 2] = randomZ;
+
     // positions x, y, z
-    positions[i3 + 0] = Math.cos(angle + spinAngle) * randomRadius + randomX;
-    positions[i3 + 1] = Math.random() * randomness * randomY;
-    positions[i3 + 2] = Math.sin(angle + spinAngle) * randomRadius + randomZ;
+    // apply randomness in the shader, not here
+    positions[i3 + 0] =
+      Math.cos(angle + spinAngle) * randomRadius /* + randomX */;
+    positions[i3 + 1] = 0.0 /* + randomY */;
+    positions[i3 + 2] =
+      Math.sin(angle + spinAngle) * randomRadius /* + randomZ */;
 
     // Colors
     const mixedColor = colorInside.clone(); // we clone to prevent mutating
@@ -219,14 +228,12 @@ function customParticleGeometry({
   }
 
   // setting attributes
-  particlesGeometry.setAttribute(
-    'position',
-    new THREE.BufferAttribute(positions, 3)
+  geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+  geo.setAttribute('aRandomScale', new THREE.BufferAttribute(scales, 1));
+  geo.setAttribute(
+    'aRandomness',
+    new THREE.BufferAttribute(randomnessArray, 3)
   );
-  particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-  particlesGeometry.setAttribute(
-    'aRandomScale',
-    new THREE.BufferAttribute(scales, 1)
-  );
-  return particlesGeometry;
+  return geo;
 }
