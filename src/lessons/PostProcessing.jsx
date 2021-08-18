@@ -22,7 +22,13 @@ import {
   GodRays,
   SMAA
 } from '@react-three/postprocessing';
-import { BlendFunction, GlitchMode, Resizer, KernelSize } from 'postprocessing';
+import {
+  BlendFunction,
+  GlitchMode,
+  Resizer,
+  KernelSize,
+  BlurPass
+} from 'postprocessing';
 
 // env imports
 import px from '../textures/environmentMaps/3/px.jpg';
@@ -95,6 +101,15 @@ function Effects() {
       <Sepia
         intensity={0.5} // sepia intensity
         blendFunction={BlendFunction.NORMAL} // blend mode
+      />
+      <Bloom
+        intensity={2} // The bloom intensity.
+        blurPass={undefined} // A blur pass.
+        width={Resizer.AUTO_SIZE} // render width
+        height={Resizer.AUTO_SIZE} // render height
+        kernelSize={KernelSize.LARGE} // blur kernel size
+        luminanceThreshold={0.6} // luminance threshold. Raise this value to mask out darker elements in the scene.
+        luminanceSmoothing={0.1} // smoothness of the luminance threshold. Range is [0, 1]
       />
     </EffectComposer>
   );
