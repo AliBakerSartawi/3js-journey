@@ -1,5 +1,5 @@
 import React, { useRef, useState, useMemo, Suspense, useEffect } from 'react';
-import { Canvas, useFrame, useLoader } from '@react-three/fiber';
+import { Canvas, useFrame, useLoader, useThree } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 import { useControls, Leva, folder } from 'leva';
@@ -35,8 +35,26 @@ import nz from '../textures/environmentMaps/3/nz.jpg';
  * Effects Component
  */
 function Effects() {
+  const effectComposer = useRef();
+  const { gl } = useThree();
+
+  // if pixelRatio > 1, no need for multisampling (MSAA)
+  const pixelRatio = gl.getPixelRatio();
+  // if false, browser does not support multisampling (maybe Safari)
+  const isWebGL2 = gl.capabilities.isWebGL2;
+
+  useEffect(() => {
+    console.log(effectComposer.current);
+    // default multisampling = 8 // taken from effectComposer properties
+  }, [effectComposer]);
+
   return (
-    <EffectComposer>
+    <EffectComposer
+      ref={effectComposer}
+      multisampling={
+        !isWebGL2 ? 0 : 
+        pixelRatio > 1 ? 0 : 8}
+    >
       {/* <DepthOfField
         focusDistance={0}
         focalLength={0.02}
@@ -75,7 +93,6 @@ function Effects() {
         intensity={0.5} // sepia intensity
         blendFunction={BlendFunction.NORMAL} // blend mode
       />
-      
     </EffectComposer>
   );
 }
@@ -114,12 +131,6 @@ function DamagedHelmet({ environmentMapTexture }) {
  * Main Component
  */
 function PostProcessing() {
-  // const { ACESFilmicToneMapping } = useControls({
-  //   Canvas: folder({
-  //     ACESFilmicToneMapping: true
-  //   })
-  // })
-
   const [environmentMapTexture] = useLoader(THREE.CubeTextureLoader, [
     [px, nx, py, ny, pz, nz]
   ]);
@@ -164,7 +175,7 @@ function PostProcessing() {
 export default PostProcessing;
 
 function Lights() {
-  const light = useRef()
+  const light = useRef();
   const { color, intensity, position, castShadow } = useControls({
     directionalLight: folder(
       {
@@ -181,7 +192,7 @@ function Lights() {
   return (
     <>
       <directionalLight
-      ref={light}
+        ref={light}
         color={color}
         position={position}
         intensity={intensity}
