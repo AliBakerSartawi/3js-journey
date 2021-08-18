@@ -52,12 +52,10 @@ function Effects() {
   return (
     <EffectComposer
       ref={effectComposer}
-      multisampling={
-        !isWebGL2 ? 0 : 
-        pixelRatio > 1 ? 0 : 8}
+      multisampling={!isWebGL2 ? 0 : pixelRatio > 1 ? 0 : 8}
     >
       {/* enable SMAA if WebGL2 isn't supported. Do not confuse MSAA with SMAA */}
-      {!isWebGL2 && <SMAA />}
+      {!isWebGL2 && pixelRatio === 1 && <SMAA />}
 
       {/* EFFECTS */}
       {/* <DepthOfField
