@@ -46,16 +46,21 @@ import nz from '../textures/environmentMaps/3/nz.jpg';
 function Effects() {
   const effectComposer = useRef();
   const { gl } = useThree();
+  const customEffect = useRef()
 
   // if pixelRatio > 1, no need for multisampling (MSAA)
   const pixelRatio = gl.getPixelRatio();
   // if false, browser does not support multisampling (maybe Safari/iOS if not newest version)
   const isWebGL2 = gl.capabilities.isWebGL2;
 
+  // useEffect(() => {
+  //   console.log(effectComposer.current);
+  //   // default multisampling = 8 // taken from effectComposer properties
+  // }, [effectComposer]);
+
   useEffect(() => {
-    console.log(effectComposer.current);
-    // default multisampling = 8 // taken from effectComposer properties
-  }, [effectComposer]);
+    console.log(customEffect.current);
+  }, [customEffect]);
 
   return (
     <EffectComposer
@@ -114,7 +119,7 @@ function Effects() {
         luminanceSmoothing={0.1} // smoothness of the luminance threshold. Range is [0, 1]
       />
       {/* CUSTOM EFFECT */}
-      <TintCustomEffect />
+      <TintCustomEffect ref={customEffect} red={0.1} alpha={0.1} />
     </EffectComposer>
   );
 }
