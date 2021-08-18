@@ -130,7 +130,7 @@ function Template() {
 
         <Lights />
       </Canvas>
-      <Leva oneLineLabels />
+      <Leva />
     </div>
   );
 }
