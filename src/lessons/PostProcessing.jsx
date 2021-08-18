@@ -19,7 +19,8 @@ import {
   Scanline,
   SSAO,
   Sepia,
-  GodRays
+  GodRays,
+  SMAA
 } from '@react-three/postprocessing';
 import { BlendFunction, GlitchMode, Resizer, KernelSize } from 'postprocessing';
 
@@ -55,6 +56,10 @@ function Effects() {
         !isWebGL2 ? 0 : 
         pixelRatio > 1 ? 0 : 8}
     >
+      {/* enable SMAA if WebGL2 isn't supported. Do not confuse MSAA with SMAA */}
+      {!isWebGL2 && <SMAA />}
+
+      {/* EFFECTS */}
       {/* <DepthOfField
         focusDistance={0}
         focalLength={0.02}
