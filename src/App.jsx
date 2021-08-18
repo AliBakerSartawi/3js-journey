@@ -4,7 +4,6 @@ import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import CustomLoader from './components/CustomLoader';
 // import ShaderPatterns from './lessons/ShaderPatterns';
-// import axios from 'axios';
 // import Lights from './lessons/Lights';
 // import BasicScene from './lessons/BasicScene';
 // import DebugUI from './lessons/DebugUI';
@@ -16,13 +15,14 @@ import CustomLoader from './components/CustomLoader';
 // import HauntedHouse from './lessons/HauntedHouse';
 // import Particles from './lessons/Particles';
 // import GalaxyGenerator from './lessons/GalaxyGenerator';
-// import Template from './lessons/Template';
+import Template from './lessons/Template';
 // import RayCaster from './lessons/RayCaster';
 // import Physics from './lessons/Physics';
+import Sidebar from './components/Sidebar';
 // import RagingSea from './lessons/RagingSea';
 // import AnimatedGalaxy from './lessons/AnimatedGalaxy';
 // import ModifiedMaterials from './lessons/ModifiedMaterials';
-import PostProcessing from './lessons/PostProcessing';
+// import PostProcessing from './lessons/PostProcessing';
 // import ImportedModels from './lessons/ImportedModels';
 // import RealisticRendering from './lessons/RealisticRendering';
 // import Shaders from './lessons/Shaders';
@@ -53,9 +53,10 @@ function App() {
 
   return (
     <Suspense fallback={<CustomLoader setLoaded={setLoaded} />}>
+      <Sidebar />
       <div ref={app} className="app">
         {/* TEMPLATE */}
-        {/* <Template /> */}
+        <Template />
 
         {/* 🤓 SCENES */}
         {/* <BasicScene /> */}
@@ -82,7 +83,7 @@ function App() {
         {/* <RagingSea /> */}
         {/* <AnimatedGalaxy /> */}
         {/* <ModifiedMaterials /> */}
-        <PostProcessing />
+        {/* <PostProcessing /> */}
       </div>
     </Suspense>
   );
