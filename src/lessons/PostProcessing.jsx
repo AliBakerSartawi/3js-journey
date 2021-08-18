@@ -4,13 +4,24 @@ import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 import { useControls, Leva, folder } from 'leva';
 import DamagedHelmetModel from '../generatedModels/DamagedHelmet';
+
+// POSTPROCESSING Imports
 import {
   EffectComposer,
   DepthOfField,
   Bloom,
   Noise,
-  Vignette
+  Vignette,
+  DotScreen,
+  Glitch,
+  ChromaticAberration,
+  Pixelation,
+  Scanline,
+  SSAO,
+  Sepia,
+  GodRays
 } from '@react-three/postprocessing';
+import { BlendFunction, GlitchMode, Resizer, KernelSize } from 'postprocessing';
 
 // env imports
 import px from '../textures/environmentMaps/3/px.jpg';
@@ -26,7 +37,7 @@ import nz from '../textures/environmentMaps/3/nz.jpg';
 function Effects() {
   return (
     <EffectComposer>
-      <DepthOfField
+      {/* <DepthOfField
         focusDistance={0}
         focalLength={0.02}
         bokehScale={2}
@@ -34,7 +45,37 @@ function Effects() {
       />
       <Bloom luminanceThreshold={0} luminanceSmoothing={0.9} height={300} />
       <Noise opacity={0.02} />
-      <Vignette eskil={false} offset={0.1} darkness={1.1} />
+      <Vignette eskil={false} offset={0.1} darkness={1.1} /> */}
+      {/* <DotScreen scale={2.0} angle={Math.PI / 2} blendFunction={BlendFunction.NORMAL} /> */}
+      {/* <Glitch
+        delay={[1.5, 3.5]} // min and max glitch delay
+        duration={[0.2, 0.5]} // min and max glitch duration
+        strength={[0.1, 0.3]} // min and max glitch strength
+        mode={GlitchMode.SPORADIC} // glitch mode
+        ratio={0.95} // Threshold for strong glitches, 0 - no weak glitches, 1 - no strong glitches.
+        active // turn on/off the effect (switches between "mode" prop and GlitchMode.DISABLED)
+      /> */}
+      {/* <ChromaticAberration
+        // blendFunction={BlendFunction.NORMAL} // blend mode
+        offset={[0.01, 0.001]} // color offset
+      /> */}
+      {/* <Noise
+        premultiply // enables or disables noise premultiplication
+        opacity={0.5}
+        blendFunction={BlendFunction.NORMAL} // blend mode
+      />
+      <Pixelation
+        granularity={5} // pixel granularity
+      />
+      <Scanline
+        blendFunction={BlendFunction.OVERLAY} // blend mode
+        density={2} // scanline density
+      /> */}
+      <Sepia
+        intensity={0.5} // sepia intensity
+        blendFunction={BlendFunction.NORMAL} // blend mode
+      />
+      
     </EffectComposer>
   );
 }
@@ -123,6 +164,7 @@ function PostProcessing() {
 export default PostProcessing;
 
 function Lights() {
+  const light = useRef()
   const { color, intensity, position, castShadow } = useControls({
     directionalLight: folder(
       {
@@ -139,6 +181,7 @@ function Lights() {
   return (
     <>
       <directionalLight
+      ref={light}
         color={color}
         position={position}
         intensity={intensity}
