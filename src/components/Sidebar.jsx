@@ -48,8 +48,9 @@ export default function Sidebar() {
   // Show on initial mount
   useEffect(() => {
     gsap.to(sidebar.current, {
-      duration: 2,
-      opacity: 1
+      duration: 1,
+      opacity: 1,
+      delay: 1,
     });
   }, [sidebar]);
 
