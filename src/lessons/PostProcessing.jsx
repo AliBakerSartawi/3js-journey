@@ -29,6 +29,8 @@ import {
   KernelSize,
   BlurPass
 } from 'postprocessing';
+// Custom Effects
+import { TintCustomEffect } from './customEffects/TintCustomEffect';
 
 // env imports
 import px from '../textures/environmentMaps/3/px.jpg';
@@ -98,10 +100,10 @@ function Effects() {
         blendFunction={BlendFunction.OVERLAY} // blend mode
         density={2} // scanline density
       /> */}
-      <Sepia
+      {/* <Sepia
         intensity={0.5} // sepia intensity
         blendFunction={BlendFunction.NORMAL} // blend mode
-      />
+      /> */}
       <Bloom
         intensity={2} // The bloom intensity.
         blurPass={undefined} // A blur pass.
@@ -111,6 +113,8 @@ function Effects() {
         luminanceThreshold={0.6} // luminance threshold. Raise this value to mask out darker elements in the scene.
         luminanceSmoothing={0.1} // smoothness of the luminance threshold. Range is [0, 1]
       />
+      {/* CUSTOM EFFECT */}
+      <TintCustomEffect />
     </EffectComposer>
   );
 }
