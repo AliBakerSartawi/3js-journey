@@ -1,11 +1,16 @@
 import React, { useRef, useState, useMemo, Suspense, useEffect } from 'react';
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
-import { Physics, useBox, usePlane, useSphere } from '@react-three/cannon';
-import { Environment, OrbitControls } from '@react-three/drei';
+import { OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 import { useControls, Leva, folder } from 'leva';
-import FlightHelmetModel from '../generatedModels/FlightHelmet';
 import DamagedHelmetModel from '../generatedModels/DamagedHelmet';
+import {
+  EffectComposer,
+  DepthOfField,
+  Bloom,
+  Noise,
+  Vignette
+} from '@react-three/postprocessing';
 
 // env imports
 import px from '../textures/environmentMaps/3/px.jpg';
@@ -16,23 +21,36 @@ import pz from '../textures/environmentMaps/3/pz.jpg';
 import nz from '../textures/environmentMaps/3/nz.jpg';
 
 /**
+ * Effects Component
+ */
+function Effects() {
+  return (
+    <EffectComposer>
+      <DepthOfField
+        focusDistance={0}
+        focalLength={0.02}
+        bokehScale={2}
+        height={480}
+      />
+      <Bloom luminanceThreshold={0} luminanceSmoothing={0.9} height={300} />
+      <Noise opacity={0.02} />
+      <Vignette eskil={false} offset={0.1} darkness={1.1} />
+    </EffectComposer>
+  );
+}
+
+/**
  * FlightHelmet Component
  */
 function DamagedHelmet({ environmentMapTexture }) {
-  const {
-    scale,
-    position,
-    rotationY,
-    envMapIntensity,
-    shadows,
-  } = useControls({
+  const { scale, position, rotationY, envMapIntensity, shadows } = useControls({
     FlightHelmet: folder(
       {
         scale: [2.5, 2.5, 2.5],
         position: [0, 0, 0],
         rotationY: { value: 0, min: 0, max: Math.PI * 2, step: 0.1 },
         envMapIntensity: { value: 2, min: 0, max: 10, step: 0.1 },
-        shadows: true,
+        shadows: true
       },
       {
         // collapsed: true
@@ -50,7 +68,6 @@ function DamagedHelmet({ environmentMapTexture }) {
     />
   );
 }
-
 
 /**
  * Main Component
@@ -88,11 +105,13 @@ function PostProcessing() {
           canvas.scene.background = environmentMapTexture;
         }}
       >
-        
         <OrbitControls />
 
         {/* MODELS / no need for suspense here as it is provided higher in the tree */}
         <DamagedHelmet environmentMapTexture={environmentMapTexture} />
+
+        {/* EFFECTS */}
+        <Effects />
 
         <Lights />
       </Canvas>
@@ -104,12 +123,7 @@ function PostProcessing() {
 export default PostProcessing;
 
 function Lights() {
-  const {
-    color,
-    intensity,
-    position,
-    castShadow
-  } = useControls({
+  const { color, intensity, position, castShadow } = useControls({
     directionalLight: folder(
       {
         color: '#ffffff',
