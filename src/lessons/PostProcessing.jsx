@@ -41,7 +41,7 @@ function Effects() {
 
   // if pixelRatio > 1, no need for multisampling (MSAA)
   const pixelRatio = gl.getPixelRatio();
-  // if false, browser does not support multisampling (maybe Safari)
+  // if false, browser does not support multisampling (maybe Safari/iOS if not newest version)
   const isWebGL2 = gl.capabilities.isWebGL2;
 
   useEffect(() => {
