@@ -21,7 +21,8 @@ import CustomLoader from './components/CustomLoader';
 // import Physics from './lessons/Physics';
 // import RagingSea from './lessons/RagingSea';
 // import AnimatedGalaxy from './lessons/AnimatedGalaxy';
-import ModifiedMaterials from './lessons/ModifiedMaterials';
+// import ModifiedMaterials from './lessons/ModifiedMaterials';
+import PostProcessing from './lessons/PostProcessing';
 // import ImportedModels from './lessons/ImportedModels';
 // import RealisticRendering from './lessons/RealisticRendering';
 // import Shaders from './lessons/Shaders';
@@ -80,7 +81,8 @@ function App() {
         {/* <ShaderPatterns /> */}
         {/* <RagingSea /> */}
         {/* <AnimatedGalaxy /> */}
-        <ModifiedMaterials />
+        {/* <ModifiedMaterials /> */}
+        <PostProcessing />
       </div>
     </Suspense>
   );
