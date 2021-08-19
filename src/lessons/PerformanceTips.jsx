@@ -9,6 +9,7 @@ import { BufferGeometryUtils } from 'three';
 /**
  * TIPS:
  * 
+ * FPS
  * 01 Use stats.js (Stats from Drei)
  *    <Stats /> can be added inside or outside Canvas component
  * 
@@ -42,6 +43,7 @@ import { BufferGeometryUtils } from 'three';
  *    cube.geometry.dispose()
  *    cube.material.dispose()
  * 
+ * LIGHTS/SHADOWS
  * 07 Avoid lights as much as possible
  *    OR use cheap lights: ambient, hemisphere, directional
  * 
@@ -61,6 +63,7 @@ import { BufferGeometryUtils } from 'three';
  *    gl.shadowMap.needsUpdate = true
  *    OR/AND update shadows manually every few frames
  * 
+ * TEXTURES
  * 13 Resize texture (they can take a lot of space in GPU)
  *    Not about file size, but resolution (pixels)
  * 
@@ -71,6 +74,7 @@ import { BufferGeometryUtils } from 'three';
  *    Choose best format:
  *      JPG is smaller than PNG, but PNG is useful for alphaMaps
  * 
+ * GEOMETRIES
  * 16 Use buffer geometries (better for performance)
  *    Classic geometries have attributes such as (vertices)
  *    Buffers lack these attributes, but custom attributes can be added
@@ -90,18 +94,43 @@ import { BufferGeometryUtils } from 'three';
  *    // but cannot animate/update a geo without updating all others merged
  *    // check #22 instancedMesh
  * 
- * 
+ * MATERIALS
  * 20 Mutualize materials
  * 
  * 21 Use cheap materials: basic, lambert, phong
  *    Standard & physical materials need more resources
  * 
+ * MESHES
  * 22 Use instancedMesh
  *    https://codesandbox.io/s/r3f-cannon-instanced-physics-g1s88
  *    https://threejs.org/docs/?q=instanced#api/en/objects/InstancedMesh
  *    args={[geometry, material, instances]}
+ * 
+ * MODELS
+ * 23 Low poly models (if you need details, use normal maps)
+ * 
+ * 24 Draco compression (smaller model size, but with initial freeze on website load)
+ * 
+ * 25 Gzip (server side compression)
+ *    Most servers don't gzip .gltf and .obj files etc...
+ *    Look for a way to achieve gzip on model files
+ *    gzip can cut site size to more than half (very useful)
+ * 
+ * CAMERA
+ * 26 Camera FOV
+ *    Frustum Culling (objects not in FOV won't be rendered)
+ *    Hence, reducing FOV increases performance
+ * 
+ * 27 Near & Far (reduce for better performance)
+ * 
+ * RENDERER || GL
+ * 28 PixelRatio (more than 2 is too much)
+ *    renderer||gl.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+ * 
+ * 29 Power Preference (when instantiating the renderer)
+ *    powerPreference: 'high-performance'
+ *    If FPS is good, no need for this config
  *    
- *  
  */
 
 /**
