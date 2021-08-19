@@ -63,7 +63,7 @@ export default function CustomLoader() {
           {progress.toFixed()} * {-progress.toFixed()} ?={' '}
           {progress.toFixed() * -progress.toFixed()}
         </p>
-        {/* <p>Loading {item}</p> */}
+        <p class="loadingBarItem">{item}</p>
         {/* <p>{loaded} / {total}</p> */}
       </div>
     </>

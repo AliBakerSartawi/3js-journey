@@ -80,5 +80,11 @@ canvas {
       will-change: transform;
     }
   }
+
+  .loadingBarItem {
+    margin: 0;
+    font-size: 12px;
+    color: grey;
+  }
 }
 
