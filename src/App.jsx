@@ -26,6 +26,7 @@ import PerformanceTips from './lessons/PerformanceTips';
 // import PostProcessing from './lessons/PostProcessing';
 // import ImportedModels from './lessons/ImportedModels';
 import RealisticRendering from './lessons/RealisticRendering';
+import CanvasLoader from './lessons/CanvasLoader';
 // import Shaders from './lessons/Shaders';
 
 function App() {
@@ -77,9 +78,9 @@ function App() {
       {/* <Suspense fallback={<CustomLoader />}> */}
       {/* <ImportedModels /> */}
       {/* </Suspense> */}
-      <Suspense fallback={<CustomLoader />}>
+      {/* <Suspense fallback={<CustomLoader />}>
         <RealisticRendering />
-      </Suspense>
+      </Suspense> */}
       {/* 🤯 SHADERS */}
       {/* <Shaders /> */}
       {/* <ShaderPatterns /> */}
@@ -94,6 +95,10 @@ function App() {
         </Suspense> */}
       {/* 💪 TIPS */}
       {/* <PerformanceTips /> */}
+      {/* ⏲️ CANVAS LOADER */}
+      <Suspense fallback={<CustomLoader />}>
+        <CanvasLoader />
+      </Suspense>
     </div>
   );
 }
