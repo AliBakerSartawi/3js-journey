@@ -3,6 +3,7 @@ import './Leva.css'
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import CustomLoader from './components/CustomLoader';
+import PerformanceTips from './lessons/PerformanceTips';
 // import ShaderPatterns from './lessons/ShaderPatterns';
 // import Lights from './lessons/Lights';
 // import BasicScene from './lessons/BasicScene';
@@ -22,7 +23,7 @@ import CustomLoader from './components/CustomLoader';
 // import RagingSea from './lessons/RagingSea';
 // import AnimatedGalaxy from './lessons/AnimatedGalaxy';
 // import ModifiedMaterials from './lessons/ModifiedMaterials';
-import PostProcessing from './lessons/PostProcessing';
+// import PostProcessing from './lessons/PostProcessing';
 // import ImportedModels from './lessons/ImportedModels';
 // import RealisticRendering from './lessons/RealisticRendering';
 // import Shaders from './lessons/Shaders';
@@ -83,7 +84,10 @@ function App() {
         {/* <RagingSea /> */}
         {/* <AnimatedGalaxy /> */}
         {/* <ModifiedMaterials /> */}
-        <PostProcessing />
+        {/* 😎 EFFECTS */}
+        {/* <PostProcessing /> */}
+        {/* 💪 TIPS */}
+        <PerformanceTips />
       </div>
     </Suspense>
   );
