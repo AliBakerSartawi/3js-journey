@@ -130,7 +130,53 @@ import { BufferGeometryUtils } from 'three';
  * 29 Power Preference (when instantiating the renderer)
  *    powerPreference: 'high-performance'
  *    If FPS is good, no need for this config
- *    
+ * 
+ * 30 Anti-Alias
+ *    Should be disabled for users with pixelRatio >= 2
+ *    Because it already looks good, and can hinder performance if activated
+ * 
+ * POSTPROCESSING
+ * 31 Limit passes
+ *    if resolution: 1920x1080 & passes: 4 & pixelRatio: 2
+ *    then 1920 * 2 * 1080 * 2 * 4 = 33,177,600 pixels to render per frame 🤯
+ *    merge passes into one if they are custom
+ *    BUT 👇
+ *    @react-three/postprocessing merges passes automatically 😉
+ *    Use as much as pleases your heart
+ * 
+ * SHADERS
+ * 32 Specify precision
+ *    new THREE.ShaderMaterial({
+ *      precision: 'lowp',
+ *    })
+ *    Might give the same result with better performance, but might result in glitches
+ * 
+ * 33 Keep shader code simple
+ *    Avoid if statements (use step or clamp or max)
+ *    Use swizzle
+ *    (cool terrain texture in lesson30 final code (minute 58 in lesson video))
+ * 
+ * 34 Use textures and manipulate them instead of perlin noises
+ *    This way, millions of calculations are avoided
+ *    Choose a texture that represents the noise
+ * 
+ * 35 Use defines
+ *    If a uniform's value won't change, define it as constant (better performance)
+ *    no semicolons, no equal sign
+ *    #define DISPLACEMENT_STRENGTH 1.5
+ *    // uniform float uDisplacementStrength;
+ * 
+ * 36 Do calculations in the vertex shader 
+ *    Because we have less vertices than fragments
+ *    For the shader function will run for each vertex or fragment
+ *    Then send them as varyings
+ *    But won't be as detailed as doing the calcs in the fragShader
+ * 
+ * GENERAL
+ * 37 Keep an eye on performances from the beginning
+ * 
+ * ** More tips n' tricks: https://discoverthreejs.com/tips-and-tricks/
+ * 
  */
 
 /**
