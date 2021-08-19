@@ -4,6 +4,7 @@ import { Physics, useBox, usePlane, useSphere } from '@react-three/cannon';
 import { OrbitControls, Stats } from '@react-three/drei';
 import * as THREE from 'three';
 import { folder, Leva, useControls } from 'leva';
+import { BufferGeometryUtils } from 'three';
 
 /**
  * TIPS:
@@ -65,10 +66,42 @@ import { folder, Leva, useControls } from 'leva';
  * 
  * 14 Keep a power of 2 resolutions with textures (for mipmapping)
  *    Width and Height don't need to match (as in a square image) 
- *    reduce image weight (TinePNG website) for faster website loading 
+ * 
+ * 15 Reduce image weight (TinePNG website) for faster website loading 
  *    Choose best format:
  *      JPG is smaller than PNG, but PNG is useful for alphaMaps
  * 
+ * 16 Use buffer geometries (better for performance)
+ *    Classic geometries have attributes such as (vertices)
+ *    Buffers lack these attributes, but custom attributes can be added
+ * 
+ * 17 Avoid Updating vertices (mid-scene, especially in useFrame)
+ * 
+ * 18 Mutualize geometries (one geo for multiple meshes of same type)
+ * 
+ * 19 Merge geometries
+ *    Even with mutualized geos, each mesh will be drawn in a separate draw call
+ *    Solution 👇
+ *    import { BufferGeometryUtils } from 'three'
+ *    // or from 'three/examples/jsm/utils/BufferGeometryUtils.js'
+ *    // create geometries in for loop and push them to an array outside the loop
+ *    const mergedGeo = BufferGeometryUtils.mergeBufferGeometries(geosArray)
+ *    const mesh = new THREE.Mesh(mergedGeo, material)
+ *    // but cannot animate/update a geo without updating all others merged
+ *    // check #22 instancedMesh
+ * 
+ * 
+ * 20 Mutualize materials
+ * 
+ * 21 Use cheap materials: basic, lambert, phong
+ *    Standard & physical materials need more resources
+ * 
+ * 22 Use instancedMesh
+ *    https://codesandbox.io/s/r3f-cannon-instanced-physics-g1s88
+ *    https://threejs.org/docs/?q=instanced#api/en/objects/InstancedMesh
+ *    args={[geometry, material, instances]}
+ *    
+ *  
  */
 
 /**
