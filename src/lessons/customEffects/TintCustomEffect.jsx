@@ -1,4 +1,4 @@
-import React, { forwardRef, useMemo } from 'react'
+import React, { forwardRef, useEffect, useMemo } from 'react'
 import { Uniform } from 'three'
 import { Effect } from 'postprocessing'
 
@@ -40,7 +40,9 @@ class TintCustomEffectImpl extends Effect {
  * @param alpha - number - Needs blending 
  */
 export const TintCustomEffect = forwardRef(({ color, alpha }, ref) => {
-  // console.log(color, alpha);
+  // adjust color strength
+  color = color.map(c => c = c * 0.1)
+  console.log(color);
   const effect = useMemo(() => new TintCustomEffectImpl({color, alpha}), [color, alpha])
   return <primitive ref={ref} object={effect} dispose={null} />
 })

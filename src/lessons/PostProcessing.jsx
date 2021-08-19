@@ -48,6 +48,14 @@ function Effects() {
   const { gl } = useThree();
   const customEffect = useRef();
 
+  const { red, green, blue } = useControls({
+    customTint: folder({
+      red: 0.5,
+      green: 0.0,
+      blue: 0.5
+    })
+  })
+
   // if pixelRatio > 1, no need for multisampling (MSAA)
   const pixelRatio = gl.getPixelRatio();
   // if false, browser does not support multisampling (maybe Safari/iOS if not newest version)
@@ -122,8 +130,8 @@ function Effects() {
       <TintCustomEffect
         ref={customEffect}
         blendFunction={BlendFunction.NORMAL}
-        color={[0.0, 0.1, 0.0]}
-        alpha={0.1}
+        color={[red, green, blue]} // variables from Leva
+        // alpha={0.1} // not working, needs adjusting the blend function in the constructor
       />
     </EffectComposer>
   );
@@ -143,7 +151,7 @@ function DamagedHelmet({ environmentMapTexture }) {
         shadows: true
       },
       {
-        // collapsed: true
+        collapsed: true
       }
     )
   });
@@ -217,7 +225,7 @@ function Lights() {
         castShadow: true
       },
       {
-        // collapsed: true
+        collapsed: true
       }
     )
   });
