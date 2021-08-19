@@ -46,7 +46,7 @@ import nz from '../textures/environmentMaps/3/nz.jpg';
 function Effects() {
   const effectComposer = useRef();
   const { gl } = useThree();
-  const customEffect = useRef()
+  const customEffect = useRef();
 
   // if pixelRatio > 1, no need for multisampling (MSAA)
   const pixelRatio = gl.getPixelRatio();
@@ -119,7 +119,12 @@ function Effects() {
         luminanceSmoothing={0.1} // smoothness of the luminance threshold. Range is [0, 1]
       />
       {/* CUSTOM EFFECT */}
-      <TintCustomEffect ref={customEffect} red={0.1} alpha={0.1} />
+      <TintCustomEffect
+        ref={customEffect}
+        blendFunction={BlendFunction.NORMAL}
+        color={[0.0, 0.1, 0.0]}
+        alpha={0.1}
+      />
     </EffectComposer>
   );
 }
