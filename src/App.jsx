@@ -1,5 +1,5 @@
 import './App.scss';
-import './Leva.css'
+import './Leva.css';
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import CustomLoader from './components/CustomLoader';
@@ -25,7 +25,7 @@ import PerformanceTips from './lessons/PerformanceTips';
 // import ModifiedMaterials from './lessons/ModifiedMaterials';
 // import PostProcessing from './lessons/PostProcessing';
 // import ImportedModels from './lessons/ImportedModels';
-// import RealisticRendering from './lessons/RealisticRendering';
+import RealisticRendering from './lessons/RealisticRendering';
 // import Shaders from './lessons/Shaders';
 
 function App() {
@@ -43,53 +43,58 @@ function App() {
   //     }
   // }, [loaded]);
 
-  useEffect(() => {
-    app.current &&
-      gsap.to(app.current, {
-        duration: 1,
-        opacity: 1,
-        delay: 0.5
-      });
-  }, [app]);
+  // useEffect(() => {
+  //   app.current &&
+  //     gsap.to(app.current, {
+  //       duration: 1,
+  //       opacity: 1,
+  //       delay: 0.5
+  //     });
+  // }, [app]);
 
   return (
-    <Suspense fallback={<CustomLoader setLoaded={setLoaded} />}>
-      {/* <Sidebar /> */}
-      <div ref={app} className="app">
-        {/* TEMPLATE */}
-        {/* <Template /> */}
+    <div ref={app} className="app">
+      {/* TEMPLATE */}
+      {/* <Template /> */}
 
-        {/* 🤓 SCENES */}
-        {/* <BasicScene /> */}
-        {/* <Geometries /> */}
-        {/* <DebugUI /> */}
-        {/* <Textures /> */}
-        {/* <Materials /> */}
-        {/* <Text /> */}
-        {/* <Lights /> */}
-        {/* <BakingShadows /> */}
-        {/* <HauntedHouse /> */}
-        {/* <Particles /> */}
-        {/* 🌟 GalaxyGenerator has a functional react-dat-gui panel */}
-        {/* <GalaxyGenerator /> */}
-        {/* <RayCaster /> */}
-        {/* ➗ Physics with Leva GUI and 🔉 collision sounds */}
-        {/* <Physics /> */}
-        {/* 🖌️ Models & custom burger exported from Blender */}
-        {/* <ImportedModels /> */}
-        {/* <RealisticRendering /> */}
-        {/* 🤯 SHADERS */}
-        {/* <Shaders /> */}
-        {/* <ShaderPatterns /> */}
-        {/* <RagingSea /> */}
-        {/* <AnimatedGalaxy /> */}
-        {/* <ModifiedMaterials /> */}
-        {/* 😎 EFFECTS */}
-        {/* <PostProcessing /> */}
-        {/* 💪 TIPS */}
-        <PerformanceTips />
-      </div>
-    </Suspense>
+      {/* 🤓 SCENES */}
+      {/* <BasicScene /> */}
+      {/* <Geometries /> */}
+      {/* <DebugUI /> */}
+      {/* <Textures /> */}
+      {/* <Materials /> */}
+      {/* <Text /> */}
+      {/* <Lights /> */}
+      {/* <BakingShadows /> */}
+      {/* <HauntedHouse /> */}
+      {/* <Particles /> */}
+      {/* 🌟 GalaxyGenerator has a functional react-dat-gui panel */}
+      {/* <GalaxyGenerator /> */}
+      {/* <RayCaster /> */}
+      {/* ➗ Physics with Leva GUI and 🔉 collision sounds */}
+      {/* <Physics /> */}
+      {/* 🖌️ Models & custom burger exported from Blender */}
+      {/* <Suspense fallback={<CustomLoader />}> */}
+      {/* <ImportedModels /> */}
+      {/* </Suspense> */}
+      <Suspense fallback={<CustomLoader />}>
+        <RealisticRendering />
+      </Suspense>
+      {/* 🤯 SHADERS */}
+      {/* <Shaders /> */}
+      {/* <ShaderPatterns /> */}
+      {/* <RagingSea /> */}
+      {/* <AnimatedGalaxy /> */}
+      {/* <Suspense fallback={<CustomLoader />}>
+          <ModifiedMaterials />
+        </Suspense> */}
+      {/* 😎 EFFECTS */}
+      {/* <Suspense fallback={<CustomLoader />}>
+          <PostProcessing />
+        </Suspense> */}
+      {/* 💪 TIPS */}
+      {/* <PerformanceTips /> */}
+    </div>
   );
 }
 
