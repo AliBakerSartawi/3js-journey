@@ -1,7 +1,7 @@
 import React, { useRef, useState, useMemo, Suspense, useEffect } from 'react';
 import { Canvas, useFrame, useLoader, extend } from '@react-three/fiber';
 import { Physics, useBox, usePlane, useSphere } from '@react-three/cannon';
-import { OrbitControls, shaderMaterial } from '@react-three/drei';
+import { OrbitControls, shaderMaterial, useProgress } from '@react-three/drei';
 import * as THREE from 'three';
 import { useControls, Leva, folder } from 'leva';
 import FlightHelmetModel from '../generatedModels/FlightHelmet';
@@ -13,9 +13,12 @@ import py from '../textures/environmentMaps/3/py.jpg';
 import ny from '../textures/environmentMaps/3/ny.jpg';
 import pz from '../textures/environmentMaps/3/pz.jpg';
 import nz from '../textures/environmentMaps/3/nz.jpg';
+import gsap from 'gsap/gsap-core';
 
 const OverlayMaterial = shaderMaterial(
-  {},
+  {
+    uAlpha: 1.0,
+  },
   `
     void main() {
       // ignoring projectionMatrix & modelViewMatrix will make the plane face the camera
@@ -23,8 +26,9 @@ const OverlayMaterial = shaderMaterial(
     }
   `,
   `
+    uniform float uAlpha;
     void main() {
-      gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+      gl_FragColor = vec4(0.0, 0.0, 0.0, uAlpha);
     }
   `
 )
@@ -34,10 +38,28 @@ extend({ OverlayMaterial })
  * Overlay Component
  */
 function Overlay() {
+  const overlay = useRef()
+  const { active, progress, errors, item, loaded, total } = useProgress()
+
+  useEffect(() => {
+    if (progress === 100) {
+      gsap.to(overlay.current.material.uniforms.uAlpha, {
+        duration: 3,
+        value: 0,
+        ease: 'power3.inOut'
+      })
+      console.log(overlay.current);
+    }
+  }, [progress])
   return (
-    <mesh>
-      <planeBufferGeometry args={[1.9, 1.9, 1, 1]} />
-      <overlayMaterial wireframe />
+    <mesh ref={overlay}>
+      <planeBufferGeometry args={[2, 2, 1, 1]} />
+      <overlayMaterial
+      // wireframe
+      transparent 
+      // uniforms
+      uAlpha={1.0}
+      />
     </mesh>
   )
 }
