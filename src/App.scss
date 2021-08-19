@@ -55,21 +55,22 @@ canvas {
   z-index: 10000;
   background: black;
   color: whitesmoke;
-
+  
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
+  
   .loadingBarContainer {
+    background: grey;
     width: 25%;
 
     .loadingBar {
-      width: 1%;
+      width: 100%;
       height: 2px;
       background: whitesmoke;
 
-      // transform: scaleX(0);
+      transform: scaleX(0);
       transform-origin: center center;
     }
   }
