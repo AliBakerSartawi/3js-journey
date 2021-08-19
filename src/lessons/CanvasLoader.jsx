@@ -48,7 +48,7 @@ function Overlay() {
         value: 0,
         ease: 'power3.inOut'
       })
-      console.log(overlay.current);
+      // console.log(overlay.current);
     }
   }, [progress])
   return (

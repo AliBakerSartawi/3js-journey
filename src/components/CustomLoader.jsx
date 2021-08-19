@@ -1,8 +1,17 @@
 import { Loader, useProgress } from '@react-three/drei';
+import { useEffect, useRef } from 'react';
 
 export default function CustomLoader() {
+  // Custom Loader Implementation
+  const loadingBar = useRef()
   const { active, progress, errors, item, loaded, total } = useProgress()
-  console.log({progress: {active, progress, errors, item, loaded, total}});
+
+  useEffect(() => {
+    console.log(loadingBar.current.style);
+    console.log(progress);
+  }, [loadingBar, progress])
+
+  // Drei Loader Styles
   const container = {
     backgroundColor: 'black',
     fontSize: '24px',
@@ -45,8 +54,12 @@ export default function CustomLoader() {
         }}
       /> */}
       <div className="customLoader">
+        <div className="loadingBarContainer">
+          <div className="loadingBar" ref={loadingBar}></div>
+        </div>
         <p>{progress.toFixed()}</p>
         <p>Loading {item}</p>
+        <p>{loaded} / {total}</p>
       </div>
     </>
   );
