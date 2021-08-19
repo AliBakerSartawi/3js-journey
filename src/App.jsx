@@ -25,8 +25,9 @@ import PerformanceTips from './lessons/PerformanceTips';
 // import ModifiedMaterials from './lessons/ModifiedMaterials';
 // import PostProcessing from './lessons/PostProcessing';
 // import ImportedModels from './lessons/ImportedModels';
-import RealisticRendering from './lessons/RealisticRendering';
-import CanvasLoader from './lessons/CanvasLoader';
+// import RealisticRendering from './lessons/RealisticRendering';
+// import CanvasLoader from './lessons/CanvasLoader';
+import HtmlWithWebGL from './lessons/HtmlWithWebGL';
 // import Shaders from './lessons/Shaders';
 
 function App() {
@@ -96,8 +97,12 @@ function App() {
       {/* 💪 TIPS */}
       {/* <PerformanceTips /> */}
       {/* ⏲️ CANVAS LOADER */}
-      <Suspense fallback={<CustomLoader />}>
+      {/* <Suspense fallback={<CustomLoader />}>
         <CanvasLoader />
+      </Suspense> */}
+      {/* WITH HTML */}
+      <Suspense fallback={<CustomLoader />}>
+        <HtmlWithWebGL />
       </Suspense>
     </div>
   );
