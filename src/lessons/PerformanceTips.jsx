@@ -1,9 +1,75 @@
 import React, { useRef, useState, useMemo } from 'react';
-import { Canvas, useFrame, useLoader } from '@react-three/fiber';
+import { Canvas, useFrame, useLoader, useThree } from '@react-three/fiber';
 import { Physics, useBox, usePlane, useSphere } from '@react-three/cannon';
-import { OrbitControls } from '@react-three/drei';
+import { OrbitControls, Stats } from '@react-three/drei';
 import * as THREE from 'three';
 import { folder, Leva, useControls } from 'leva';
+
+/**
+ * TIPS:
+ * 
+ * 01 Use stats.js (Stats from Drei)
+ *    <Stats /> can be added inside or outside Canvas component
+ * 
+ * 02 Run Chrome without FPS limit
+ *    Gist Link: https://gist.github.com/brunosimon/c15e7451a802fa8e34c0678620022f7d
+ * 
+ *    First, close Chrome
+ *    
+ *    # Unix (Terminal)
+ *    open -a "Google Chrome" --args --disable-gpu-vsync --disable-frame-rate-limit
+ *    
+ *    # Windows (Command prompt)
+ *    start chrome --args --disable-gpu-vsync --disable-frame-rate-limit
+ * 
+ *    Sometimes, the process must be repeated twice to make it work
+ *    To lock FPS again, simply close Chrome and reopen it normally
+ * 
+ * 03 Download Spector.js Chrome extension to monitor draw calls
+ * 
+ * 04 Renderer Information
+ *    const { gl } = useThree()
+ *    console.log(gl.info)
+ * 
+ * 05 Avoid expensive operations in the Tick function
+ *    Tick function === useFrame
+ * 
+ * 06 Dispose of objects that are no longer needed
+ *    In R3F, unmounting a component will dispose of its objects
+ *    Easier than what's below 👇
+ *    scene.remove(cube)
+ *    cube.geometry.dispose()
+ *    cube.material.dispose()
+ * 
+ * 07 Avoid lights as much as possible
+ *    OR use cheap lights: ambient, hemisphere, directional
+ * 
+ * 08 Avoid adding or removing lights (mid-scene)
+ *    That will cause all materials supporting lights to be recompiled
+ * 
+ * 09 Avoid shadows (use baked shadows)
+ * 
+ * 10 Optimize shadow maps
+ *    Try using the smallest mapSize possible {[1024, 1024]}
+ * 
+ * 11 Use castShadow and receiveShadow wisely
+ * 
+ * 12 Deactivate shadow auto update (stale scene)
+ *    shadows will be rendered on 1st frame only 👇
+ *    gl.shadowMap.autoUpdate = false
+ *    gl.shadowMap.needsUpdate = true
+ *    OR/AND update shadows manually every few frames
+ * 
+ * 13 Resize texture (they can take a lot of space in GPU)
+ *    Not about file size, but resolution (pixels)
+ * 
+ * 14 Keep a power of 2 resolutions with textures (for mipmapping)
+ *    Width and Height don't need to match (as in a square image) 
+ *    reduce image weight (TinePNG website) for faster website loading 
+ *    Choose best format:
+ *      JPG is smaller than PNG, but PNG is useful for alphaMaps
+ * 
+ */
 
 /**
  * Plane
@@ -55,7 +121,7 @@ function Box({ color, x, y, z }) {
   );
 }
 
-function Boxes({boxes}) {
+function Boxes({ boxes }) {
   const rainingBoxes = useMemo(() => {
     return (
       <>
@@ -89,6 +155,7 @@ function Sphere(props) {
     args: [1],
     position: [0, 0.75, 0]
   }));
+
   return (
     <mesh castShadow ref={sphere}>
       <sphereBufferGeometry args={[1]} />
@@ -104,7 +171,7 @@ function PerformanceTips() {
   // controls
   const { gravity, boxes } = useControls({
     gravity: { value: -9.82, min: -9.82, max: 0, step: 0.1 },
-    boxes: { value: 50, min: 1, max: 100, step: 1 },
+    boxes: { value: 50, min: 1, max: 100, step: 1 }
   });
 
   return (
@@ -130,6 +197,7 @@ function PerformanceTips() {
 
         <Lights />
       </Canvas>
+      <Stats />
       <Leva />
     </div>
   );
@@ -145,23 +213,37 @@ function Lights() {
     Hemisphere_Sky_Light_Color: hemisphereSkyColor,
     Hemisphere_Ground_Light_Color: hemisphereGroundColor
   } = useControls({
-    Lights: folder({
-      Point_Light: folder({
-        Point_Light_Intensity: { value: 1, min: 0, max: 10, step: 0.01 },
-        Point_Light_Color: '#e1e1e1',
-      }, {
+    Lights: folder(
+      {
+        Point_Light: folder(
+          {
+            Point_Light_Intensity: { value: 1, min: 0, max: 10, step: 0.01 },
+            Point_Light_Color: '#e1e1e1'
+          },
+          {
+            collapsed: true
+          }
+        ),
+        Hemisphere_Light: folder(
+          {
+            Hemisphere_Light_Intensity: {
+              value: 1,
+              min: 0,
+              max: 10,
+              step: 0.01
+            },
+            Hemisphere_Sky_Light_Color: '#e1e1e1',
+            Hemisphere_Ground_Light_Color: '#e1e1e1'
+          },
+          {
+            collapsed: true
+          }
+        )
+      },
+      {
         collapsed: true
-      }),
-      Hemisphere_Light: folder({
-        Hemisphere_Light_Intensity: { value: 1, min: 0, max: 10, step: 0.01 },
-        Hemisphere_Sky_Light_Color: '#e1e1e1',
-        Hemisphere_Ground_Light_Color: '#e1e1e1'
-      }, {
-        collapsed: true
-      })
-    }, {
-      collapsed: true
-    })
+      }
+    )
   });
   return (
     <>
