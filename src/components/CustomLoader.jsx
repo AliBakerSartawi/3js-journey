@@ -1,6 +1,8 @@
-import { Loader } from '@react-three/drei';
+import { Loader, useProgress } from '@react-three/drei';
 
-export default function CustomLoader({ setLoaded }) {
+export default function CustomLoader() {
+  const { active, progress, errors, item, loaded, total } = useProgress()
+  console.log({progress: {active, progress, errors, item, loaded, total}});
   const container = {
     backgroundColor: 'black',
     fontSize: '24px',
@@ -21,26 +23,32 @@ export default function CustomLoader({ setLoaded }) {
     fontFamily: 'Fira Code, mono'
   };
   return (
-    <Loader
-      containerStyles={container}
-      innerStyles={inner}
-      barStyles={bar}
-      dataStyles={data}
-      // dataInterpolation={(p) => `Still wondering if ${p.toFixed(0)} / ${p.toFixed(0)} = 1 `}
-      dataInterpolation={(p) => {
-        p = p.toFixed();
-        return `Still wondering if ${p} * ${p} = ${p * p} 🤯`;
-      }}
-      initialState={(active) => {
-        // console.log(active);
-        // if (!active) {
-        //   // without setTimeout, I get cannot update component (`App`) while rendering component (`Loader`)
-        //   setTimeout(() => {
-        //     setLoaded(true);
-        //   }, 100);
-        // }
-      }}
-    />
+    <>
+      {/* <Loader
+        containerStyles={container}
+        innerStyles={inner}
+        barStyles={bar}
+        dataStyles={data}
+        // dataInterpolation={(p) => `Still wondering if ${p.toFixed(0)} / ${p.toFixed(0)} = 1 `}
+        dataInterpolation={(p) => {
+          p = p.toFixed();
+          return `Still wondering if ${p} * ${p} = ${p * p} 🤯`;
+        }}
+        initialState={(active) => {
+          // console.log(active);
+          // if (!active) {
+          //   // without setTimeout, I get cannot update component (`App`) while rendering component (`Loader`)
+          //   setTimeout(() => {
+          //     setLoaded(true);
+          //   }, 100);
+          // }
+        }}
+      /> */}
+      <div className="customLoader">
+        <p>{progress.toFixed()}</p>
+        <p>Loading {item}</p>
+      </div>
+    </>
   );
 }
 

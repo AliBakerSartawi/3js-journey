@@ -48,3 +48,17 @@ canvas {
 //   $leva-fontSizes-root: 12px;
 // }
 
+.customLoader {
+  height: 100vh;
+  width: 100%;
+  position: absolute;
+  z-index: 10000;
+  background: black;
+  color: whitesmoke;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
