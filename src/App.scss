@@ -72,6 +72,12 @@ canvas {
 
       transform: scaleX(0);
       transform-origin: center center;
+
+      // very important
+      transition: transform 750ms;
+
+      // increases performance a bit
+      will-change: transform;
     }
   }
 }
