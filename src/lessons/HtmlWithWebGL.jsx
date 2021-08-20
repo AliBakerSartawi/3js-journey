@@ -20,7 +20,7 @@ import nz from '../textures/environmentMaps/3/nz.jpg';
 function Sphere() {
   const [hidden, setHidden] = useState(false);
 
-  useEffect(() => console.log('Sphere: Hidden ::::', hidden), [hidden])
+  useEffect(() => console.log('Sphere: Hidden ::::', hidden), [hidden]);
 
   return (
     <mesh position={[3, 0, 0]}>
@@ -58,17 +58,27 @@ function Box() {
     >
       <boxBufferGeometry args={[1, 1]} />
       <meshStandardMaterial color={'salmon'} />
-      {show && (
-        <Html
-          position={[-1, 0, 0]}
-          className="HtmlContainer"
-          center
-          // controlling occlude transition
-          occlude // can be true, or 3dObject refs
-        >
-          <p>BOX</p>
-        </Html>
-      )}
+      <Html
+        position={[0, 0, 2]}
+        className="HtmlContainer"
+        center
+        occlude // can be true, or 3dObject refs
+        style={{
+          transition: 'all 0.5s',
+          opacity: show ? 1 : 0,
+          transform: `scale(${show ? 1 : 0.5})`,
+          width: '150px',
+          maxHeight: '100px',
+          overflow: 'scroll',
+          cursor: 'wait'
+        }}
+      >
+        <p>
+          SCROLL QUICKLY Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus
+          iusto incidunt ut inventore quasi voluptatum unde ipsam amet
+          voluptatibus nihil possimus nisi, laborum porro pariatur?
+        </p>
+      </Html>
     </mesh>
   );
 }
