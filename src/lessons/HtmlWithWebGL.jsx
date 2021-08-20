@@ -15,6 +15,35 @@ import pz from '../textures/environmentMaps/3/pz.jpg';
 import nz from '../textures/environmentMaps/3/nz.jpg';
 
 /**
+ * Sphere Component
+ */
+function Sphere() {
+  const [show, setShow] = useState(false);
+  return (
+    <mesh position={[3, 0, 0]}>
+      <sphereBufferGeometry args={[1]} />
+      <meshStandardMaterial color={'salmon'} />
+      <Html
+        position={[1.25, 0, 0]}
+        className="HtmlContainer"
+        center
+        // controlling occlude transition
+        occlude // can be true, or 3dObject refs
+        onOcclude={setShow}
+        style={{
+          color: 'whitesmoke',
+          transition: 'all 0.5s',
+          opacity: show ? 0 : 1,
+          transform: `scale(${show ? 0.5 : 1})`
+        }}
+      >
+        <p>SPHERE</p>
+      </Html>
+    </mesh>
+  );
+}
+
+/**
  * Box Component
  */
 function Box() {
@@ -29,8 +58,11 @@ function Box() {
       <meshStandardMaterial color={'salmon'} />
       {show && (
         <Html
+          position={[-1, 0, 0]}
           className="HtmlContainer"
           center
+          // controlling occlude transition
+          occlude // can be true, or 3dObject refs
           style={{
             color: 'whitesmoke'
           }}
@@ -113,6 +145,7 @@ function HtmlWithWebGL() {
         <FlightHelmet environmentMapTexture={environmentMapTexture} />
 
         <Box />
+        <Sphere />
 
         <Lights />
       </Canvas>
@@ -157,6 +190,7 @@ function Lights() {
         shadow-normalBias={0.02}
         // if surface is flat (not rounded), try using bias instead of normalBias
       />
+      <ambientLight />
     </>
   );
 }
