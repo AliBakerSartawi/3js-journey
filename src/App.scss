@@ -3,10 +3,10 @@
 body {
   margin: 0;
   padding: 0;
-  
-  font-family: 'Fira Code', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+
+  font-family: 'Fira Code', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
+    'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
@@ -15,19 +15,20 @@ body {
 }
 
 html {
-
   // to remove Leva GUI scrollbar
   *::-webkit-scrollbar {
     display: none;
   }
-  
+
   /* Hide scrollbar for IE, Edge and Firefox */
   * {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
   }
 
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     box-sizing: border-box;
   }
 }
@@ -42,7 +43,7 @@ canvas {
 }
 
 // // Leva
-// // overriding variable won't work in Sass, it compiles variables, while CSS includes them in the document 
+// // overriding variable won't work in Sass, it compiles variables, while CSS includes them in the document
 // .leva-c-kWgxhW {
 //   $leva-sizes-rootWidth: 350px;
 //   $leva-fontSizes-root: 12px;
@@ -55,12 +56,12 @@ canvas {
   z-index: 10000;
   background: black;
   color: whitesmoke;
-  
+
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  
+
   .loadingBarContainer {
     background: grey;
     width: 25%;
@@ -88,3 +89,17 @@ canvas {
   }
 }
 
+// Html inside WebGL
+.HtmlGlasses {
+  // font-family: 'Fira code';
+  padding: 5px 10px;
+  border-radius: 20px;
+  background: rgba(30, 30, 30, 0.5);
+  border: 1px solid rgba(100, 100, 100, 0.25);
+  color: whitesmoke;
+
+  p {
+    font-size: 12px;
+    margin: 0;
+  }
+}

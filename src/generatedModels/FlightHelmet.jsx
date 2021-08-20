@@ -64,14 +64,10 @@ export default function Model(props) {
           position={[0.1, 0.5, 0]}
           className="HtmlGlasses"
           style={{
-            color: 'whitesmoke',
-            background: 'rgba(30, 30, 30, 0.5)',
-            borderRadius: '10px',
-            padding: '10px',
-            fontFamily: 'Fira code'
+            
           }}
         >
-          <p style={{margin: 0}}>Glasses</p>
+          <p>Glasses</p>
         </Html>
       </mesh>
       <mesh
