@@ -18,23 +18,25 @@ import nz from '../textures/environmentMaps/3/nz.jpg';
  * Sphere Component
  */
 function Sphere() {
-  const [show, setShow] = useState(false);
+  const [hidden, setHidden] = useState(false);
+
+  useEffect(() => console.log('Sphere: Hidden ::::', hidden), [hidden])
+
   return (
     <mesh position={[3, 0, 0]}>
       <sphereBufferGeometry args={[1]} />
-      <meshStandardMaterial color={'salmon'} />
+      <meshStandardMaterial color={'aquamarine'} />
       <Html
         position={[1.25, 0, 0]}
         className="HtmlContainer"
         center
         // controlling occlude transition
         occlude // can be true, or 3dObject refs
-        onOcclude={setShow}
+        onOcclude={setHidden}
         style={{
-          color: 'whitesmoke',
           transition: 'all 0.5s',
-          opacity: show ? 0 : 1,
-          transform: `scale(${show ? 0.5 : 1})`
+          opacity: hidden ? 0 : 1,
+          transform: `scale(${hidden ? 0.5 : 1})`
         }}
       >
         <p>SPHERE</p>
@@ -63,9 +65,6 @@ function Box() {
           center
           // controlling occlude transition
           occlude // can be true, or 3dObject refs
-          style={{
-            color: 'whitesmoke'
-          }}
         >
           <p>BOX</p>
         </Html>
