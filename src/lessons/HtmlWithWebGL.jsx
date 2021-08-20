@@ -15,24 +15,53 @@ import pz from '../textures/environmentMaps/3/pz.jpg';
 import nz from '../textures/environmentMaps/3/nz.jpg';
 
 /**
+ * Box Component
+ */
+function Box() {
+  const [show, setShow] = useState(false);
+  return (
+    <mesh
+      position={[-3, 0, 0]}
+      onPointerEnter={() => setShow(true)}
+      onPointerLeave={() => setShow(false)}
+    >
+      <boxBufferGeometry args={[1, 1]} />
+      <meshStandardMaterial color={'salmon'} />
+      {show && (
+        <Html
+          className="HtmlContainer"
+          center
+          style={{
+            color: 'whitesmoke'
+          }}
+        >
+          <p>BOX</p>
+        </Html>
+      )}
+    </mesh>
+  );
+}
+
+/**
  * FlightHelmet Component
  */
 function FlightHelmet({ environmentMapTexture }) {
-  const { scale, position, rotationY, envMapIntensity, shadows, enableHTML } = useControls({
-    FlightHelmet: folder(
-      {
-        scale: [10, 10, 10],
-        position: [0, -4, 0],
-        rotationY: { value: 0, min: 0, max: Math.PI * 2, step: 0.1 },
-        envMapIntensity: { value: 3.5, min: 0, max: 10, step: 0.1 },
-        shadows: true,
-        enableHTML: true
-      },
-      {
-        // collapsed: true
-      }
-    )
-  });
+  const { scale, position, rotationY, envMapIntensity, shadows, enableHTML } =
+    useControls({
+      FlightHelmet: folder(
+        {
+          scale: [10, 10, 10],
+          position: [0, -4, 0],
+          rotationY: { value: 0, min: 0, max: Math.PI * 2, step: 0.1 },
+          envMapIntensity: { value: 3.5, min: 0, max: 10, step: 0.1 },
+          shadows: true,
+          enableHTML: true
+        },
+        {
+          // collapsed: true
+        }
+      )
+    });
   return (
     <FlightHelmetModel
       scale={scale}
@@ -50,7 +79,6 @@ function FlightHelmet({ environmentMapTexture }) {
  * Main Component
  */
 function HtmlWithWebGL() {
-
   const [environmentMapTexture] = useLoader(THREE.CubeTextureLoader, [
     [px, nx, py, ny, pz, nz]
   ]);
@@ -84,18 +112,7 @@ function HtmlWithWebGL() {
         {/* MODELS / no need for suspense here as it is provided higher in the tree */}
         <FlightHelmet environmentMapTexture={environmentMapTexture} />
 
-        <mesh position={[-3, 0, 0]}>
-          <boxBufferGeometry args={[1, 1]} />
-          <meshStandardMaterial color={'salmon'} />
-          <Html
-          center
-            style={{
-              color: 'whitesmoke'
-            }}
-          >
-            <p>BOX</p>
-          </Html>
-        </mesh>
+        <Box />
 
         <Lights />
       </Canvas>
@@ -133,12 +150,11 @@ function Lights() {
         intensity={directionalLightIntensity}
         castShadow={directionalLightCastShadow}
         shadow-mapSize={[1024, 1024]}
-
         // tweak normalBias to remove shadow acne on the burger
         // start testing from 0.01 and go up
         // increasing the value too much will create wrong shadows
         // usually, 0.05 is more than enough
-        shadow-normalBias={0.02} 
+        shadow-normalBias={0.02}
         // if surface is flat (not rounded), try using bias instead of normalBias
       />
     </>

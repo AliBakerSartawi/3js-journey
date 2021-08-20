@@ -63,7 +63,7 @@ export default function Model(props) {
           // center
           distanceFactor={20} // makes size relative to zoom
           // position={[0.1, 0.5, 0]}
-          className="HtmlGlasses"
+          className="HtmlContainer"
           style={{}}
         >
           <p>Glasses</p>
