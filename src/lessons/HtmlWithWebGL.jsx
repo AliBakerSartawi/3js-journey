@@ -18,14 +18,15 @@ import nz from '../textures/environmentMaps/3/nz.jpg';
  * FlightHelmet Component
  */
 function FlightHelmet({ environmentMapTexture }) {
-  const { scale, position, rotationY, envMapIntensity, shadows } = useControls({
+  const { scale, position, rotationY, envMapIntensity, shadows, enableHTML } = useControls({
     FlightHelmet: folder(
       {
         scale: [10, 10, 10],
         position: [0, -4, 0],
         rotationY: { value: 0, min: 0, max: Math.PI * 2, step: 0.1 },
         envMapIntensity: { value: 3.5, min: 0, max: 10, step: 0.1 },
-        shadows: true
+        shadows: true,
+        enableHTML: true
       },
       {
         // collapsed: true
@@ -40,6 +41,7 @@ function FlightHelmet({ environmentMapTexture }) {
       envMap={environmentMapTexture}
       envMapIntensity={envMapIntensity}
       shadows={shadows}
+      enableHTML={enableHTML}
     />
   );
 }
@@ -84,7 +86,7 @@ function HtmlWithWebGL() {
 
         <Lights />
       </Canvas>
-      <Leva oneLineLabels />
+      <Leva />
     </div>
   );
 }
@@ -122,7 +124,7 @@ function Lights() {
         directionalLightCastShadow: true
       },
       {
-        // collapsed: true
+        collapsed: true
       }
     )
   });
