@@ -1,7 +1,7 @@
 import React, { useRef, useState, useMemo, Suspense, useEffect } from 'react';
 import { Canvas, useFrame, useLoader, extend } from '@react-three/fiber';
 import { Physics, useBox, usePlane, useSphere } from '@react-three/cannon';
-import { OrbitControls, shaderMaterial } from '@react-three/drei';
+import { OrbitControls, shaderMaterial, Html } from '@react-three/drei';
 import * as THREE from 'three';
 import { useControls, Leva, folder } from 'leva';
 import FlightHelmetModel from '../generatedModels/FlightHelmet';
@@ -84,6 +84,19 @@ function HtmlWithWebGL() {
         {/* MODELS / no need for suspense here as it is provided higher in the tree */}
         <FlightHelmet environmentMapTexture={environmentMapTexture} />
 
+        <mesh position={[-3, 0, 0]}>
+          <boxBufferGeometry args={[1, 1]} />
+          <meshStandardMaterial color={'salmon'} />
+          <Html
+          center
+            style={{
+              color: 'whitesmoke'
+            }}
+          >
+            <p>BOX</p>
+          </Html>
+        </mesh>
+
         <Lights />
       </Canvas>
       <Leva />
@@ -92,22 +105,6 @@ function HtmlWithWebGL() {
 }
 
 export default HtmlWithWebGL;
-
-/**
- * Plane
- */
-function Plane(props) {
-  return (
-    <mesh
-      // ref={plane}
-      receiveShadow
-      rotation-x={-Math.PI / 2}
-    >
-      <planeBufferGeometry args={[25, 25]} />
-      <meshStandardMaterial color={'grey'} />
-    </mesh>
-  );
-}
 
 function Lights() {
   const {
