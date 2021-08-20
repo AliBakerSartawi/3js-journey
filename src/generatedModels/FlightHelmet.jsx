@@ -60,12 +60,11 @@ export default function Model(props) {
         // material-envMapIntensity={props.envMapIntensity}
       >
         <Html
-          distanceFactor={20} // kind of like size
-          position={[0.1, 0.5, 0]}
+          // center
+          distanceFactor={20} // makes size relative to zoom
+          // position={[0.1, 0.5, 0]}
           className="HtmlGlasses"
-          style={{
-            
-          }}
+          style={{}}
         >
           <p>Glasses</p>
         </Html>

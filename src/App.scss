@@ -98,8 +98,21 @@ canvas {
   border: 1px solid rgba(100, 100, 100, 0.25);
   color: whitesmoke;
 
+  // cursor: help;
+
+  // to make the cursor go through the element (unclickable)
+  // pointer-events: none;
+
+  // on hover transition
+  // transform: scale(0,0);
+  // transition: transform 300ms;
+  // and add (visible) class if object is hovered with (transform: scale(1,1);)
+
   p {
     font-size: 12px;
     margin: 0;
+
+    // for smoother text on transitions
+    // will-change: transform;
   }
 }
