@@ -62,6 +62,7 @@ export default function Model(props) {
         <Html
           distanceFactor={20} // kind of like size
           position={[0.1, 0.5, 0]}
+          className="HtmlGlasses"
           style={{
             color: 'whitesmoke',
             background: 'rgba(30, 30, 30, 0.5)',

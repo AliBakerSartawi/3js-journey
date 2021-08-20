@@ -7,8 +7,8 @@ export default function CustomLoader() {
   const { active, progress, errors, item, loaded, total } = useProgress();
 
   useEffect(() => {
-    console.log(loadingBar.current.style);
-    console.log(progress);
+    // console.log(loadingBar.current.style);
+    // console.log(progress);
     // loadingBar.current.style.width = `${progress}%`
     loadingBar.current.style.transform = `scaleX(${progress / 100})`;
   }, [loadingBar, progress]);
