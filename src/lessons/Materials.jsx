@@ -3,7 +3,8 @@ import React, {
   useMemo,
   useRef,
   Suspense,
-  useLayoutEffect
+  useLayoutEffect,
+  useState
 } from 'react';
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import {
@@ -108,6 +109,7 @@ function ApplyAOMap({ plane }) {
  */
 function Matcaps() {
   const ref = useRef();
+  const [hidden, setHidden] = useState();
 
   // textures
   const [
@@ -139,7 +141,8 @@ function Matcaps() {
     position,
     wireframe,
     castShadow,
-    rotate
+    rotate,
+    html
   } = useControls({
     Matcaps: folder(
       {
@@ -151,7 +154,8 @@ function Matcaps() {
         position: [0, 1, -1],
         wireframe: false,
         castShadow: true,
-        rotate: true
+        rotate: true,
+        html: true
       },
       {
         collapsed: true
@@ -190,6 +194,24 @@ function Matcaps() {
             : matcap8Texture
         }
       />
+      {html && (
+        <Html
+          distanceFactor={3.5}
+          position={[0, 0.75, 0]}
+          center
+          className="donutMaterials"
+          occlude
+          onOcclude={setHidden}
+          style={{
+            transition: 'all 0.5s',
+            opacity: hidden ? 0 : 1,
+            transform: `scale(${hidden ? 0.5 : 1})`
+          }}
+        >
+          <p>matcaps</p>
+          <p>meshMatcapMaterial</p>
+        </Html>
+      )}
     </mesh>
   );
 }
@@ -199,6 +221,7 @@ function Matcaps() {
  */
 function Normals() {
   const ref = useRef();
+  const [hidden, setHidden] = useState();
 
   const {
     radialSegments,
@@ -247,10 +270,13 @@ function Normals() {
           position={[0, 0.75, 0]}
           center
           className="donutMaterials"
-          // occlude
-          // style={{
-          //   width: 'max-content'
-          // }}
+          occlude
+          onOcclude={setHidden}
+          style={{
+            transition: 'all 0.5s',
+            opacity: hidden ? 0 : 1,
+            transform: `scale(${hidden ? 0.5 : 1})`
+          }}
         >
           <p>Normals</p>
           <p>meshNormalMaterial</p>
