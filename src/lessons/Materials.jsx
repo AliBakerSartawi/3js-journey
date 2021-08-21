@@ -1,15 +1,8 @@
-import React, {
-  useRef,
-  useState
-} from 'react';
+import React, { useRef, useState } from 'react';
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
-import {
-  OrbitControls,
-  Html
-} from '@react-three/drei';
+import { OrbitControls, Html } from '@react-three/drei';
 import * as THREE from 'three';
 import { Leva, useControls, folder } from 'leva';
-import gsap from 'gsap';
 
 // Matcap Imports
 import matcap1 from '../textures/matcaps/1.png';
@@ -22,8 +15,8 @@ import matcap7 from '../textures/matcaps/7.png';
 import matcap8 from '../textures/matcaps/8.png';
 
 // Gradient Imports
-import gradient3 from '../textures/gradients/3.jpg'
-import gradient5 from '../textures/gradients/5.jpg'
+import gradient3 from '../textures/gradients/3.jpg';
+import gradient5 from '../textures/gradients/5.jpg';
 
 /**
  * Toon Component
@@ -33,16 +26,17 @@ function Toon() {
   const [hidden, setHidden] = useState();
 
   // textures
-  const [
-    gradient3Texture,
-    gradient5Texture,
-  ] = useLoader(THREE.TextureLoader, [
+  const [gradient3Texture, gradient5Texture] = useLoader(THREE.TextureLoader, [
     gradient3,
-    gradient5,
+    gradient5
   ]);
+
+  gradient3Texture.magFilter = THREE.NearestFilter;
+  gradient5Texture.magFilter = THREE.NearestFilter;
 
   const {
     color,
+    gradientMap,
     radialSegments,
     tubularSegments,
     radius,
@@ -55,7 +49,11 @@ function Toon() {
   } = useControls({
     Toon: folder(
       {
-        color: '#237648',
+        color: '#219656',
+        gradientMap: {
+          value: 'threeTone',
+          options: ['threeTone', 'fiveTone']
+        },
         radialSegments: { value: 16, min: 2, max: 128, step: 1 },
         tubularSegments: { value: 32, min: 2, max: 128, step: 1 },
         radius: { value: 0.3, min: 0.1, max: 5, step: 0.01 },
@@ -80,12 +78,16 @@ function Toon() {
 
   return (
     <mesh castShadow={castShadow} ref={ref} position={position}>
-          <torusBufferGeometry args={[radius, tube, radialSegments, tubularSegments]} />
-          <meshToonMaterial
-          wireframe={wireframe}
-            color={color}
-            gradientMap={gradient5Texture}
-          />
+      <torusBufferGeometry
+        args={[radius, tube, radialSegments, tubularSegments]}
+      />
+      <meshToonMaterial
+        wireframe={wireframe}
+        color={color}
+        gradientMap={
+          gradientMap === 'threeTone' ? gradient3Texture : gradient5Texture
+        }
+      />
       {html && (
         <Html
           distanceFactor={3.5}
@@ -131,7 +133,7 @@ function Phong() {
   } = useControls({
     Phong: folder(
       {
-        color: '#1f1f1f',
+        color: '#3269ff',
         specular: '#ff2233',
         shininess: { value: 100, min: 0, max: 1000, step: 1 },
         radialSegments: { value: 16, min: 2, max: 128, step: 1 },
@@ -158,7 +160,9 @@ function Phong() {
 
   return (
     <mesh castShadow={castShadow} ref={ref} position={position}>
-      <torusBufferGeometry args={[radius, tube, radialSegments, tubularSegments]} />
+      <torusBufferGeometry
+        args={[radius, tube, radialSegments, tubularSegments]}
+      />
       <meshPhongMaterial
         color={color}
         shininess={shininess}
@@ -385,7 +389,6 @@ function Plane() {
  * Main Component
  */
 function Materials() {
-
   const { autoRotate } = useControls({
     OrbitControls: folder({
       autoRotate: false
@@ -404,7 +407,7 @@ function Materials() {
           far: 2000
         }}
       >
-        <axesHelper args={[10]} />
+        {/* <axesHelper args={[10]} /> */}
         <OrbitControls dampingFactor={0.05} autoRotate={autoRotate} />
 
         {/* plane */}
@@ -421,6 +424,7 @@ function Materials() {
 
         <Lights />
       </Canvas>
+      <Leva />
     </div>
   );
 }
