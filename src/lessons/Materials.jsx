@@ -8,8 +8,8 @@ import React, {
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
 import { OrbitControls, TrackballControls, Loader } from '@react-three/drei';
 import * as THREE from 'three';
+import { Leva, useControls, folder } from 'leva';
 import gsap from 'gsap';
-// import * as dat from 'dat.gui'
 
 /**
  * texture imports
@@ -36,7 +36,7 @@ import matcap8 from '../textures/matcaps/8.png';
  * p => positive
  * n => negative
  * https://polyhaven.com/hdris
- * 
+ *
  * convert hdri to cube map => https://matheowis.github.io/HDRI-to-CubeMap/
  */
 import px from '../textures/environmentMaps/0/px.jpg';
@@ -63,29 +63,21 @@ const material = new THREE.MeshBasicMaterial({ color: 'crimson' });
  */
 function Motion({ plane, sphere, torus, torus2, torus3, torus4, torus5 }) {
   useFrame(({ camera, clock }, delta) => {
-    plane.current.rotation.z = 0.1 * clock.elapsedTime;
+    // sphere.current.rotation.y = 0.1 * clock.elapsedTime;
+    // torus.current.rotation.x = 0.1 * clock.elapsedTime;
+    // torus2.current.rotation.x = 0.1 * clock.elapsedTime;
+    // torus3.current.rotation.x = 0.1 * clock.elapsedTime;
+    // torus4.current.rotation.x = 0.1 * clock.elapsedTime;
+    // torus5.current.rotation.x = 0.1 * clock.elapsedTime;
 
-    sphere.current.rotation.y = 0.1 * clock.elapsedTime;
-
-    torus.current.rotation.x = 0.1 * clock.elapsedTime;
-    torus2.current.rotation.x = 0.1 * clock.elapsedTime;
-    torus3.current.rotation.x = 0.1 * clock.elapsedTime;
-    torus4.current.rotation.x = 0.1 * clock.elapsedTime;
-    torus5.current.rotation.x = 0.1 * clock.elapsedTime;
+    // sphere.current.rotation.x = sphere.current.rotation.y += 0.01;
+    torus.current.rotation.x = torus.current.rotation.y += 0.01;
+    torus2.current.rotation.x = torus2.current.rotation.y -= 0.01;
+    torus3.current.rotation.x = torus3.current.rotation.y += 0.01;
+    torus4.current.rotation.x = torus4.current.rotation.y -= 0.01;
+    torus5.current.rotation.x = torus5.current.rotation.y += 0.01;
   });
   return null;
-}
-
-/**
- * Lights component
- */
-function Lights() {
-  return (
-    <>
-      <ambientLight args={[0xffffff, 0.5]} />
-      <pointLight castShadow args={[0xffffff, 0.5]} position={[2, 3, 4]} />
-    </>
-  );
 }
 
 /**
@@ -102,6 +94,60 @@ function ApplyAOMap({ plane }) {
   }, [plane]);
 
   return null;
+}
+
+/**
+ * Normals Component
+ */
+function Normals() {
+  const ref = useRef();
+
+  const {
+    radialSegments,
+    tubularSegments,
+    radius,
+    position,
+    wireframe,
+    castShadow,
+    rotate
+  } = useControls({
+    Normals: folder({
+      radialSegments: { value: 16, min: 2, max: 128, step: 1 },
+      tubularSegments: { value: 32, min: 2, max: 128, step: 1 },
+      radius: { value: 0.3, min: 0.1, max: 5, step: 0.01 },
+      position: [1.5, 1, 1],
+      wireframe: false,
+      castShadow: true,
+      rotate: true
+    })
+  });
+
+  useFrame(() => {
+    if (rotate) {
+      ref.current.rotation.x = ref.current.rotation.y += 0.01;
+    }
+  });
+
+  return (
+    <mesh castShadow={castShadow} ref={ref} position={position}>
+      <torusBufferGeometry
+        args={[radius, 0.2, radialSegments, tubularSegments]}
+      />
+      <meshNormalMaterial flatShading={true} wireframe={wireframe} />
+    </mesh>
+  );
+}
+
+/**
+ * Plane Component
+ */
+function Plane() {
+  return (
+    <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]}>
+      <planeBufferGeometry args={[50, 50]} />
+      <meshStandardMaterial side={THREE.DoubleSide} color={'orangered'} />
+    </mesh>
+  );
 }
 
 /**
@@ -157,20 +203,20 @@ function Materials() {
     [px, nx, py, ny, pz, nz]
   ]);
 
-  console.log(environmentMapTexture)
+  console.log(environmentMapTexture);
 
   // gradient3Texture.minFilter = THREE.NearestFilter
   // because gradient picture is small, we should alter the magFilter
   gradient3Texture.magFilter = THREE.NearestFilter;
 
   return (
-    <div style={{ height: '100vh', backgroundColor: 'rgb(26, 26, 26)' }}>
+    <div style={{ height: '100vh', backgroundColor: '#C01805' }}>
       <Canvas
         shadows
         pixelRatio={Math.min(window.devicePixelRatio, 2)}
         camera={{
           fov: 45,
-          position: [3, 3, 3],
+          position: [5, 5, 5],
           near: 0.1,
           far: 2000
         }}
@@ -186,74 +232,14 @@ function Materials() {
           torus4={torus4}
           torus5={torus5}
         />
-        <Lights />
 
         {/* plane */}
-        <mesh
-          ref={plane}
-          receiveShadow
-          position={[0, 0, 0]}
-          rotation={[-Math.PI / 2, 0, 0]}
-        >
-          <planeBufferGeometry args={[10, 10, 64, 64]} />
-          {/* meshBasicMaterial cannot receive shadows, but Standard does */}
-          <meshStandardMaterial
-            map={doorColorTexture}
-            // DoubleSide requires more GPU calculations, use sparingly
-            side={THREE.DoubleSide}
-            // color adds tint above the texture
-            // color={'#00fe43'}
-
-            // unlike lambert and phong, standard supports roughness and metalness
-            metalness={1}
-            metalnessMap={doorMetallicTexture}
-            roughness
-            roughnessMap={doorRoughnessTexture}
-            // other maps
-            normalMap={doorNormalTexture}
-            normalScale={[1, 1]}
-            transparent // enabling transparent is necessary for alphaMap
-            alphaMap={doorOpacityTexture}
-            aoMap={doorAmbientOcclusionTexture}
-            aoMapIntensity={1}
-            // for displacement to work, geometry segments are required
-            displacementMap={doorHeightTexture}
-            displacementScale={0.5}
-            // environment map (how the scene reflects on this plane)
-            envMap={environmentMapTexture}
-          />
-          {/* applying aoMap requires setting attribute to geometry, which requires accessing the ref after the component fully mounted */}
-          <ApplyAOMap plane={plane} />
-        </mesh>
+        <Plane />
 
         {/* sphere */}
-        <mesh ref={sphere} position={[2.5, 1, 1]}>
-          <axesHelper args={[3]} />
-          <sphereBufferGeometry args={[0.5, 16, 16]} />
-          <meshNormalMaterial
-            // flatshading can be cool for certain art types
-            flatShading
-            normalMap={doorNormalTexture}
-          />
-        </mesh>
-
-        <mesh position={[1.25, 1, 1]}>
-          <axesHelper args={[3]} />
-          <sphereBufferGeometry args={[0.5, 16, 16]} />
-          <meshMatcapMaterial matcap={matcap8Texture} />
-        </mesh>
+        <Normals />
 
         {/* torus */}
-        <mesh position={[0, 1, 0]}>
-          <torusBufferGeometry args={[0.3, 0.2, 16, 32]} />
-          <meshBasicMaterial
-            // transparent must be set to true, then provide opacity value
-            transparent
-            opacity={0.25}
-            wireframe
-            color={0xffffff}
-          />
-        </mesh>
         <mesh ref={torus} position={[0, 1, -1]}>
           <torusBufferGeometry args={[0.3, 0.2, 16, 32]} />
           {/* matcaps can simulate lights and shadow without having them in the scene */}
@@ -298,14 +284,35 @@ function Materials() {
         {/* standard => arguably the best one => uses most realistic algorithms */}
         <mesh castShadow ref={torus5} position={[0, 1, 4]}>
           <torusBufferGeometry args={[0.3, 0.2, 16, 32]} />
-          <meshStandardMaterial metalness={0} roughness={0} envMap={environmentMapTexture} color={0x000000} />
+          <meshStandardMaterial
+            metalness={0}
+            roughness={0}
+            envMap={environmentMapTexture}
+            color={0x000000}
+          />
         </mesh>
 
-        {/* meshPhysicalMaterial => like standard, but has clear coat effect */}
-        {/* https://threejs.org/examples/?q=physical#webgl_materials_physical_clearcoat */}
+        <Lights />
       </Canvas>
     </div>
   );
 }
 
 export default Materials;
+
+/**
+ * Lights component
+ */
+function Lights() {
+  return (
+    <>
+      <hemisphereLight args={[0xe1e1e1, 0xe1e1e1, 0.5]} />
+      <pointLight
+        shadow-mapSize={[1024, 1024]}
+        castShadow
+        args={[0xe1e1e1, 1, 20, 1]}
+        position={[2, 3, 4]}
+      />
+    </>
+  );
+}

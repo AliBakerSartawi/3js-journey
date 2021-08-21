@@ -60,7 +60,9 @@ function App() {
         <Sidebar />
 
         {/* 🤓 SCENES */}
-        <Materials />
+        <Suspense fallback={<CustomLoader />}>
+          <Materials />
+        </Suspense>
         {/* <Text /> */}
         {/* <Lights /> */}
         {/* <BakingShadows /> */}
