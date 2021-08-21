@@ -27,7 +27,11 @@ import gradient3 from '../textures/gradients/3.jpg';
  * https://github.com/nidorx/matcaps
  */
 import matcap1 from '../textures/matcaps/1.png';
+import matcap2 from '../textures/matcaps/2.png';
 import matcap3 from '../textures/matcaps/3.png';
+import matcap4 from '../textures/matcaps/4.png';
+import matcap5 from '../textures/matcaps/5.png';
+import matcap6 from '../textures/matcaps/6.png';
 import matcap7 from '../textures/matcaps/7.png';
 import matcap8 from '../textures/matcaps/8.png';
 
@@ -70,8 +74,6 @@ function Motion({ plane, sphere, torus, torus2, torus3, torus4, torus5 }) {
     // torus4.current.rotation.x = 0.1 * clock.elapsedTime;
     // torus5.current.rotation.x = 0.1 * clock.elapsedTime;
 
-    // sphere.current.rotation.x = sphere.current.rotation.y += 0.01;
-    torus.current.rotation.x = torus.current.rotation.y += 0.01;
     torus2.current.rotation.x = torus2.current.rotation.y -= 0.01;
     torus3.current.rotation.x = torus3.current.rotation.y += 0.01;
     torus4.current.rotation.x = torus4.current.rotation.y -= 0.01;
@@ -97,6 +99,92 @@ function ApplyAOMap({ plane }) {
 }
 
 /**
+ * Matcaps Component
+ */
+function Matcaps() {
+  const ref = useRef();
+
+  // textures
+  const [
+    matcap1Texture,
+    matcap2Texture,
+    matcap3Texture,
+    matcap4Texture,
+    matcap5Texture,
+    matcap6Texture,
+    matcap7Texture,
+    matcap8Texture
+  ] = useLoader(THREE.TextureLoader, [
+    matcap1,
+    matcap2,
+    matcap3,
+    matcap4,
+    matcap5,
+    matcap6,
+    matcap7,
+    matcap8
+  ]);
+
+  const {
+    matcap,
+    radialSegments,
+    tubularSegments,
+    radius,
+    tube,
+    position,
+    wireframe,
+    castShadow,
+    rotate
+  } = useControls({
+    Matcaps: folder({
+      matcap: { value: 5, options: [1, 2, 3, 4, 5, 6, 7, 8] },
+      radialSegments: { value: 16, min: 2, max: 128, step: 1 },
+      tubularSegments: { value: 32, min: 2, max: 128, step: 1 },
+      radius: { value: 0.3, min: 0.1, max: 5, step: 0.01 },
+      tube: { value: 0.2, min: 0.1, max: 5, step: 0.01 },
+      position: [0, 1, -1],
+      wireframe: false,
+      castShadow: true,
+      rotate: true
+    })
+  });
+
+  useFrame(() => {
+    if (rotate) {
+      ref.current.rotation.x = ref.current.rotation.y += 0.01;
+    }
+  });
+
+  return (
+    <mesh castShadow={castShadow} ref={ref} position={position}>
+      <torusBufferGeometry
+        args={[radius, tube, radialSegments, tubularSegments]}
+      />
+      <meshMatcapMaterial
+        wireframe={wireframe}
+        matcap={
+          matcap === 1
+            ? matcap1Texture
+            : matcap === 2
+            ? matcap2Texture
+            : matcap === 3
+            ? matcap3Texture
+            : matcap === 4
+            ? matcap4Texture
+            : matcap === 5
+            ? matcap5Texture
+            : matcap === 6
+            ? matcap6Texture
+            : matcap === 7
+            ? matcap7Texture
+            : matcap8Texture
+        }
+      />
+    </mesh>
+  );
+}
+
+/**
  * Normals Component
  */
 function Normals() {
@@ -106,6 +194,7 @@ function Normals() {
     radialSegments,
     tubularSegments,
     radius,
+    tube,
     position,
     wireframe,
     castShadow,
@@ -114,7 +203,8 @@ function Normals() {
     Normals: folder({
       radialSegments: { value: 16, min: 2, max: 128, step: 1 },
       tubularSegments: { value: 32, min: 2, max: 128, step: 1 },
-      radius: { value: 0.3, min: 0.1, max: 5, step: 0.01 },
+      radius: { value: 0.3, min: 0.1, max: 5, step: 0.001 },
+      tube: { value: 0.2, min: 0.1, max: 5, step: 0.001 },
       position: [1.5, 1, 1],
       wireframe: false,
       castShadow: true,
@@ -131,7 +221,7 @@ function Normals() {
   return (
     <mesh castShadow={castShadow} ref={ref} position={position}>
       <torusBufferGeometry
-        args={[radius, 0.2, radialSegments, tubularSegments]}
+        args={[radius, tube, radialSegments, tubularSegments]}
       />
       <meshNormalMaterial flatShading={true} wireframe={wireframe} />
     </mesh>
@@ -166,37 +256,6 @@ function Materials() {
   const torus5 = useRef();
 
   /**
-   * loading textures
-   */
-  const [
-    doorColorTexture,
-    doorAmbientOcclusionTexture,
-    doorHeightTexture,
-    doorMetallicTexture,
-    doorNormalTexture,
-    doorOpacityTexture,
-    doorRoughnessTexture,
-    gradient3Texture,
-    matcap1Texture,
-    matcap3Texture,
-    matcap7Texture,
-    matcap8Texture
-  ] = useLoader(THREE.TextureLoader, [
-    doorColor,
-    doorAmbientOcclusion,
-    doorHeight,
-    doorMetallic,
-    doorNormal,
-    doorOpacity,
-    doorRoughness,
-    gradient3,
-    matcap1,
-    matcap3,
-    matcap7,
-    matcap8
-  ]);
-
-  /**
    * loading environment cubic texture
    */
   const [environmentMapTexture] = useLoader(THREE.CubeTextureLoader, [
@@ -205,9 +264,11 @@ function Materials() {
 
   console.log(environmentMapTexture);
 
-  // gradient3Texture.minFilter = THREE.NearestFilter
-  // because gradient picture is small, we should alter the magFilter
-  gradient3Texture.magFilter = THREE.NearestFilter;
+  const { autoRotate } = useControls({
+    OrbitControls: folder({
+      autoRotate: false
+    })
+  });
 
   return (
     <div style={{ height: '100vh', backgroundColor: '#C01805' }}>
@@ -222,7 +283,7 @@ function Materials() {
         }}
       >
         <axesHelper args={[10]} />
-        <OrbitControls dampingFactor={0.05} />
+        <OrbitControls dampingFactor={0.05} autoRotate={autoRotate} />
         <Motion
           plane={plane}
           sphere={sphere}
@@ -236,20 +297,10 @@ function Materials() {
         {/* plane */}
         <Plane />
 
-        {/* sphere */}
+        {/* Donuts */}
         <Normals />
 
-        {/* torus */}
-        <mesh ref={torus} position={[0, 1, -1]}>
-          <torusBufferGeometry args={[0.3, 0.2, 16, 32]} />
-          {/* matcaps can simulate lights and shadow without having them in the scene */}
-          <meshMatcapMaterial matcap={matcap3Texture} />
-        </mesh>
-        <mesh position={[0, 1, -2]}>
-          <torusBufferGeometry args={[0.3, 0.2, 16, 32]} />
-          {/* matcaps can simulate lights and shadow without having them in the scene */}
-          <meshMatcapMaterial matcap={matcap7Texture} />
-        </mesh>
+        <Matcaps />
 
         {/* materials that react to light */}
         {/* lambert */}
@@ -277,7 +328,7 @@ function Materials() {
           <meshToonMaterial
             color={0x237648}
             // gradientMap can make it smoother, unless min & mag filters are fixed on the texture
-            gradientMap={gradient3Texture}
+            // gradientMap={gradient3Texture}
           />
         </mesh>
 
