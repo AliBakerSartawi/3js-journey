@@ -116,3 +116,22 @@ canvas {
     // will-change: transform;
   }
 }
+
+// Donuts Component
+.donutMaterials {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  padding: 10px;
+  border-radius: 10px;
+  background: rgba(whitesmoke, 0.1);
+
+  pointer-events: none;
+
+  p {
+    margin: 0;
+    color: black;
+  }
+}

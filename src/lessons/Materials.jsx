@@ -6,7 +6,12 @@ import React, {
   useLayoutEffect
 } from 'react';
 import { Canvas, useFrame, useLoader } from '@react-three/fiber';
-import { OrbitControls, TrackballControls, Loader } from '@react-three/drei';
+import {
+  OrbitControls,
+  TrackballControls,
+  Loader,
+  Html
+} from '@react-three/drei';
 import * as THREE from 'three';
 import { Leva, useControls, folder } from 'leva';
 import gsap from 'gsap';
@@ -136,17 +141,22 @@ function Matcaps() {
     castShadow,
     rotate
   } = useControls({
-    Matcaps: folder({
-      matcap: { value: 5, options: [1, 2, 3, 4, 5, 6, 7, 8] },
-      radialSegments: { value: 16, min: 2, max: 128, step: 1 },
-      tubularSegments: { value: 32, min: 2, max: 128, step: 1 },
-      radius: { value: 0.3, min: 0.1, max: 5, step: 0.01 },
-      tube: { value: 0.2, min: 0.1, max: 5, step: 0.01 },
-      position: [0, 1, -1],
-      wireframe: false,
-      castShadow: true,
-      rotate: true
-    })
+    Matcaps: folder(
+      {
+        matcap: { value: 5, options: [1, 2, 3, 4, 5, 6, 7, 8] },
+        radialSegments: { value: 16, min: 2, max: 128, step: 1 },
+        tubularSegments: { value: 32, min: 2, max: 128, step: 1 },
+        radius: { value: 0.3, min: 0.1, max: 5, step: 0.01 },
+        tube: { value: 0.2, min: 0.1, max: 5, step: 0.01 },
+        position: [0, 1, -1],
+        wireframe: false,
+        castShadow: true,
+        rotate: true
+      },
+      {
+        collapsed: true
+      }
+    )
   });
 
   useFrame(() => {
@@ -198,18 +208,25 @@ function Normals() {
     position,
     wireframe,
     castShadow,
-    rotate
+    rotate,
+    html
   } = useControls({
-    Normals: folder({
-      radialSegments: { value: 16, min: 2, max: 128, step: 1 },
-      tubularSegments: { value: 32, min: 2, max: 128, step: 1 },
-      radius: { value: 0.3, min: 0.1, max: 5, step: 0.001 },
-      tube: { value: 0.2, min: 0.1, max: 5, step: 0.001 },
-      position: [1.5, 1, 1],
-      wireframe: false,
-      castShadow: true,
-      rotate: true
-    })
+    Normals: folder(
+      {
+        radialSegments: { value: 16, min: 2, max: 128, step: 1 },
+        tubularSegments: { value: 32, min: 2, max: 128, step: 1 },
+        radius: { value: 0.3, min: 0.1, max: 5, step: 0.001 },
+        tube: { value: 0.2, min: 0.1, max: 5, step: 0.001 },
+        position: [1.5, 1, 1],
+        wireframe: false,
+        castShadow: true,
+        rotate: true,
+        html: true
+      },
+      {
+        collapsed: true
+      }
+    )
   });
 
   useFrame(() => {
@@ -224,6 +241,21 @@ function Normals() {
         args={[radius, tube, radialSegments, tubularSegments]}
       />
       <meshNormalMaterial flatShading={true} wireframe={wireframe} />
+      {html && (
+        <Html
+          distanceFactor={3.5}
+          position={[0, 0.75, 0]}
+          center
+          className="donutMaterials"
+          // occlude
+          // style={{
+          //   width: 'max-content'
+          // }}
+        >
+          <p>Normals</p>
+          <p>meshNormalMaterial</p>
+        </Html>
+      )}
     </mesh>
   );
 }
@@ -306,7 +338,10 @@ function Materials() {
         {/* lambert */}
         <mesh castShadow ref={torus2} position={[0, 1, 1]}>
           <torusBufferGeometry args={[0.3, 0.2, 16, 32]} />
-          <meshLambertMaterial envMap={environmentMapTexture} />
+          <meshLambertMaterial
+            envMap={environmentMapTexture}
+            envMapIntensity={1}
+          />
         </mesh>
 
         {/* phong */}
@@ -324,7 +359,6 @@ function Materials() {
         {/* toon */}
         <mesh castShadow ref={torus4} position={[0, 1, 3]}>
           <torusBufferGeometry args={[0.3, 0.2, 16, 32]} />
-          {/* phong is smoother than lambert, but lambert is more performant */}
           <meshToonMaterial
             color={0x237648}
             // gradientMap can make it smoother, unless min & mag filters are fixed on the texture
