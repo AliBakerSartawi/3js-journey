@@ -3,14 +3,14 @@ import './Leva.css';
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import CustomLoader from './components/CustomLoader';
-import PerformanceTips from './lessons/PerformanceTips';
+import Sidebar from './components/Sidebar';
+/**
+ * Scene Imports
+ */
+// import PerformanceTips from './lessons/PerformanceTips';
 // import ShaderPatterns from './lessons/ShaderPatterns';
 // import Lights from './lessons/Lights';
-// import BasicScene from './lessons/BasicScene';
-// import DebugUI from './lessons/DebugUI';
-// import Geometries from './lessons/Geometries';
-// import Materials from './lessons/Materials';
-// import Textures from './lessons/Textures';
+import Materials from './lessons/Materials';
 // import Text from './lessons/Text';
 // import BakingShadows from './lessons/BakingShadows';
 // import HauntedHouse from './lessons/HauntedHouse';
@@ -19,7 +19,6 @@ import PerformanceTips from './lessons/PerformanceTips';
 // import Template from './lessons/Template';
 // import RayCaster from './lessons/RayCaster';
 // import Physics from './lessons/Physics';
-// import Sidebar from './components/Sidebar';
 // import RagingSea from './lessons/RagingSea';
 // import AnimatedGalaxy from './lessons/AnimatedGalaxy';
 // import ModifiedMaterials from './lessons/ModifiedMaterials';
@@ -27,7 +26,7 @@ import PerformanceTips from './lessons/PerformanceTips';
 // import ImportedModels from './lessons/ImportedModels';
 // import RealisticRendering from './lessons/RealisticRendering';
 // import CanvasLoader from './lessons/CanvasLoader';
-import HtmlWithWebGL from './lessons/HtmlWithWebGL';
+// import HtmlWithWebGL from './lessons/HtmlWithWebGL';
 // import Shaders from './lessons/Shaders';
 
 function App() {
@@ -56,55 +55,53 @@ function App() {
 
   return (
     <div ref={app} className="app">
-      {/* TEMPLATE */}
-      {/* <Template /> */}
-
-      {/* 🤓 SCENES */}
-      {/* <BasicScene /> */}
-      {/* <Geometries /> */}
-      {/* <DebugUI /> */}
-      {/* <Textures /> */}
-      {/* <Materials /> */}
-      {/* <Text /> */}
-      {/* <Lights /> */}
-      {/* <BakingShadows /> */}
-      {/* <HauntedHouse /> */}
-      {/* <Particles /> */}
-      {/* 🌟 GalaxyGenerator has a functional react-dat-gui panel */}
-      {/* <GalaxyGenerator /> */}
-      {/* <RayCaster /> */}
-      {/* ➗ Physics with Leva GUI and 🔉 collision sounds */}
-      {/* <Physics /> */}
-      {/* 🖌️ Models & custom burger exported from Blender */}
-      {/* <Suspense fallback={<CustomLoader />}> */}
-      {/* <ImportedModels /> */}
-      {/* </Suspense> */}
-      {/* <Suspense fallback={<CustomLoader />}>
-        <RealisticRendering />
-      </Suspense> */}
-      {/* 🤯 SHADERS */}
-      {/* <Shaders /> */}
-      {/* <ShaderPatterns /> */}
-      {/* <RagingSea /> */}
-      {/* <AnimatedGalaxy /> */}
-      {/* <Suspense fallback={<CustomLoader />}>
-          <ModifiedMaterials />
-        </Suspense> */}
-      {/* 😎 EFFECTS */}
-      {/* <Suspense fallback={<CustomLoader />}>
-          <PostProcessing />
-        </Suspense> */}
-      {/* 💪 TIPS */}
-      {/* <PerformanceTips /> */}
-      {/* ⏲️ CANVAS LOADER */}
-      {/* <Suspense fallback={<CustomLoader />}>
-        <CanvasLoader />
-      </Suspense> */}
-      {/* WITH HTML */}
       <Suspense fallback={<CustomLoader />}>
-        <HtmlWithWebGL />
+        {/* Sidebar */}
+        <Sidebar />
+
+        {/* 🤓 SCENES */}
+        <Materials />
+        {/* <Text /> */}
+        {/* <Lights /> */}
+        {/* <BakingShadows /> */}
+        {/* <HauntedHouse /> */}
+        {/* <Particles /> */}
+        {/* 🌟 GalaxyGenerator has a functional react-dat-gui panel */}
+        {/* <GalaxyGenerator /> */}
+        {/* <RayCaster /> */}
+        {/* ➗ Physics with Leva GUI and 🔉 collision sounds */}
+        {/* <Physics /> */}
+        {/* 🖌️ Models & custom burger exported from Blender */}
+        {/* <Suspense fallback={<CustomLoader />}> */}
+        {/* <ImportedModels /> */}
+        {/* </Suspense> */}
+        {/* <Suspense fallback={<CustomLoader />}>
+          <RealisticRendering />
+        </Suspense> */}
+        {/* 🤯 SHADERS */}
+        {/* <Shaders /> */}
+        {/* <ShaderPatterns /> */}
+        {/* <RagingSea /> */}
+        {/* <AnimatedGalaxy /> */}
+        {/* <Suspense fallback={<CustomLoader />}>
+            <ModifiedMaterials />
+          </Suspense> */}
+        {/* 😎 EFFECTS */}
+        {/* <Suspense fallback={<CustomLoader />}>
+            <PostProcessing />
+          </Suspense> */}
+        {/* 💪 TIPS */}
+        {/* <PerformanceTips /> */}
+        {/* ⏲️ CANVAS LOADER */}
+        {/* <Suspense fallback={<CustomLoader />}>
+          <CanvasLoader />
+        </Suspense> */}
+        {/* WITH HTML */}
+        {/* <Suspense fallback={<CustomLoader />}>
+          <HtmlWithWebGL />
+        </Suspense> */}
       </Suspense>
-    </div>
+            </div>
   );
 }
 
