@@ -58,7 +58,8 @@ export default function Sidebar() {
     <div className="sidebar" ref={sidebar}>
       {/* TOGGLE */}
       <div className="sidebarToggle" ref={toggle} onClick={toggleSidebar}>
-        <p>&larr;</p>
+        {/* <p>&larr;</p> */}
+        <p>{'<'}</p>
       </div>
 
       {/* BODY */}
